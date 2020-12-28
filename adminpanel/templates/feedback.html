@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="WrapperArea">
+    <div class="WrapperBox">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-info" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        <div class="Small-Wrapper">
+            <div class="TableList">
+                <div class="dragscroll">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>User</th>
+                            <th>Order id</th>
+                            <th>Content</th>
+                            <th>Stars</th>
+                            <!--                <th>created_at</th>-->
+                            <!--                <th>Mode of Payment</th>-->
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for object in object_list %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{object.user.email}}</td>
+                            <td>ORDER {{object.order.id}}</td>
+                            <td>{{object.feedback}}</td>
+                            <td>{{object.stars}}</td>
+                            <!--                <td>{{object.amount}}</td>-->
+                            <!--                <td>{{object.payment_method}}</td>-->
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}

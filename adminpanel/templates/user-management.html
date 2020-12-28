@@ -1,0 +1,439 @@
+{% extends 'base.html' %}
+{% block body %}
+<!--<script>-->
+<!--    var protocol = window.location.protocol-->
+<!--    var hostname = window.location.hostname-->
+<!--    var port = window.location.port-->
+<!--    var url = protocol + "//" + hostname + ":" + port + "/adminpanel" + "/get-notification-setting" + "/"-->
+<!--    var delay = 0-->
+<!--    $.ajax({-->
+<!--        url: url,-->
+<!--        method: 'GET',-->
+<!--        success(response) {-->
+<!--            setTimeout(function(){-->
+<!--            if (response == 1) {-->
+<!--                $(".settings").prop("checked", true);-->
+<!--                $(".view-control").css('display','inline');-->
+<!--            }-->
+<!--            else {-->
+<!--                $(".settings").prop("checked", false);-->
+<!--                $(".view-control").css('display','inline');-->
+<!--            }-->
+<!--            },delay)-->
+<!--        },-->
+<!--        error() {-->
+<!--            console.log("Some error occurrred")-->
+<!--        }-->
+<!--    });-->
+<!--&lt;!&ndash;    fetch(url)&ndash;&gt;-->
+<!--&lt;!&ndash;      .then(function (response) {&ndash;&gt;-->
+<!--&lt;!&ndash;        return response.json();&ndash;&gt;-->
+<!--&lt;!&ndash;      })&ndash;&gt;-->
+<!--&lt;!&ndash;      .then(function (myJson) {&ndash;&gt;-->
+<!--&lt;!&ndash;        if (myJson===1){&ndash;&gt;-->
+<!--&lt;!&ndash;        $("#settings").prop("checked", true);&ndash;&gt;-->
+<!--&lt;!&ndash;        }&ndash;&gt;-->
+<!--&lt;!&ndash;        else{&ndash;&gt;-->
+<!--&lt;!&ndash;        $("#settings").prop("checked", false);&ndash;&gt;-->
+<!--&lt;!&ndash;        }&ndash;&gt;-->
+<!--&lt;!&ndash;        console.log(myJson)&ndash;&gt;-->
+<!--&lt;!&ndash;      })&ndash;&gt;-->
+<!--&lt;!&ndash;      .catch(function (error) {&ndash;&gt;-->
+<!--&lt;!&ndash;        console.log("Error: " + error);&ndash;&gt;-->
+<!--&lt;!&ndash;      });&ndash;&gt;-->
+
+
+<!--</script>-->
+<div class="WrapperArea">
+    <div class="WrapperBox">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-info" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        <div class="Small-Wrapper">
+            <div class="SearchBox">
+                <form action="" method="get">
+                    <!--                    {% csrf_token %}-->
+                    <input type="text" name="qs" placeholder="Enter Key">
+                    <button>Apply</button>
+                </form>
+            </div>
+
+            <h4 class="Title">User Management</h4>
+
+            <div class="Filter">
+                <form method="get">
+                    <!--                    <div class="form-group">-->
+                    <!--                        {{ myfilter.form}}-->
+                    <!--                        <button class="Button">Apply</button>-->
+                    <!--                    </div>-->
+
+                    <div class="form-group">
+                        <label>From Date</label>
+                        <input type="date" name="from_date" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>To Date</label>
+                        <input type="date" name="to_date" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button class="Button" type="submit">Apply</button>
+                    </div>
+                </form>
+            </div>
+            {% if search %}
+            <div class="TableList">
+                <div class="dragscroll">
+                    <table style="width: 150vw">
+                        <thead>
+                        <tr>
+                            <th>S. No</th>
+                            <th>User ID</th>
+                            <th>First Name of the user</th>
+                            <th>Last Name of the user</th>
+                            <th>Profile Photo</th>
+                            <th>Phone Number</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for object in search %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{object.id}}</td>
+                            <td>{{object.first_name}}</td>
+                            <td>{{object.last_name}}</td>
+                            {% if object.profile_pic %}
+                            <td>
+                                <figure><img src="{{object.profile_pic.url}}" alt="Profile pic"></figure>
+                            </td>
+                            {% else %}
+                            <td>
+                                <figure><img src="https://snapic-bucket.s3.amazonaws.com/static/default_profile.png"
+                                             alt=""></figure>
+                            </td>
+                            {% endif %}
+                            <td>{{object.phone_number}}</td>
+                            <td>
+                                <a class="Blue" href="{% url 'adminpanel:user-detail' object.id %}">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                                <button class="Red deleteButton" value="{{object.id}}" data-toggle="modal"
+                                        data-target="#DeleteModal" style="border:none;box-shadow:none;
+                                                                                background:transparent;outline:0;">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                                {% if object.is_blocked %}
+                                <button class="Red cross" data-target="#UnBlock" data-toggle="modal"
+                                        value="{{object.id}}"
+                                        style="border:none;box-shadow:none;background:transparent;outline:0;margin-left:10px;">
+                                    <i class="fa fa-ban"></i>
+                                </button>
+                                {% else %}
+                                <button class="Green tick" data-target="#Block" data-toggle="modal"
+                                        value="{{object.id}}"
+                                        style="border:none;box-shadow:none;background:transparent;outline:0;margin-left:10px;">
+                                    <i class="fa fa-check"></i>
+                                </button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% elif pages %}
+            <div class="TableList">
+                <div class="dragscroll">
+                    <table style="width: 150vw">
+                        <thead>
+                        <tr>
+                            <th>S. No</th>
+                            <th>User ID</th>
+                            <th>First Name of the user</th>
+                            <th>Last Name of the user</th>
+                            <th>Profile Photo</th>
+                            <th>Phone Number</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for object in pages %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{object.id}}</td>
+                            <td>{{object.first_name}}</td>
+                            <td>{{object.last_name}}</td>
+                            {% if object.profile_pic %}
+                            <td>
+                                <figure><img src="{{object.profile_pic.url}}" alt="Profile pic"></figure>
+                            </td>
+                            {% else %}
+                            <td>
+                                <figure><img src="https://snapic-bucket.s3.amazonaws.com/static/default_profile.png"
+                                             alt=""></figure>
+                            </td>
+                            {% endif %}
+                            <td>{{object.phone_number}}</td>
+                            <td>
+                                <a class="Blue" href="{% url 'adminpanel:user-detail' object.id %}">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                                <button class="Red deleteButton" value="{{object.id}}" data-toggle="modal"
+                                        data-target="#DeleteModal" style="border:none;box-shadow:none;
+                                                                                background:transparent;outline:0;">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                                {% if object.is_blocked %}
+                                <button class="Red cross" data-target="#UnBlock" data-toggle="modal"
+                                        value="{{object.id}}"
+                                        style="border:none;box-shadow:none;background:transparent;outline:0;margin-left:10px;">
+                                    <i class="fa fa-ban"></i>
+                                </button>
+                                {% else %}
+                                <button class="Green tick" data-target="#Block" data-toggle="modal"
+                                        value="{{object.id}}"
+                                        style="border:none;box-shadow:none;background:transparent;outline:0;margin-left:10px;">
+                                    <i class="fa fa-check"></i>
+                                </button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% else %}
+            <div class="TableList">
+                <div class="dragscroll">
+                    <table style="width: 150vw">
+                        <thead>
+                        <tr>
+                            <th>S. No</th>
+                            <th>User ID</th>
+                            <th>First Name of the user</th>
+                            <th>Last Name of the user</th>
+                            <th>Profile Photo</th>
+                            <th>Phone Number</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for object in object_list %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{object.id}}</td>
+                            <td>{{object.first_name}}</td>
+                            <td>{{object.last_name}}</td>
+                            {% if object.profile_pic %}
+                            <td>
+                                <figure><img src="{{object.profile_pic.url}}" alt="Profile pic"></figure>
+                            </td>
+                            {% else %}
+                            <td>
+                                <figure><img src="https://snapic-bucket.s3.amazonaws.com/static/default_profile.png"
+                                             alt=""></figure>
+                            </td>
+                            {% endif %}
+                            <td>{{object.phone_number}}</td>
+                            <td>
+                                <a class="Blue" href="{% url 'adminpanel:user-detail' object.id %}">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                                <button class="Red deleteButton" value="{{object.id}}" data-toggle="modal"
+                                        data-target="#DeleteModal" style="border:none;box-shadow:none;
+                                                                                background:transparent;outline:0;">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                                {% if object.is_blocked %}
+                                <button class="Red cross" data-target="#UnBlock" data-toggle="modal"
+                                        value="{{object.id}}"
+                                        style="border:none;box-shadow:none;background:transparent;outline:0;margin-left:10px;">
+                                    <i class="fa fa-ban"></i>
+                                </button>
+                                {% else %}
+                                <button class="Green tick" data-target="#Block" data-toggle="modal"
+                                        value="{{object.id}}"
+                                        style="border:none;box-shadow:none;background:transparent;outline:0;margin-left:10px;">
+                                    <i class="fa fa-check"></i>
+                                </button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+
+
+            {% if pages.has_other_pages %}
+            <ul class="pagination">
+                {% if pages.has_previous %}
+                <li class="page-item"><a aria-label="Previous" class="page-link"
+                                         href="?page={{ pages.previous_page_number }}">Previous</a></li>
+                {% else %}
+                <li class="page-item disabled"><span>&laquo;</span></li>
+                {% endif %}
+                {% for i in pages.paginator.page_range %}
+                {% if pages.number == i %}
+                <li class="page-item active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                {% else %}
+                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                {% endif %}
+                {% endfor %}
+                {% if pages.has_next %}
+                <li class="page-item"><a aria-label="Next" class="page-link" href="?page={{ pages.next_page_number }}">Next</a>
+                </li>
+                {% else %}
+                <li class="page-item disabled"><span>&raquo;</span></li>
+                {% endif %}
+            </ul>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="ModalBox">
+    <div id="DeleteModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="Decline">
+                        <a href="JavaScript:Void(0);" class="CloseModal" data-dismiss="modal">×</a>
+                        <h3>Delete</h3>
+                        <p>Are you sure you want to delete this Member ?</p>
+                        <div id="object_id_placeholder_div">
+                            <input hidden="true" id="object_id_placeholder_input" value="">
+                        </div>
+                        <h4>
+                            <a href="JavaScript:Void(0);" data-dismiss="modal" style="color:blue;">no</a>
+                            <button id="modal_delete_button" data-dismiss="modal" style="border:none;box-shadow:none;
+                                                                                background:transparent;outline:0;color:blue;margin-left:10px;">
+                                Yes
+                            </button>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- block user modal -->
+<div class="ModalBox">
+    <div id="Block" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="Decline">
+                        <a href="JavaScript:Void(0);" class="CloseModal" data-dismiss="modal">×</a>
+                        <h3>Block</h3>
+                        <p>Are you sure you want to block this Member ?</p>
+                        <div id="object_id_block_div">
+                            <input hidden="true" id="object_id_block_input" value="">
+                        </div>
+                        <h4>
+                            <a href="JavaScript:Void(0);" data-dismiss="modal">No</a>
+                            <button id="modal_block_button" data-dismiss="modal" style="border:none;box-shadow:none;
+                                                                                background:transparent;outline:0;color:blue;margin-left:10px;">
+                                Yes
+                            </button>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- unblock user modal -->
+<div class="ModalBox">
+    <div id="UnBlock" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="Decline">
+                        <a href="JavaScript:Void(0);" class="CloseModal" data-dismiss="modal">×</a>
+                        <h3>Unblock</h3>
+                        <p>Are you sure you want to unblock this Member ?</p>
+                        <div id="object_id_unblock_div">
+                            <input hidden="true" id="object_id_unblock_input" value="">
+                        </div>
+                        <h4>
+                            <a href="JavaScript:Void(0);" data-dismiss="modal">No</a>
+                            <button id="modal_unblock_button" data-dismiss="modal" style="border:none;box-shadow:none;
+                                                                                background:transparent;outline:0;color:blue;margin-left:10px;">
+                                Yes
+                            </button>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+    $('.tick').click(function (e) {
+        console.log('clicked tick Button')
+        e.preventDefault();
+//      $('.modal').addClass('show');
+        var value = $(this).val();
+        console.log("value",value)
+        $("#object_id_block_div").html(`<input hidden="true" id="object_id_block_input" value="` + value + `">`)
+    });
+    $('.CloseModal').click(function (e) {
+        e.preventDefault();
+//        $('.modal').removeClass('show');
+    });
+
+    $("#modal_block_button").click(function () {
+        var object_id = $("#object_id_block_input").val();
+        console.log('Id ',object_id)
+        var protocol = window.location.protocol
+        var hostname = window.location.hostname
+        var port = window.location.port
+        var url = protocol + "//" + hostname + ":" + port + "/adminpanel" + "/block-unblock-user" + "/" + object_id + "/"
+        window.location.href = url
+    });
+});
+
+
+$(document).ready(function () {
+    $('.cross').click(function (e) {
+        console.log('clicked tick Button')
+        e.preventDefault();
+//      $('.modal').addClass('show');
+        var value = $(this).val();
+        console.log("value",value)
+        $("#object_id_unblock_div").html(`<input hidden="true" id="object_id_unblock_input" value="` + value + `">`)
+    });
+    $('.CloseModal').click(function (e) {
+        e.preventDefault();
+//        $('.modal').removeClass('show');
+    });
+
+    $("#modal_unblock_button").click(function () {
+        var object_id = $("#object_id_unblock_input").val();
+        console.log('Id ',object_id)
+        var protocol = window.location.protocol
+        var hostname = window.location.hostname
+        var port = window.location.port
+        var url = protocol + "//" + hostname + ":" + port + "/adminpanel" + "/block-unblock-user" + "/" + object_id + "/"
+        window.location.href = url
+    });
+});
+
+
+</script>
+{% endblock body %}

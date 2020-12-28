@@ -1,0 +1,144 @@
+{% load static %}
+<html lang="en">
+<head>
+    <title>Quizlok | Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link type="text/css" rel="stylesheet" href="{% static 'adminpanel/css/style.css' %}">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+            integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+            crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="{% static 'adminpanel/js/delete-script.js' %}"></script>
+    <script type="text/javascript" src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
+    <script type="text/javascript" src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
+</head>
+<body>
+<div class="Header">
+    <div class="Logo">
+        <img src="{% static 'adminpanel/images/logo_splash.png' %}">
+    </div>
+    <div class="Navigation">
+        <div class="header-notifications">
+            <a href="{% url 'adminpanel:notification' %}">
+                <i class="fa fa-bell fa-2x" aria-hidden="true"></i>
+                <span class="badge" id="count"></span>
+            </a>
+        </div>
+
+        <div class="Avater">
+            <a href="javascript:void(0);">
+                <figure><img src="{% static 'adminpanel/images/profile.jpg' %}"></figure>
+                {{user}} </a>
+            <ul>
+                <li>
+                    <figure><img src="{% static 'adminpanel/images/profile.jpg' %}"></figure>
+                    <h4> {{user}} <span>Administrator</span></h4>
+                </li>
+                <li><a href="{% url 'logout' %}"><span><i class="fa fa-sign-out"></i></span> Logout</a></li>
+            </ul>
+        </div>
+        <div class="clear"></div>
+    </div>
+</div>
+<div class="SidenavBar">
+    <ul>
+
+        <li class="nav-item nav-link {% if request.resolver_match.view_name  == 'adminpanel:dashboard' %}active{% endif %}">
+            <a href="{% url 'adminpanel:dashboard'  %}">
+                <span><i class="fa fa-tachometer"></i></span> Dashboard
+            </a>
+        </li>
+
+        <li class="nav-item nav-link {% if request.resolver_match.view_name  == 'adminpanel:users-list' %}active{% endif %}">
+            <a href="{% url 'adminpanel:users-list' %}">
+                <span><i class="fa fa-user"></i></span> User Management
+            </a>
+        </li>
+        <li class="nav-item nav-link {% if request.resolver_match.view_name  == 'adminpanel:coin-plan-list' %}active{% endif %}">
+            <a href="{% url 'adminpanel:coin-plan-list' %}">
+                <span><i class="fa fa-creative-commons"></i></span> Coin Plan Management
+            </a>
+        </li>
+        <li class="nav-item nav-link {% if request.resolver_match.view_name  == 'adminpanel:transaction' %}active{% endif %}">
+            <a href="{% url 'adminpanel:transaction' %}">
+                <span><i class="fa fa-database"></i></span> Transactions
+            </a>
+        </li>
+        <li class="nav-item nav-link {% if request.resolver_match.view_name  == 'adminpanel:notification' %}active{% endif %}">
+            <a href="{% url 'adminpanel:notification' %}">
+                <span><i class="fa fa-bell"></i></span> Notification
+            </a>
+        </li>
+
+        <li class="nav-item nav-link {% if request.resolver_match.view_name  == 'adminpanel:terms-and-condition' %}active{% endif %}">
+            <a href="{% url 'adminpanel:terms-and-condition' %}">
+                <span><i class="fa fa-font"></i></span> Static content
+            </a>
+        </li>
+        <li class="nav-item nav-link {% if request.resolver_match.view_name  == 'adminpanel:send-notification' %}active{% endif %}">
+            <a href="{% url 'adminpanel:send-notification' %}">
+                <span><i class="fa fa-send"></i></span> Send Notification
+            </a>
+        </li>
+        <li class="nav-item nav-link {% if request.resolver_match.view_name  == 'change_password' %}active{% endif %}">
+            <a href="{% url 'change_password' %}">
+                <span><i class="fa fa-cog"></i></span> Settings
+            </a>
+        </li>
+        <li class="nav-item nav-link {% if request.resolver_match.view_name  == 'logout' %}active{% endif %}">
+            <a href="{% url 'logout' %}">
+                <span><i class="fa fa-sign-out"></i></span> Logout
+            </a>
+        </li>
+    </ul>
+</div>
+<!--<div class="content-wrapper">-->
+<!--    {% if messages %}-->
+<!--    {% for message in messages %}-->
+<!--    <div class="alert alert-warning alert-dismissible fade in" role="alert">-->
+<!--        {{ message }}-->
+<!--        <button type="button" class="close" data-dismiss="alert" aria-label="Close">-->
+<!--            <span aria-hidden="true">&times;</span>-->
+<!--        </button>-->
+<!--    </div>-->
+<!--    {% endfor %}-->
+<!--    {% endif %}-->
+<!--</div>-->
+<script>
+    var protocol = window.location.protocol
+    var hostname = window.location.hostname
+    var port = window.location.port
+    var url = protocol + "//" + hostname + ":" + port + "/adminpanel" + "/notification-count" + "/"
+    fetch(url)
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (myJson) {
+        document.querySelector("#count").innerHTML = myJson;
+      })
+      .catch(function (error) {
+        console.log("Error: " + error);
+      });
+
+
+
+</script>
+{% block content %}
+{% endblock content %}
+</div>
+{% block body %}
+
+{% endblock body %}
+
+<script src="{% static 'adminpanel/js/jquery.min.js' %}"></script>
+<script src="{% static 'adminpanel/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'adminpanel/js/colResizable-1.6.min.js' %}"></script>
+<script src="{% static 'adminpanel/js/app.js' %}"></script>
+
+
+{% block extra_scripts %}
+{% endblock extra_scripts %}
+</body>
+</html>

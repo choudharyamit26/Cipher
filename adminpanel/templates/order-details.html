@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block body %}
+
+<div class="WrapperArea">
+    <div class="WrapperBox">
+        <div class="Small-Wrapper">
+            <div class="Category">
+                <h3> Order detail </h3>
+                <hr>
+                <a class="Green pull-right" href="{% url 'adminpanel:download-order' object.id %}">
+                    <i class="fa fa-download"></i> Download
+                </a>
+
+                <div class="row"><label class="col-md-6">Order Id:</label>{{object.id}}</div>
+                <div class="row"><label class="col-md-6">User Id:</label>{{object.user.id}}</div>
+
+                <div class="row"><label class="col-md-6">Order date:</label> {{object.created_at|date:'M. d, Y'}}</div>
+
+                <div class="row"><label class="col-md-6">User name:</label>{{object.user.first_name}}
+                    {{object.user.last_name}}
+                </div>
+
+                <div class="row"><label class="col-md-6">Phone Number:</label> {{object.user.phone_number}}</div>
+
+                <div class="row"><label class="col-md-6">Email id :</label> {{object.user.email}}</div>
+
+                <div class="row"><label class="col-md-6">Album Cost:</label> {{object.album_cost}}</div>
+                <div class="row"><label class="col-md-6">Total Charges:</label> {{object.total}}</div>
+
+                <div class="row"><label class="col-md-6">Discount:</label> {{object.discount}}</div>
+                <div class="row"><label class="col-md-6">Extra Charges:</label> {{object.extra_charges}}</div>
+                <div class="row"><label class="col-md-6">Paid:</label> {{object.total}}</div>
+                <!--                <div class="row"><label class="col-md-6">Payment mode:</label>{{object.mode_of_payment}}</div>-->
+                {% if object.address.street or object.address.building or object.address.apartment or object.address.city %}
+                <div class="row"><label class="col-md-6">Delivery Address:</label>{{object.address.street}}
+                    {{object.address.building}} {{object.address.apartment}} {{object.address.city}}
+                    {{object.address.nearest_point}}
+                </div>
+                {% else %}
+                <div class="row"><label class="col-md-6">Delivery Address:</label>{{object.address.nearest_point}}
+                </div>
+                {% endif %}
+                <div class="row"><label class="col-md-6">Delivery Phone Nmber:</label> {{object.address.phone_number}}</div>
+                <div class="row"><label class="col-md-6">Order Status:</label> {{object.status}}</div>
+                <div class="row"><label class="col-md-6">Default Delivery Date:</label>
+                    {{object.get_delivery_date|date:'M. d, Y'}}
+                </div>
+                <div class="row"><label class="col-md-6">Custom Delivery Date:</label>
+                    {{object.delivery_date|date:'M. d, Y'}}
+                </div>
+                <hr>
+            </div>
+<!--            <div class="Filter">-->
+<!--                <div class="form-group">-->
+<!--                    <label>&nbsp;</label>-->
+<!--                    <input type="hidden" id="object_id_placeholder_input2" name="id" value={{ object.id }}>-->
+<!--                    <button class="Button" id="updateOrder">Update Order</button>-->
+<!--                </div>-->
+<!--            </div>-->
+
+
+        </div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="js/colResizable-1.6.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="https://cdn.rawgit.com/asvd/dragscroll/master/dragscroll.js"></script>
+<script>
+        $(function() {
+            $("table").colResizable();
+        });
+
+        $(document).ready(function() {
+            $('.CheckBox').on("click", function(e) {
+                $(this).next('.Numbers').toggle();
+                $(this).toggleClass("Check");
+                e.stopPropagation();
+                e.preventDefault();
+            });
+        });
+
+
+
+</script>
+<script>
+    $("#updateOrder").click(function () {
+    var object_id = $("#object_id_placeholder_input2").val();
+    var protocol = window.location.protocol
+    var hostname = window.location.hostname
+    var port = window.location.port
+    var url = protocol + "//" + hostname + ":" + port + "/adminpanel" + "/order-update" + "/" + object_id + "/"
+    window.location.href = url
+    });
+
+
+
+</script>
+{% endblock body %}

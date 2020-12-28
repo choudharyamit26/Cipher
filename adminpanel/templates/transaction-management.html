@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="WrapperArea">
+    <div class="WrapperBox">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-info" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        <div class="Small-Wrapper">
+            <div class="SearchBox">
+                <form action="" method="get">
+                    <input type="text" name="qs" placeholder="Enter Key">
+                    <button>Apply</button>
+                </form>
+            </div>
+            <h4 class="Title">Transaction Management</h4>
+
+            <div class="Filter">
+                <form method="get">
+                    <div class="form-group">
+                        <label>From Date</label>
+                        <input type="date" name="from_date" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>To Date</label>
+                        <input type="date" name="to_date" class="form-control">
+                    </div>
+                    <!--                <div class="form-group">-->
+                    <!--                    <label>Transaction Reports</label>-->
+                    <!--                    <select class="form-control">-->
+                    <!--                        <option>Select Reports</option>-->
+                    <!--                        <option>Weekly</option>-->
+                    <!--                        <option>Monthly</option>-->
+                    <!--                        <option>Yearly</option>-->
+                    <!--                    </select>-->
+                    <!--                </div>-->
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button class="Button" type="submit">Apply</button>
+                    </div>
+                    <div class="fltR">
+                        <a href="{% url 'adminpanel:export' %}" class="Export" style="margin:26px 0 0 40px">
+                            <i class="fa fa-file-pdf-o"></i> Export
+                        </a>
+                        <div class="clear"></div>
+                    </div>
+                </form>
+            </div>
+
+            {% if search %}
+            <div class="TableList">
+                <div class="dragscroll">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Payment Id</th>
+                            <th>Operation Id</th>
+                            <th>Order Id</th>
+                            <th>Order Date</th>
+                            <th>User</th>
+                            <th>Total Amount</th>
+                            <th>Mode of Payment</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for object in search %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{object.payment_id}}</td>
+                            <td>{{object.operation_id}}</td>
+                            <td>ORDER {{object.order.id}}</td>
+                            <td>{{object.created_at}}</td>
+                            <td>{{object.user.email}}</td>
+                            <td>{{object.amount}}</td>
+                            <td>{{object.payment_method}}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% else %}
+            <div class="TableList">
+                <div class="dragscroll">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Payment Id</th>
+                            <th>Operation Id</th>
+                            <th>Order Id</th>
+                            <th>Order Date</th>
+                            <th>User</th>
+                            <th>Total Amount</th>
+                            <th>Mode of Payment</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for object in object_list %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{object.payment_id}}</td>
+                            <td>{{object.operation_id}}</td>
+                            <td>ORDER {{object.order.id}}</td>
+                            <td>{{object.created_at}}</td>
+                            <td>{{object.user.email}}</td>
+                            <td>{{object.amount}}</td>
+                            <td>{{object.payment_method}}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock body %}

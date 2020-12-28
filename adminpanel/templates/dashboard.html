@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="WrapperArea">
+    <div class="WrapperBox">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-info" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        <!--        <div class="alert alert-info">-->
+        <!--            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>-->
+        <!--            <strong>23</strong> matches found-->
+        <!--        </div>-->
+        <div class="Small-Wrapper">
+            <h4 class="Title">Dashboard</h4>
+
+            <div class="DashboardArea">
+                <div class="row">
+                    {% if users_count %}
+                    <div class="col-sm-4">
+                        <aside>
+                            <h4>Active users on the platform</h4>
+                            <h2>{{ users_count }}</h2>
+                            <h5><span>Total Active users on the platform :</span> {{ users_count }}</h5>
+                        </aside>
+                    </div>
+                    {% else %}
+                    <div class="col-sm-4">
+                        <aside>
+                            <h4>Active users on the platform</h4>
+                            <h2>0</h2>
+                            <h5><span>Total Active users on the platform :</span>0</h5>
+                        </aside>
+                    </div>
+                    {% endif %}
+                    <div class="col-sm-4">
+                        <aside>
+                            <h4>Number of Secret Messages Sent</h4>
+                            <h2>0</h2>
+                            <h5><span>Total Number of Secret Messages Sent :</span>0</h5>
+                        </aside>
+                    </div>
+                    <div class="col-sm-4">
+                        <aside>
+                            <h4>Number of Secret Messages Opened</h4>
+                            <h2>0</h2>
+                            <h5><span>Total Number of Secret Messages Opened :</span>0</h5>
+                        </aside>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock body %}

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="WrapperArea">
+    <div class="WrapperBox">
+        <div class="Small-Wrapper">
+            <h4 class="Title">User Details</h4>
+            <div class="DetailsArea">
+                {% if object.profile_pic %}
+                <div class="DetailsProfile">
+                    <figure><img width="200" src="{{object.profile_pic.url}}"></figure>
+                </div>
+                {% else %}
+                <div class="DetailsProfile">
+                    <figure><img src="https://snapic-bucket.s3.amazonaws.com/static/default_profile.png"
+                                 alt="Profile pic"></figure>
+                </div>
+                {% endif %}
+                <ul>
+                    <li>
+                        <span>User id </span>{{object.id}}
+                    </li>
+
+                    <li>
+                        <span>Name of the user</span>{{object.first_name}} {{object.last_name}}
+                    </li>
+
+                    <li>
+                        <span>Phone Number</span>{{object.phone_number}}
+                    </li>
+
+                    <li>
+                        <span>Email id </span>{{object.email}}
+                    </li>
+
+                    <li>
+                        <span>Created at</span>{{object.created_at|date:'M. d, Y'}}
+                    </li>
+                    <li>
+                        <span>Number of Sent Messages </span>0
+                    </li>
+                    <li>
+                        <span>Number of Received Messages</span>0
+                    </li>
+                    <li>
+                        <span>Number of Contacts </span>0
+                    </li>
+                    <li>
+                        <span>Number of  Transactions </span>0
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock body %}
