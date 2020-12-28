@@ -37,6 +37,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     # social_type = models.CharField(default='', max_length=500, null=True, blank=True)
     # social_id = models.CharField(default='', max_length=200, null=True, blank=True)
     device_token = models.CharField(default='', max_length=500, null=True, blank=True)
+    remember_me = models.BooleanField(default=False)
     password = models.CharField(default='123456', max_length=100)
     confirm_password = models.CharField(default='123456', max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)

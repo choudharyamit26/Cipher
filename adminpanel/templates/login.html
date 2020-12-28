@@ -13,7 +13,7 @@
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 </head>
 
-<body onload="remember()">
+<body onload="rememberMe()">
 <div class="LoginArea" style="background-image: url('images/pattern.png');">
     <!--    <div class="content-wrapper">-->
     <!--        {% if messages %}-->
@@ -77,9 +77,8 @@
 </div>
 <script type="text/javascript">
 
-function remember(){
-<!--        var remember_me = document.getElementById("remember").checked;-->
-        var remember_me = {{cookie3}};
+function rememberMe(){
+        var remember_me = '{{cookie3}}';
         console.log('On load function --->>>> ',remember_me,typeof(remember_me))
         if (remember_me){
         console.log('inside remember me checked true or false')
@@ -93,7 +92,8 @@ function login() {
     var email = $("#email").val();
     var password = $("#password").val();
     var remember_me = document.getElementById("remember").checked;
-    console.log(remember_me)
+    //alert(remember_me)
+    console.log(email,password,remember_me)
 
     console.log(email,password,remember_me)
     var url = "{% url 'adminpanel:login' %}";

@@ -61,25 +61,25 @@
                 <span><i class="fa fa-creative-commons"></i></span> Coin Plan Management
             </a>
         </li>
-        <li class="nav-item nav-link {% if request.resolver_match.view_name  == 'adminpanel:transaction' %}active{% endif %}">
-            <a href="{% url 'adminpanel:transaction' %}">
-                <span><i class="fa fa-database"></i></span> Transactions
-            </a>
-        </li>
+        <!--        <li class="nav-item nav-link {% if request.resolver_match.view_name  == 'adminpanel:transaction' %}active{% endif %}">-->
+        <!--            <a href="{% url 'adminpanel:transaction' %}">-->
+        <!--                <span><i class="fa fa-database"></i></span> Transactions-->
+        <!--            </a>-->
+        <!--        </li>-->
+
         <li class="nav-item nav-link {% if request.resolver_match.view_name  == 'adminpanel:notification' %}active{% endif %}">
             <a href="{% url 'adminpanel:notification' %}">
                 <span><i class="fa fa-bell"></i></span> Notification
             </a>
         </li>
-
-        <li class="nav-item nav-link {% if request.resolver_match.view_name  == 'adminpanel:terms-and-condition' %}active{% endif %}">
-            <a href="{% url 'adminpanel:terms-and-condition' %}">
-                <span><i class="fa fa-font"></i></span> Static content
-            </a>
-        </li>
         <li class="nav-item nav-link {% if request.resolver_match.view_name  == 'adminpanel:send-notification' %}active{% endif %}">
             <a href="{% url 'adminpanel:send-notification' %}">
                 <span><i class="fa fa-send"></i></span> Send Notification
+            </a>
+        </li>
+        <li class="nav-item nav-link {% if request.resolver_match.view_name  == 'adminpanel:terms-and-condition' %}active{% endif %}">
+            <a href="{% url 'adminpanel:terms-and-condition' %}">
+                <span><i class="fa fa-font"></i></span> Static content
             </a>
         </li>
         <li class="nav-item nav-link {% if request.resolver_match.view_name  == 'change_password' %}active{% endif %}">
@@ -121,6 +121,7 @@
       .catch(function (error) {
         console.log("Error: " + error);
       });
+
 
 
 

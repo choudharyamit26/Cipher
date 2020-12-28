@@ -4,7 +4,7 @@ from django.urls import path
 from .views import Login, Dashboard, NotificationView, UsersList, TransactionView, TermsAndConditionView, \
     UpdateTermsAndCondition, SetAdminNotificationSetting, GetAdminNotificationSetting, SendNotification, \
     UpdateContactUsView, UpdatePrivacyPolicyView, CreateCoinPlan, ListCoinPlan, UpdateCoinPlan, CoinPlanDetail, \
-    NotificationCount, ReadNotifications, UserDetail, CreateUser,BlockUnblockUser
+    NotificationCount, ReadNotifications, UserDetail, CreateUser, BlockUnblockUser, UserDelete
 
 app_name = 'adminpanel'
 
@@ -13,6 +13,7 @@ urlpatterns = [
                   path('dashboard/', Dashboard.as_view(), name='dashboard'),
                   path('notification/', NotificationView.as_view(), name='notification'),
                   path('users-list/', UsersList.as_view(), name='users-list'),
+                  path('user-delete/<int:pk>/', UserDelete.as_view(), name='user-delete'),
                   path('block-unblock-user/<int:pk>/', BlockUnblockUser.as_view(), name='block-unblock-user'),
                   path('transaction/', TransactionView.as_view(), name='transaction'),
                   path('terms-and-condition/', TermsAndConditionView.as_view(), name='terms-and-condition'),

@@ -158,9 +158,9 @@
                         <tr>
                             <th>S. No</th>
                             <th>User ID</th>
+                            <th>Profile Photo</th>
                             <th>First Name of the user</th>
                             <th>Last Name of the user</th>
-                            <th>Profile Photo</th>
                             <th>Phone Number</th>
                             <th>Action</th>
                         </tr>
@@ -170,18 +170,22 @@
                         <tr>
                             <td>{{forloop.counter}}</td>
                             <td>{{object.id}}</td>
-                            <td>{{object.first_name}}</td>
-                            <td>{{object.last_name}}</td>
                             {% if object.profile_pic %}
                             <td>
-                                <figure><img src="{{object.profile_pic.url}}" alt="Profile pic"></figure>
+                                <center>
+                                    <figure><img src="{{object.profile_pic.url}}" alt="Profile pic"></figure>
+                                </center>
                             </td>
                             {% else %}
                             <td>
-                                <figure><img src="https://snapic-bucket.s3.amazonaws.com/static/default_profile.png"
-                                             alt=""></figure>
+                                <center>
+                                    <figure><img src="https://snapic-bucket.s3.amazonaws.com/static/default_profile.png"
+                                                 alt=""></figure>
+                                </center>
                             </td>
                             {% endif %}
+                            <td>{{object.first_name}}</td>
+                            <td>{{object.last_name}}</td>
                             <td>{{object.phone_number}}</td>
                             <td>
                                 <a class="Blue" href="{% url 'adminpanel:user-detail' object.id %}">
@@ -220,9 +224,9 @@
                         <tr>
                             <th>S. No</th>
                             <th>User ID</th>
+                            <th>Profile Photo</th>
                             <th>First Name of the user</th>
                             <th>Last Name of the user</th>
-                            <th>Profile Photo</th>
                             <th>Phone Number</th>
                             <th>Action</th>
                         </tr>
@@ -232,18 +236,22 @@
                         <tr>
                             <td>{{forloop.counter}}</td>
                             <td>{{object.id}}</td>
-                            <td>{{object.first_name}}</td>
-                            <td>{{object.last_name}}</td>
                             {% if object.profile_pic %}
                             <td>
-                                <figure><img src="{{object.profile_pic.url}}" alt="Profile pic"></figure>
+                                <center>
+                                    <figure><img src="{{object.profile_pic.url}}" alt="Profile pic"></figure>
+                                </center>
                             </td>
                             {% else %}
                             <td>
-                                <figure><img src="https://snapic-bucket.s3.amazonaws.com/static/default_profile.png"
-                                             alt=""></figure>
+                                <center>
+                                    <figure><img src="https://snapic-bucket.s3.amazonaws.com/static/default_profile.png"
+                                                 alt=""></figure>
+                                </center>
                             </td>
                             {% endif %}
+                            <td>{{object.first_name}}</td>
+                            <td>{{object.last_name}}</td>
                             <td>{{object.phone_number}}</td>
                             <td>
                                 <a class="Blue" href="{% url 'adminpanel:user-detail' object.id %}">
@@ -433,6 +441,9 @@ $(document).ready(function () {
         window.location.href = url
     });
 });
+
+
+
 
 
 </script>

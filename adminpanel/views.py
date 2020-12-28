@@ -14,7 +14,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-from django.views.generic import View, ListView, UpdateView, CreateView, DetailView
+from django.views.generic import View, ListView, UpdateView, CreateView, DetailView, DeleteView
 
 from .filters import TransactionFilter, UserFilter
 from .forms import LoginForm, UpdateTnCForm, UserNotificationForm, UpdateContactusForm, UpdatePrivacyPolicyForm, \
@@ -51,6 +51,7 @@ class Login(View):
         email = self.request.POST['email']
         password = self.request.POST['password']
         remember_me = self.request.POST.get('remember_me' or None)
+        print(email, password, remember_me)
         try:
             user_object = user.objects.get(email=email)
             if user_object.check_password(password):
@@ -59,7 +60,7 @@ class Login(View):
                     messages.success(self.request, 'Logged in successfully')
                     # self.request.session['uid'] = self.request.POST['email']
                     if remember_me:
-                        # print('inside remember me')
+                        print('inside remember me')
                         cookie_age = 60 * 60 * 24
                         self.request.session.set_expiry(1209600)
                         response = HttpResponse()
@@ -267,7 +268,7 @@ class UsersList(LoginRequiredMixin, ListView):
         if qs:
             search = User.objects.filter(Q(first_name__icontains=qs) |
                                          Q(last_name__icontains=qs) |
-                                         Q(email__icontains=qs) |
+                                         Q(id__icontains=qs) |
                                          Q(phone_number__icontains=qs))
 
             search_count = len(search)
@@ -585,6 +586,18 @@ class UserDetail(LoginRequiredMixin, DetailView):
         return context
 
 
+class UserDelete(LoginRequiredMixin, DeleteView):
+    login_url = 'adminpanel:login'
+
+    def get(self, request, *args, **kwargs):
+        request_kwargs = kwargs
+        object_id = request_kwargs['pk']
+        UserObj = User.objects.get(id=object_id)
+        UserObj.delete()
+        messages.success(self.request, "User deleted successfully")
+        return HttpResponseRedirect('/adminpanel/users-list/')
+
+
 class BlockUnblockUser(View):
     model = User
 
@@ -611,9 +624,9 @@ class CreateUser(View):
         User.objects.create(
             first_name='Test',
             last_name='User',
-            email='testuser3@gmail.com',
+            email='testuser34@gmail.com',
             country_code='+91',
-            phone_number='7678689353'
+            phone_number='7678689355'
         )
         messages.info(self.request, 'User created')
         return redirect('adminpanel:users-list')
