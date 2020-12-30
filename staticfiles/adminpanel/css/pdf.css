@@ -1,0 +1,44 @@
+@page {
+    size: A4
+}
+    .mainImg{
+        width: 600px;
+        border: 4px solid yellow !important;
+        margin: 0 auto;
+        height: 330px;
+        margin-bottom: 150px;
+        text-align: center;
+        max-width: 600px;
+        max-height: 330px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .imgs img{
+        width: 600px;
+        height: 330px;
+        border: 10px solid red !important;
+        text-align: center;
+        max-width: 600px;
+        max-height: 330px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+    }
+    td strong{
+    font-size:20px;
+    }
+    td{
+    font-size:18px;
+    }
+    .mainTD{
+    width:300px;
+    }
+    .innerTD{
+    width:400px;
+    }
