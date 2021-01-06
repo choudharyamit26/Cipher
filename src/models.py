@@ -43,6 +43,7 @@ class Message(models.Model):
     incorrect_attempts_by = models.ManyToManyField(AppUser, related_name='incorrect_attempts', blank=True)
     correct_attempts_by = models.ManyToManyField(AppUser, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    is_missed = models.BooleanField(default=False)
 
 
 class IncorrectAttempt(models.Model):
@@ -63,6 +64,16 @@ class SecretKey(models.Model):
 class Favourites(models.Model):
     user = models.ForeignKey(AppUser, on_delete=models.CASCADE)
     favourite = models.ForeignKey(AppUser, on_delete=models.CASCADE, related_name='favourite_user')
+
+
+class AppNotification(models.Model):
+    user = models.ForeignKey(AppUser, on_delete=models.CASCADE)
+    message = models.ForeignKey(Message, on_delete=models.CASCADE)
+    text = models.TextField()
+    date_read = models.DateTimeField(auto_now_add=True)
+    date_sent = models.DateField()
+    mode = models.CharField(default='', max_length=100)
+    sent_to = models.ManyToManyField(AppUser, related_name='sent_to')
 
 
 class UserCoins(models.Model):

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView
 from rest_framework.settings import api_settings
 from rest_framework.views import APIView
 from rest_framework.generics import UpdateAPIView
@@ -11,7 +11,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
-from .models import AppUser, Message, IncorrectAttempt, Favourites
+from .models import AppUser, Message, IncorrectAttempt, Favourites, AppNotification
 from .serializers import UserCreateSerailizer, LoginSerializer, ForgetPasswordSerializer, ComposeMessageSerializer, \
     SecretKeySerializer, ReadMessageSerializer, ProfilePicSerializer, OtpSeralizer, VerifyOtpSeralizer, \
     VerifyForgetPasswordOtpSerializer, AddToFavouritesSerializer
@@ -336,6 +336,16 @@ class ReadingMessage(CreateAPIView):
                 if ans == message_obj.ans:
                     message_obj.read_by.add(app_user_obj.id)
                     ###### Add notification to be sent to the sender
+                    notification = AppNotification.objects.create(
+                        user=message_obj.sender,
+                        message=Message.objects.get(id=message_obj.id),
+                        text=f'{app_user_obj.username} read your message',
+                        # date_read=,
+                        date_sent=message_obj.created_at,
+                        mode=message_obj.mode,
+                    )
+                    for receiver in message_obj.receiver.all():
+                        notification.sent_to.add(receiver)
                     if message_obj.attachment:
                         return Response({"message": "Correct answer", 'message_text': message_obj.text,
                                          'message_attachment': message_obj.attachment,
@@ -535,6 +545,44 @@ class AddToFavourites(CreateAPIView):
                 return Response({'message': x['error'], 'status': HTTP_400_BAD_REQUEST})
         else:
             return Response({'message': serializer.errors, 'status': HTTP_400_BAD_REQUEST})
+
+
+class GetFavourites(ListAPIView):
+    model = Favourites
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        user = self.request.user
+        app_user = AppUser.objects.get(phone_number=user.phone_number)
+        favourites = Favourites.objects.filter(user=app_user)
+        data = []
+        for fav in favourites:
+            data.append({'user_id': fav.favourite.id, 'username': fav.favourite.username,
+                         'country_code': fav.favourite.country_code,
+                         'phone_number': fav.favourite.phone_number})
+        return Response({'data': data, 'status': HTTP_200_OK})
+
+
+class GetNotificationList(ListAPIView):
+    model = AppNotification
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        user = self.request.user
+        app_user = AppUser.objects.get(phone_number=user.phone_number)
+        notifications = AppNotification.objects.filter(user=app_user)
+        receivers = []
+        # for message in notifications:
+        #     # print(message.receiver.all().exclude(id=app_user_obj.id))
+        #     receivers.append({"message_id": message.id, "receiver": [
+        #         {'receiver_id': x.id, 'name': x.username, 'country_code': x.country_code,
+        #          'phone_number': x.phone_number,
+        #          'profile_pic': x.profile_pic.url} for x in
+        #         message.sent_to.all().exclude(
+        #             id=app_user.id)]})
+        return Response({'data': notifications.values(), 'status': HTTP_200_OK})
 
 
 class CustomMessage(APIView):
