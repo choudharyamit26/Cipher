@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import gettext as _
 from .models import *
+from src.models import *
 
 
 class UserAdmin(BaseUserAdmin):
@@ -12,7 +13,7 @@ class UserAdmin(BaseUserAdmin):
         (None, {'fields': ('email', 'password')}),
         (_('Personal Info'),
          {'fields': (
-         'first_name', 'last_name', 'profile_pic', 'phone_number', 'device_token', 'is_blocked', 'remember_me')}),
+             'first_name', 'last_name', 'profile_pic', 'phone_number', 'device_token', 'is_blocked', 'remember_me')}),
         (_('Permissions'),
          {'fields': ('is_active', 'is_staff', 'is_superuser')}),
         (_('Important Dates'), {'fields': ('last_login',)})
@@ -32,3 +33,9 @@ admin.site.register(TermsandCondition)
 admin.site.register(PrivacyPolicy)
 admin.site.register(Settings)
 admin.site.register(Coin)
+admin.site.register(UserContact)
+admin.site.register(SecretKey)
+admin.site.register(Message)
+admin.site.register(Contact)
+admin.site.register(AppUser)
+admin.site.register(IncorrectAttempt)

@@ -23,6 +23,7 @@ from adminpanel.views import PasswordResetConfirmView, PasswordResetView
 urlpatterns = [
                   path('admin/', admin.site.urls),
                   path('adminpanel/', include('adminpanel.urls', namespace='adminpanel')),
+                  path('api/', include('src.urls', namespace='src')),
                   path('logout/', auth_views.LogoutView.as_view(template_name='logout.html'), name='logout'),
                   path('password-reset/',
                        PasswordResetView.as_view(),
