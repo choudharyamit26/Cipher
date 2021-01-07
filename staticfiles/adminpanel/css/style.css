@@ -1677,3 +1677,8 @@ ul.Multiple::-webkit-scrollbar {
     border: 0;
     float: right;
 }
+.LoginArea .LoginBox figure img{
+        width: 100%;
+    height: 100%;
+    object-fit: scale-down;
+}
