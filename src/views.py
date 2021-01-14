@@ -208,6 +208,34 @@ class VerifyForgetPasswordOtp(CreateAPIView):
             return Response({'message': serializer.errors, 'status': HTTP_400_BAD_REQUEST})
 
 
+@method_decorator(csrf_exempt, name='dispatch')
+class ResetPasswordAPIView(CreateAPIView):
+    """
+    Forget password api.
+    Enter country code and phone number to reset password.
+    """
+    serializer_class = ForgetPasswordSerializer
+
+    def post(self, request, *args, **kwargs):
+        data = self.request.data
+        # country_code = data['country_code']
+        phone_number = data['phone_number']
+        password = data['password']
+        confirm_password = data['confirm_password']
+        try:
+            user = User.objects.get(phone_number=phone_number)
+            if password == confirm_password:
+                user.set_password(password)
+                user.save()
+                return Response({"message": "Password updated successfully", "status": HTTP_200_OK})
+            else:
+                return Response(
+                    {"message": "Password and Confirm password did not match", "status": HTTP_400_BAD_REQUEST})
+        except Exception as e:
+            x = {'error': str(e)}
+            return Response({"message": x['error'], "status": HTTP_400_BAD_REQUEST})
+
+
 class Logout(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)

@@ -1,6 +1,6 @@
 from .views import CreateUser, LoginView, SendOtpTwilio, ForgetPasswordAPIView, Logout, ComposeMessage, InboxView, \
     ReadingMessage, UpdateProfilePic, VerifyOtp, CustomMessage, VerifyForgetPasswordOtp, UsersList, AddToFavourites, \
-    GetFavourites,GetNotificationList
+    GetFavourites, GetNotificationList, ResetPasswordAPIView
 from django.urls import path
 
 app_name = 'src'
@@ -12,6 +12,7 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', Logout.as_view(), name='login'),
     path('forget-password-otp/', ForgetPasswordAPIView.as_view(), name='forget-password-otp'),
+    path('reset-password/', ResetPasswordAPIView.as_view(), name='reset-password'),
     path('verify-forget-password-otp/', VerifyForgetPasswordOtp.as_view(), name='verify-forget-password-otp'),
     path('compose-message/', ComposeMessage.as_view(), name='compose-message'),
     path('inbox/', InboxView.as_view(), name='inbox'),
