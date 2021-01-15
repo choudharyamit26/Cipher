@@ -287,7 +287,7 @@ class ComposeMessage(CreateAPIView):
                 receiver = serializer.validated_data['receiver']
                 print(receiver)
                 mode = serializer.validated_data['mode']
-                ques = serializer.validated_data['ques']
+                ques = serializer.validated_data['ques']/home/mobulous/Desktop/Maclo-Dating-App
                 ans = serializer.validated_data['ans']
                 # ques_attachment = serializer.validated_data['ques_attachment']
                 msg_obj = Message.objects.create(

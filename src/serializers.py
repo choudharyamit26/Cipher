@@ -74,7 +74,10 @@ class VerifyForgetPasswordOtpSerializer(serializers.Serializer):
 
 class ComposeMessageSerializer(serializers.ModelSerializer):
     receiver = serializers.ListField()
-
+    mode = serializers.CharField()
+    attachment = serializers.FileField()
+    ques = serializers.CharField()
+    ans = serializers.CharField()
     # secret_key = SecretKeySerializer(many=True)
 
     class Meta:
