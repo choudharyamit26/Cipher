@@ -11,10 +11,10 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
-from .models import AppUser, Message, IncorrectAttempt, Favourites, AppNotification
+from .models import AppUser, Message, IncorrectAttempt, Favourites, AppNotification, UserCoins
 from .serializers import UserCreateSerailizer, LoginSerializer, ForgetPasswordSerializer, ComposeMessageSerializer, \
     SecretKeySerializer, ReadMessageSerializer, ProfilePicSerializer, OtpSeralizer, VerifyOtpSeralizer, \
-    VerifyForgetPasswordOtpSerializer, AddToFavouritesSerializer
+    VerifyForgetPasswordOtpSerializer, AddToFavouritesSerializer, ResetPasswordSerializer
 from adminpanel.models import User
 from authy.api import AuthyApiClient
 from twilio.rest import Client
@@ -214,26 +214,30 @@ class ResetPasswordAPIView(CreateAPIView):
     Forget password api.
     Enter country code and phone number to reset password.
     """
-    serializer_class = ForgetPasswordSerializer
+    serializer_class = ResetPasswordSerializer
 
     def post(self, request, *args, **kwargs):
         data = self.request.data
         # country_code = data['country_code']
-        phone_number = data['phone_number']
-        password = data['password']
-        confirm_password = data['confirm_password']
-        try:
-            user = User.objects.get(phone_number=phone_number)
-            if password == confirm_password:
-                user.set_password(password)
-                user.save()
-                return Response({"message": "Password updated successfully", "status": HTTP_200_OK})
-            else:
-                return Response(
-                    {"message": "Password and Confirm password did not match", "status": HTTP_400_BAD_REQUEST})
-        except Exception as e:
-            x = {'error': str(e)}
-            return Response({"message": x['error'], "status": HTTP_400_BAD_REQUEST})
+        serializer = ResetPasswordSerializer(data=self.request.data)
+        if serializer.is_valid():
+            phone_number = serializer.validated_data['phone_number']
+            password = serializer.validated_data['password']
+            confirm_password = serializer.validated_data['confirm_password']
+            try:
+                user = User.objects.get(phone_number=phone_number)
+                if password == confirm_password:
+                    user.set_password(password)
+                    user.save()
+                    return Response({"message": "Password updated successfully", "status": HTTP_200_OK})
+                else:
+                    return Response(
+                        {"message": "Password and Confirm password did not match", "status": HTTP_400_BAD_REQUEST})
+            except Exception as e:
+                x = {'error': str(e)}
+                return Response({"message": x['error'], "status": HTTP_400_BAD_REQUEST})
+        else:
+            return Response({'error': serializer.errors, 'status': HTTP_400_BAD_REQUEST})
 
 
 class Logout(APIView):
@@ -272,41 +276,48 @@ class ComposeMessage(CreateAPIView):
         print(self.request.data)
         serializer = ComposeMessageSerializer(data=self.request.data)
         if serializer.is_valid():
-            sender = AppUser.objects.get(phone_number=user.phone_number)
-            text = serializer.validated_data['text']
-            validity = serializer.validated_data['validity']
-            attachment = serializer.validated_data['attachment']
-            receiver = serializer.validated_data['receiver']
-            mode = serializer.validated_data['mode']
-            ques = serializer.validated_data['ques']
-            ans = serializer.validated_data['ans']
-            ques_attachment = serializer.validated_data['ques_attachment']
-            msg_obj = Message.objects.create(
-                sender=sender,
-                text=text,
-                validity=validity,
-                attachment=attachment,
-                mode=mode,
-                ques=ques,
-                ans=ans,
-                ques_attachment=ques_attachment
-            )
-            for obj in receiver:
-                print(obj)
-                try:
-                    msg_obj.receiver.add(AppUser.objects.get(phone_number=obj))
-                except:
-                    account_sid = 'AC1f8847272f073322f7b0c073e120ad7a'
-                    auth_token = '1fe5e97d3658f655c5ff73949213a801'
-                    client = Client(account_sid, auth_token)
-                    message = client.messages.create(
-                        body="Test message from quizlok using twilio",
-                        from_='+19722993983',
-                        to=str(obj)
-                        # to='+91'+str(obj)
-                    )
-            print([x for x in msg_obj.receiver.all()])
-            return Response({"message": "Message composed successfully", "status": HTTP_200_OK})
+            user_obj = AppUser.objects.get(phone_number=user.phone_number)
+            user_coins = UserCoins.objects.get(user=user_obj)
+            print('Coins-----------', user_coins)
+            if user_coins.number_of_coins > 0:
+                sender = AppUser.objects.get(phone_number=user.phone_number)
+                text = serializer.validated_data['text']
+                validity = serializer.validated_data['validity']
+                attachment = serializer.validated_data['attachment']
+                receiver = serializer.validated_data['receiver']
+                print(receiver)
+                mode = serializer.validated_data['mode']
+                ques = serializer.validated_data['ques']
+                ans = serializer.validated_data['ans']
+                # ques_attachment = serializer.validated_data['ques_attachment']
+                msg_obj = Message.objects.create(
+                    sender=sender,
+                    text=text,
+                    validity=validity,
+                    attachment=attachment,
+                    mode=mode,
+                    ques=ques,
+                    ans=ans,
+                    # ques_attachment=ques_attachment
+                )
+                for obj in receiver:
+                    print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', obj)
+                    try:
+                        msg_obj.receiver.add(AppUser.objects.get(phone_number=obj))
+                    except:
+                        account_sid = 'AC1f8847272f073322f7b0c073e120ad7a'
+                        auth_token = '1fe5e97d3658f655c5ff73949213a801'
+                        client = Client(account_sid, auth_token)
+                        message = client.messages.create(
+                            body="Test message from quizlok using twilio",
+                            from_='+19722993983',
+                            # to=str(obj)
+                            to='+91' + str(obj)
+                        )
+                print([x for x in msg_obj.receiver.all()])
+                return Response({"message": "Message sent successfully", "status": HTTP_200_OK})
+            else:
+                return Response({"message": "You cannot send message.Insufficient coins", "status": HTTP_400_BAD_REQUEST})
         else:
             return Response({'message': serializer.errors, 'status': HTTP_400_BAD_REQUEST})
 

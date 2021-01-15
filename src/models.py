@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils import timezone
 import datetime
 
@@ -39,7 +41,7 @@ class Message(models.Model):
     mode = models.CharField(default='', choices=MODE, max_length=100)
     ques = models.TextField(default='')
     ans = models.TextField(default='')
-    ques_attachment = models.FileField(null=True, blank=True)
+    # ques_attachment = models.FileField(null=True, blank=True)
     incorrect_attempts_by = models.ManyToManyField(AppUser, related_name='incorrect_attempts', blank=True)
     correct_attempts_by = models.ManyToManyField(AppUser, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -80,6 +82,16 @@ class UserCoins(models.Model):
     user = models.ForeignKey(AppUser, on_delete=models.CASCADE)
     number_of_coins = models.IntegerField(default=5)
 
+
+@receiver(post_save, sender=AppUser)
+def user_coins(sender, instance, created, **kwargs):
+    if created:
+        user_id = instance.id
+        user = AppUser.objects.get(id=user_id)
+        UserCoins.objects.create(
+            user=user,
+            number_of_coins=5
+        )
     # @property
     # def delete_object_periodically(self):
     #     # time = self.created_at + datetime.timedelta(seconds=5)

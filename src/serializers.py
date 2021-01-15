@@ -9,6 +9,9 @@ from django.contrib.auth import get_user_model, authenticate
 
 
 class UserCreateSerailizer(serializers.ModelSerializer):
+    username = serializers.CharField()
+    country_code = serializers.IntegerField()
+    phone_number = serializers.IntegerField()
     password = serializers.CharField(style={'input_type': 'password'})
     confirm_password = serializers.CharField(style={'input_type': 'password'})
 
@@ -50,6 +53,17 @@ class ForgetPasswordSerializer(serializers.ModelSerializer):
         model = User
         fields = ('country_code', 'phone_number')
         # fields = ('country_code', 'phone_number', 'password', 'confirm_password')
+
+
+class ResetPasswordSerializer(serializers.ModelSerializer):
+    # country_code = serializers.IntegerField()
+    phone_number = serializers.IntegerField()
+    password = serializers.CharField(style={'input_type': 'password'})
+    confirm_password = serializers.CharField(style={'input_type': 'password'})
+
+    class Meta:
+        model = User
+        fields = ('phone_number', 'password', 'confirm_password')
 
 
 class VerifyForgetPasswordOtpSerializer(serializers.Serializer):
@@ -104,9 +118,11 @@ class OtpSeralizer(serializers.ModelSerializer):
 
 
 class VerifyOtpSeralizer(serializers.ModelSerializer):
+    username = serializers.CharField()
     phone_number = serializers.IntegerField()
     country_code = serializers.IntegerField()
     verification_code = serializers.IntegerField()
+    password = serializers.CharField()
 
     class Meta:
         model = AppUser
