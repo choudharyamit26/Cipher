@@ -315,6 +315,9 @@ class ComposeMessage(CreateAPIView):
                             to='+91' + str(obj)
                         )
                 print([x for x in msg_obj.receiver.all()])
+                user_coins.number_of_coins -= 1
+                user_coins.save()
+
                 return Response({"message": "Message sent successfully", "status": HTTP_200_OK})
             else:
                 return Response({"message": "You cannot send message.Insufficient coins", "status": HTTP_400_BAD_REQUEST})
