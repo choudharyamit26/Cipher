@@ -125,7 +125,7 @@ class LoginView(ObtainAuthToken):
             #     print(token[0].key)
             #     return Response({'token': token[0].key, 'id': user.id, 'status': HTTP_200_OK})
             userObj = User.objects.get(phone_number=phone_number)
-            user_id = AppUser.objects.get(phone_number=phone_number).id
+            user_id = AppUser.objects.get(phone_number=phone_number)
             check_pass = userObj.check_password(password)
             if check_pass:
                 token = Token.objects.get_or_create(user=userObj)
@@ -135,7 +135,9 @@ class LoginView(ObtainAuthToken):
                 userObj.save(update_fields=['device_token'])
                 print('updated device token ', userObj.device_token)
                 token = token[0]
-                return Response({"Token": token.key, "id": user_id, "status": HTTP_200_OK})
+                return Response({"Token": token.key, "id": user_id.id, 'username': user_id.username,
+                                 'country_code': user_id.country_code,
+                                 'phone_number': user_id.phone_number, "status": HTTP_200_OK})
             else:
                 return Response({"message": "Wrong password", "status": HTTP_400_BAD_REQUEST})
         except Exception as e:
@@ -279,35 +281,64 @@ class ComposeMessage(CreateAPIView):
                 ques = serializer.validated_data['ques']
                 ans = serializer.validated_data['ans']
                 # ques_attachment = serializer.validated_data['ques_attachment']
-                msg_obj = Message.objects.create(
-                    sender=sender,
-                    text=text,
-                    validity=validity,
-                    attachment=attachment,
-                    mode=mode,
-                    ques=ques,
-                    ans=ans,
-                    # ques_attachment=ques_attachment
-                )
-                for obj in receiver:
-                    print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', obj)
-                    try:
-                        msg_obj.receiver.add(AppUser.objects.get(phone_number=obj))
-                    except:
-                        account_sid = 'AC1f8847272f073322f7b0c073e120ad7a'
-                        auth_token = '1fe5e97d3658f655c5ff73949213a801'
-                        client = Client(account_sid, auth_token)
-                        message = client.messages.create(
-                            body="Test message from quizlok using twilio",
-                            from_='+19722993983',
-                            # to=str(obj)
-                            to='+91' + str(obj)
-                        )
-                print([x for x in msg_obj.receiver.all()])
-                user_coins.number_of_coins -= 1
-                user_coins.save()
-
-                return Response({"message": "Message sent successfully", "status": HTTP_200_OK})
+                if attachment:
+                    msg_obj = Message.objects.create(
+                        sender=sender,
+                        text=text,
+                        validity=validity,
+                        attachment=attachment,
+                        mode=mode,
+                        ques=ques,
+                        ans=ans,
+                        # ques_attachment=ques_attachment
+                    )
+                    for obj in receiver:
+                        print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', obj)
+                        try:
+                            msg_obj.receiver.add(AppUser.objects.get(phone_number=obj))
+                        except:
+                            account_sid = 'AC1f8847272f073322f7b0c073e120ad7a'
+                            auth_token = '1fe5e97d3658f655c5ff73949213a801'
+                            client = Client(account_sid, auth_token)
+                            message = client.messages.create(
+                                body="Test message from quizlok using twilio",
+                                from_='+19722993983',
+                                # to=str(obj)
+                                to='+91' + str(obj)
+                            )
+                    print([x for x in msg_obj.receiver.all()])
+                    user_coins.number_of_coins -= 1
+                    user_coins.save()
+                    return Response({"message": "Message sent successfully", "status": HTTP_200_OK})
+                else:
+                    msg_obj = Message.objects.create(
+                        sender=sender,
+                        text=text,
+                        validity=validity,
+                        # attachment=attachment,
+                        mode=mode,
+                        ques=ques,
+                        ans=ans,
+                        # ques_attachment=ques_attachment
+                    )
+                    for obj in receiver:
+                        print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', obj)
+                        try:
+                            msg_obj.receiver.add(AppUser.objects.get(phone_number=obj))
+                        except:
+                            account_sid = 'AC1f8847272f073322f7b0c073e120ad7a'
+                            auth_token = '1fe5e97d3658f655c5ff73949213a801'
+                            client = Client(account_sid, auth_token)
+                            message = client.messages.create(
+                                body="Test message from quizlok using twilio",
+                                from_='+19722993983',
+                                # to=str(obj)
+                                to='+91' + str(obj)
+                            )
+                    print([x for x in msg_obj.receiver.all()])
+                    user_coins.number_of_coins -= 1
+                    user_coins.save()
+                    return Response({"message": "Message sent successfully", "status": HTTP_200_OK})
             else:
                 return Response(
                     {"message": "You cannot send message.Insufficient coins", "status": HTTP_400_BAD_REQUEST})
@@ -533,7 +564,9 @@ class VerifyOtp(APIView):
                 #     on=True
                 # )
                 token = Token.objects.get_or_create(user=us_obj)
-                return Response({'token': token[0].key, 'id': user.id, 'status': HTTP_200_OK})
+                return Response(
+                    {'token': token[0].key, 'id': user.id, 'username': user.username, 'country_code': user.country_code,
+                     'phone_number': user.phone_number, 'status': HTTP_200_OK})
                 # return Response({'success': True, 'msg': check.content['message']}, status=HTTP_200_OK)
             else:
                 return Response({'success': False, 'msg': check.content['message']}, status=HTTP_400_BAD_REQUEST)
