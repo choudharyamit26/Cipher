@@ -1,6 +1,7 @@
 from .views import CreateUser, LoginView, SendOtpTwilio, ForgetPasswordAPIView, Logout, ComposeMessage, InboxView, \
     ReadingMessage, UpdateProfilePic, VerifyOtp, CustomMessage, VerifyForgetPasswordOtp, UsersList, AddToFavourites, \
-    GetFavourites, GetNotificationList, ResetPasswordAPIView
+    GetFavourites, GetNotificationList, ResetPasswordAPIView, DeleteUserAccount, TermsAndConditionView, \
+    UpdateUserNameView, UpdateNotificationSettings
 from django.urls import path
 
 app_name = 'src'
@@ -23,4 +24,8 @@ urlpatterns = [
     path('fav-list/', GetFavourites.as_view(), name='fav-list'),
     path('custom-message/', CustomMessage.as_view(), name='custom-message'),
     path('notification-list/', GetNotificationList.as_view(), name='notification-list'),
+    path('delete-user/', DeleteUserAccount.as_view(), name='delete-user'),
+    path('terms-and-condition/', TermsAndConditionView.as_view(), name='terms-and-condition'),
+    path('update-username/', UpdateUserNameView.as_view(), name='update-username'),
+    path('update-notification-setting/', UpdateNotificationSettings.as_view(), name='update-notification-setting'),
 ]

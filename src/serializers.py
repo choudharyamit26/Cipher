@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_200_OK
-from .models import AppUser, Message, SecretKey, Favourites
+from .models import AppUser, Message, SecretKey, Favourites, AppNotification, AppNotificationSetting
 from adminpanel.models import User
 
 from django.contrib.auth import get_user_model, authenticate
@@ -78,6 +78,7 @@ class ComposeMessageSerializer(serializers.ModelSerializer):
     attachment = serializers.FileField()
     ques = serializers.CharField()
     ans = serializers.CharField()
+
     # secret_key = SecretKeySerializer(many=True)
 
     class Meta:
@@ -136,3 +137,15 @@ class AddToFavouritesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favourites
         fields = ('favourite',)
+
+
+class UpdateUserNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AppUser
+        fields = ('username',)
+
+
+class UpdateNotificationSettingsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AppNotificationSetting
+        fields = ('on',)

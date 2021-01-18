@@ -11,15 +11,17 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
-from .models import AppUser, Message, IncorrectAttempt, Favourites, AppNotification, UserCoins
+from .models import AppUser, Message, IncorrectAttempt, Favourites, AppNotification, UserCoins, AppNotificationSetting
 from .serializers import UserCreateSerailizer, LoginSerializer, ForgetPasswordSerializer, ComposeMessageSerializer, \
     SecretKeySerializer, ReadMessageSerializer, ProfilePicSerializer, OtpSeralizer, VerifyOtpSeralizer, \
-    VerifyForgetPasswordOtpSerializer, AddToFavouritesSerializer, ResetPasswordSerializer
-from adminpanel.models import User
+    VerifyForgetPasswordOtpSerializer, AddToFavouritesSerializer, ResetPasswordSerializer, UpdateUserNameSerializer, \
+    UpdateNotificationSettingsSerializer
+from adminpanel.models import User, TermsandCondition
 from authy.api import AuthyApiClient
 from twilio.rest import Client
 
 # Production key from authy app in twilio
+
 authy_api = AuthyApiClient('SpLBdknBezXVTlD6s2gxbXgH4NzqUDcv')
 
 
@@ -240,19 +242,6 @@ class ResetPasswordAPIView(CreateAPIView):
             return Response({'error': serializer.errors, 'status': HTTP_400_BAD_REQUEST})
 
 
-class Logout(APIView):
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
-    """
-    Logout API
-    """
-
-    def get(self, request, *args, **kwargs):
-        # user = self.request.user
-        request.user.auth_token.delete()
-        return Response({"msg": "Logged out successfully", "status": HTTP_200_OK})
-
-
 class ComposeMessage(CreateAPIView):
     """
     Compose message for users
@@ -320,7 +309,8 @@ class ComposeMessage(CreateAPIView):
 
                 return Response({"message": "Message sent successfully", "status": HTTP_200_OK})
             else:
-                return Response({"message": "You cannot send message.Insufficient coins", "status": HTTP_400_BAD_REQUEST})
+                return Response(
+                    {"message": "You cannot send message.Insufficient coins", "status": HTTP_400_BAD_REQUEST})
         else:
             return Response({'message': serializer.errors, 'status': HTTP_400_BAD_REQUEST})
 
@@ -538,6 +528,10 @@ class VerifyOtp(APIView):
                 us_obj = User.objects.create(phone_number=phone_number, email=str(phone_number) + '@email.com')
                 us_obj.set_password(password)
                 us_obj.save()
+                # AppNotification.objects.create(
+                #     user=user,
+                #     on=True
+                # )
                 token = Token.objects.get_or_create(user=us_obj)
                 return Response({'token': token[0].key, 'id': user.id, 'status': HTTP_200_OK})
                 # return Response({'success': True, 'msg': check.content['message']}, status=HTTP_200_OK)
@@ -625,6 +619,82 @@ class GetNotificationList(ListAPIView):
         #         message.sent_to.all().exclude(
         #             id=app_user.id)]})
         return Response({'data': notifications.values(), 'status': HTTP_200_OK})
+
+
+class Logout(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        request.user.auth_token.delete()
+        return Response({"msg": "Logged out successfully", "status": HTTP_200_OK})
+
+
+class DeleteUserAccount(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        try:
+            user = self.request.user
+            user_obj = User.objects.get(phone_number=user.phone_number)
+            user_obj.delete()
+            app_user = AppUser.objects.get(phone_number=user.phone_number)
+            app_user.delete()
+            return Response({'message': 'Account deleted successfully', 'status': HTTP_200_OK})
+        except Exception as e:
+            x = {'error': str(e)}
+            return Response({'error': x['error'], 'status': HTTP_400_BAD_REQUEST})
+
+
+class TermsAndConditionView(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        t_and_c = TermsandCondition.objects.all()[0]
+        return Response({'data': t_and_c.conditions, 'status': HTTP_200_OK})
+
+
+class UpdateUserNameView(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    queryset = User.objects.all()
+    serializer_class = UpdateUserNameSerializer
+
+    def patch(self, request, *args, **kwargs):
+        user = self.request.user
+        serializer = UpdateUserNameSerializer(data=self.request.data)
+        if serializer.is_valid():
+            username = serializer.validated_data['username']
+            app_user = AppUser.objects.get(phone_number=user.phone_number)
+            app_user.username = username
+            app_user.save()
+            return Response({'message': 'Username updates successfully', 'status': HTTP_200_OK})
+        else:
+            return Response({'error': serializer.errors, 'status': HTTP_400_BAD_REQUEST})
+
+
+class UpdateNotificationSettings(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    queryset = User.objects.all()
+    serializer_class = UpdateNotificationSettingsSerializer
+
+    def patch(self, request, *args, **kwargs):
+        user = self.request.user
+        serializer = UpdateNotificationSettingsSerializer(data=self.request.data)
+        if serializer.is_valid():
+            on = serializer.validated_data['on']
+            app_user = AppUser.objects.get(phone_number=user.phone_number)
+            settings = AppNotificationSetting.objects.get(user=app_user)
+            # on = str(on).capitalize()
+            # settings.on = on.capitalize()
+            settings.on = on
+            settings.save()
+            return Response({'message': 'Update notification successfully', 'status': HTTP_200_OK})
+        else:
+            return Response({'error': serializer.errors, 'status': HTTP_400_BAD_REQUEST})
 
 
 class CustomMessage(APIView):

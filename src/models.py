@@ -75,7 +75,13 @@ class AppNotification(models.Model):
     date_read = models.DateTimeField(auto_now_add=True)
     date_sent = models.DateField()
     mode = models.CharField(default='', max_length=100)
+    # on = models.BooleanField(default=True)
     sent_to = models.ManyToManyField(AppUser, related_name='sent_to')
+
+
+class AppNotificationSetting(models.Model):
+    user = models.ForeignKey(AppUser, on_delete=models.CASCADE)
+    on = models.BooleanField(default=True)
 
 
 class UserCoins(models.Model):
@@ -91,6 +97,10 @@ def user_coins(sender, instance, created, **kwargs):
         UserCoins.objects.create(
             user=user,
             number_of_coins=5
+        )
+        AppNotificationSetting.objects.create(
+            user=user,
+            on=True
         )
     # @property
     # def delete_object_periodically(self):
