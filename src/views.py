@@ -697,6 +697,31 @@ class UpdateNotificationSettings(APIView):
             return Response({'error': serializer.errors, 'status': HTTP_400_BAD_REQUEST})
 
 
+class GetUserNotificationSetting(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        user = self.request.user
+        app_user = AppUser.objects.get(phone_number=user.phone_number)
+        settings = AppNotificationSetting.objects.get(user=app_user)
+        print(settings.on)
+        return Response(
+            {'message': 'Fetched user notification settings successfully', 'value': settings.on, 'status': HTTP_200_OK})
+
+
+class GetUserCoins(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        user = self.request.user
+        app_user = AppUser.objects.get(phone_number=user.phone_number)
+        coins = UserCoins.objects.get(user=app_user)
+        return Response({'message': 'Fetched users coins successfully', 'coins': coins.number_of_coins,
+                         'status': HTTP_400_BAD_REQUEST})
+
+
 class CustomMessage(APIView):
 
     def get(self, request, *args, **kwargs):

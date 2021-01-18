@@ -1,7 +1,7 @@
 from .views import CreateUser, LoginView, SendOtpTwilio, ForgetPasswordAPIView, Logout, ComposeMessage, InboxView, \
     ReadingMessage, UpdateProfilePic, VerifyOtp, CustomMessage, VerifyForgetPasswordOtp, UsersList, AddToFavourites, \
     GetFavourites, GetNotificationList, ResetPasswordAPIView, DeleteUserAccount, TermsAndConditionView, \
-    UpdateUserNameView, UpdateNotificationSettings
+    UpdateUserNameView, UpdateNotificationSettings,GetUserNotificationSetting,GetUserCoins
 from django.urls import path
 
 app_name = 'src'
@@ -28,4 +28,6 @@ urlpatterns = [
     path('terms-and-condition/', TermsAndConditionView.as_view(), name='terms-and-condition'),
     path('update-username/', UpdateUserNameView.as_view(), name='update-username'),
     path('update-notification-setting/', UpdateNotificationSettings.as_view(), name='update-notification-setting'),
+    path('get-notification-setting/', GetUserNotificationSetting.as_view(), name='get-notification-setting'),
+    path('get-user-coins/', GetUserCoins.as_view(), name='get-user-coins'),
 ]
