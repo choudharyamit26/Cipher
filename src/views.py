@@ -296,6 +296,10 @@ class ComposeMessage(CreateAPIView):
                         print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', obj)
                         try:
                             msg_obj.receiver.add(AppUser.objects.get(phone_number=obj))
+                            AppNotification.objects.create(
+                                user=AppUser.objects.get(phone_number=obj),
+                                text='You have a new message'
+                            )
                         except:
                             account_sid = 'AC1f8847272f073322f7b0c073e120ad7a'
                             auth_token = '1fe5e97d3658f655c5ff73949213a801'
@@ -422,7 +426,7 @@ class ReadingMessage(CreateAPIView):
                         print('Message read by all', message_obj.read_by.all())
                         print('Message read by count ', message_obj.read_by.count())
                         return Response(
-                            {'message': 'You cannot read this message as it was on race mode and it was already read'})
+                            {'message': 'You cannot read this message as it was in race mode and it was already read'})
                     else:
                         if ans == message_obj.ans:
                             message_obj.read_by.add(app_user_obj.id)
@@ -438,6 +442,12 @@ class ReadingMessage(CreateAPIView):
                             for receiver in message_obj.receiver.all():
                                 notification.sent_to.add(receiver)
                             if message_obj.attachment:
+                                # AppNotification.objects.create(
+                                #     user=message_obj.sender,
+                                #     text=f'{app_user_obj.username} read your message',
+                                #     date_sent=message_obj.created_at,
+                                #     mode=message_obj.mode
+                                # )
                                 return Response({"message": "Correct answer", 'message_text': message_obj.text,
                                                  'message_attachment': message_obj.attachment,
                                                  'sender_name': message_obj.sender.username, 'status': HTTP_200_OK})
@@ -798,15 +808,16 @@ class GetNotificationList(ListAPIView):
         app_user = AppUser.objects.get(phone_number=user.phone_number)
         notifications = AppNotification.objects.filter(user=app_user)
         receivers = []
-        # for message in notifications:
-        #     # print(message.receiver.all().exclude(id=app_user_obj.id))
-        #     receivers.append({"message_id": message.id, "receiver": [
-        #         {'receiver_id': x.id, 'name': x.username, 'country_code': x.country_code,
-        #          'phone_number': x.phone_number,
-        #          'profile_pic': x.profile_pic.url} for x in
-        #         message.sent_to.all().exclude(
-        #             id=app_user.id)]})
-        return Response({'data': notifications.values(), 'status': HTTP_200_OK})
+        for message in notifications:
+            # print(message.receiver.all().exclude(id=app_user_obj.id))
+            receivers.append({"message_id": message.id, "receiver": [
+                {'receiver_id': x.id, 'name': x.username, 'country_code': x.country_code,
+                 'phone_number': x.phone_number,
+                 'profile_pic': x.profile_pic.url} for x in
+                message.sent_to.all().exclude(
+                    id=app_user.id)]})
+        # return Response({'data': notifications.values(), 'status': HTTP_200_OK})
+        return Response({'data': notifications.values(), 'receivers': receivers, 'status': HTTP_200_OK})
 
 
 class DeleteAllNotification(APIView):
@@ -824,6 +835,25 @@ class DeleteAllNotification(APIView):
             return Response({'message': 'Notifications deleted successfully', 'status': HTTP_200_OK})
         else:
             return Response({'message': 'No notification to be deleted', 'status': HTTP_400_BAD_REQUEST})
+
+
+class UpdateNotificationStatus(APIView):
+    model = AppNotification
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        user = self.request.user
+        app_user = AppUser.objects.get(phone_number=user.phone_number)
+        notifications = AppNotification.objects.filter(user=app_user).filter(read=False)
+        if notifications.count() > 0:
+            for notification in notifications:
+                print(notification)
+                notification.read = True
+                notification.save()
+            return Response({'message': 'Notifications read successfully', 'status': HTTP_200_OK})
+        else:
+            return Response({'message': 'No unread message found', 'status': HTTP_400_BAD_REQUEST})
 
 
 class UnreadNotificationCount(APIView):
