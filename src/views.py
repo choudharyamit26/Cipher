@@ -357,17 +357,36 @@ class InboxView(APIView):
         app_user_obj = AppUser.objects.get(phone_number=user.phone_number)
         messages_obj = Message.objects.filter(receiver=app_user_obj.id)
         receivers = []
+        messages_values = []
         for message in messages_obj:
             # print(message.receiver.all().exclude(id=app_user_obj.id))
+            if message.attachment:
+                messages_values.append(
+                    {'id': message.id, 'sender_id': message.id, 'sender_name': message.sender.username,
+                     'sender_country_code': message.sender.country_code,
+                     'sender_profile_pic': message.sender.profile_pic.url,
+                     'sender_phone_number': message.sender.phone_number, 'mode': message.mode, 'question': message.ques,
+                     'answer': message.ans, 'created_at': message.created_at, 'missed': message.is_missed,
+                     'message_text': message.text, 'message_attachment': message.attachment.url,
+                     'validity': message.validity})
+            else:
+                messages_values.append(
+                    {'id': message.id, 'sender_id': message.id, 'sender_name': message.sender.username,
+                     'sender_country_code': message.sender.country_code,
+                     'sender_profile_pic': message.sender.profile_pic.url,
+                     'sender_phone_number': message.sender.phone_number, 'mode': message.mode, 'question': message.ques,
+                     'answer': message.ans, 'created_at': message.created_at, 'missed': message.is_missed,
+                     'message_text': message.text, 'message_attachment': '', 'validity': message.validity})
+
             receivers.append({"message_id": message.id, "receiver": [
                 {'receiver_id': x.id, 'name': x.username, 'country_code': x.country_code,
                  'phone_number': x.phone_number,
                  'profile_pic': x.profile_pic.url} for x in
                 message.receiver.all().exclude(
                     id=app_user_obj.id)]})
-        print(receivers)
+        # print(receivers)
         if messages_obj.count() > 0:
-            return Response({'data': messages_obj.values(), 'receivers': receivers, 'status': HTTP_200_OK})
+            return Response({'data': messages_values, 'receivers': receivers, 'status': HTTP_200_OK})
         else:
             return Response({'message': 'No messages', 'status': HTTP_400_BAD_REQUEST})
 
@@ -396,52 +415,83 @@ class ReadingMessage(CreateAPIView):
                 print(ans is message_obj.ans)
                 print('Answer>>>', ans, type(ans))
                 print('Original answer>>>', message_obj.ans, type(message_obj.ans))
-                if ans == message_obj.ans:
-                    message_obj.read_by.add(app_user_obj.id)
-                    ###### Add notification to be sent to the sender
-                    notification = AppNotification.objects.create(
-                        user=message_obj.sender,
-                        message=Message.objects.get(id=message_obj.id),
-                        text=f'{app_user_obj.username} read your message',
-                        # date_read=,
-                        date_sent=message_obj.created_at,
-                        mode=message_obj.mode,
-                    )
-                    for receiver in message_obj.receiver.all():
-                        notification.sent_to.add(receiver)
-                    if message_obj.attachment:
-                        return Response({"message": "Correct answer", 'message_text': message_obj.text,
-                                         'message_attachment': message_obj.attachment,
-                                         'sender_name': message_obj.sender.username, 'status': HTTP_200_OK})
-                    else:
+                print('Message read by all', message_obj.read_by.all())
+                print('Message read by count ', message_obj.read_by.count())
+                if message_obj.mode is 'Race':
+                    if message_obj.read_by.count() > 0:
+                        print('Message read by all', message_obj.read_by.all())
+                        print('Message read by count ', message_obj.read_by.count())
                         return Response(
-                            {"message": "Correct answer", 'message_text': message_obj.text,
-                             'sender_name': message_obj.sender.username, 'status': HTTP_200_OK})
-                else:
-                    message_obj.incorrect_attempts_by.add(app_user_obj.id)
-                    try:
-                        incorrect_attempts = IncorrectAttempt.objects.filter(user=app_user_obj)
-                        print([x.message_id.id for x in incorrect_attempts])
-                        if incorrect_attempts:
-                            print('>>>>>>>>>', int(message_id) in [x.message_id.id for x in incorrect_attempts])
-                            if int(message_id) in [x.message_id.id for x in incorrect_attempts]:
-                                msg_obj = IncorrectAttempt.objects.get(message_id=message_id)
-                                if msg_obj.count < 3:
-                                    msg_obj.count += 1
-                                    msg_obj.save()
-                                    msg_count = msg_obj.count
-                                    left_attempts = 3 - msg_count
-                                    return Response(
-                                        {
-                                            'message': f'Incorrect answer. {left_attempts} attempts left out of 3 attempts',
-                                            'status': HTTP_400_BAD_REQUEST})
-                                else:
-                                    return Response(
-                                        {
-                                            'message': 'Sorry you can not see the message.You have given incorrect answer 3 times',
-                                            'status': HTTP_400_BAD_REQUEST})
+                            {'message': 'You cannot read this message as it was on race mode and it was already read'})
+                    else:
+                        if ans == message_obj.ans:
+                            message_obj.read_by.add(app_user_obj.id)
+                            ###### Add notification to be sent to the sender
+                            notification = AppNotification.objects.create(
+                                user=message_obj.sender,
+                                message=Message.objects.get(id=message_obj.id),
+                                text=f'{app_user_obj.username} read your message',
+                                # date_read=,
+                                date_sent=message_obj.created_at,
+                                mode=message_obj.mode,
+                            )
+                            for receiver in message_obj.receiver.all():
+                                notification.sent_to.add(receiver)
+                            if message_obj.attachment:
+                                return Response({"message": "Correct answer", 'message_text': message_obj.text,
+                                                 'message_attachment': message_obj.attachment,
+                                                 'sender_name': message_obj.sender.username, 'status': HTTP_200_OK})
                             else:
-                                print('false case')
+                                return Response(
+                                    {"message": "Correct answer", 'message_text': message_obj.text,
+                                     'sender_name': message_obj.sender.username, 'status': HTTP_200_OK})
+                        else:
+                            message_obj.incorrect_attempts_by.add(app_user_obj.id)
+                            try:
+                                incorrect_attempts = IncorrectAttempt.objects.filter(user=app_user_obj)
+                                print([x.message_id.id for x in incorrect_attempts])
+                                if incorrect_attempts:
+                                    print('>>>>>>>>>', int(message_id) in [x.message_id.id for x in incorrect_attempts])
+                                    if int(message_id) in [x.message_id.id for x in incorrect_attempts]:
+                                        msg_obj = IncorrectAttempt.objects.get(message_id=message_id)
+                                        if msg_obj.count < 3:
+                                            msg_obj.count += 1
+                                            msg_obj.save()
+                                            msg_count = msg_obj.count
+                                            left_attempts = 3 - msg_count
+                                            return Response(
+                                                {
+                                                    'message': f'Incorrect answer. {left_attempts} attempts left out of 3 attempts',
+                                                    'status': HTTP_400_BAD_REQUEST})
+                                        else:
+                                            return Response(
+                                                {
+                                                    'message': 'Sorry you can not see the message.You have given incorrect answer 3 times',
+                                                    'status': HTTP_400_BAD_REQUEST})
+                                    else:
+                                        print('false case')
+                                        try:
+                                            IncorrectAttempt.objects.get(message_id=message_id)
+                                            pass
+                                        except Exception as e:
+                                            IncorrectAttempt.objects.create(
+                                                user=app_user_obj,
+                                                message_id=Message.objects.get(id=message_id),
+                                                count=1
+                                            )
+                                else:
+                                    print('outer if')
+                                    try:
+                                        IncorrectAttempt.objects.get(message_id=message_id)
+                                        pass
+                                    except Exception as e:
+                                        IncorrectAttempt.objects.create(
+                                            user=app_user_obj,
+                                            message_id=Message.objects.get(id=message_id),
+                                            count=1
+                                        )
+                            except Exception as e:
+                                print('inside except block', e)
                                 try:
                                     IncorrectAttempt.objects.get(message_id=message_id)
                                     pass
@@ -451,8 +501,81 @@ class ReadingMessage(CreateAPIView):
                                         message_id=Message.objects.get(id=message_id),
                                         count=1
                                     )
+                                # return Response({'message': 'Incorrect answer. 2 attempts left out of 3 attempts',
+                                #                  'status': HTTP_400_BAD_REQUEST})
+
+                            return Response({'message': 'Incorrect answer. 2 attempts left out of 3 attempts',
+                                             'status': HTTP_400_BAD_REQUEST})
+
+                else:
+                    if ans == message_obj.ans:
+                        message_obj.read_by.add(app_user_obj.id)
+                        ###### Add notification to be sent to the sender
+                        notification = AppNotification.objects.create(
+                            user=message_obj.sender,
+                            message=Message.objects.get(id=message_obj.id),
+                            text=f'{app_user_obj.username} read your message',
+                            # date_read=,
+                            date_sent=message_obj.created_at,
+                            mode=message_obj.mode,
+                        )
+                        for receiver in message_obj.receiver.all():
+                            notification.sent_to.add(receiver)
+                        if message_obj.attachment:
+                            return Response({"message": "Correct answer", 'message_text': message_obj.text,
+                                             'message_attachment': message_obj.attachment,
+                                             'sender_name': message_obj.sender.username, 'status': HTTP_200_OK})
                         else:
-                            print('outer if')
+                            return Response(
+                                {"message": "Correct answer", 'message_text': message_obj.text,
+                                 'sender_name': message_obj.sender.username, 'status': HTTP_200_OK})
+                    else:
+                        message_obj.incorrect_attempts_by.add(app_user_obj.id)
+                        try:
+                            incorrect_attempts = IncorrectAttempt.objects.filter(user=app_user_obj)
+                            print([x.message_id.id for x in incorrect_attempts])
+                            if incorrect_attempts:
+                                print('>>>>>>>>>', int(message_id) in [x.message_id.id for x in incorrect_attempts])
+                                if int(message_id) in [x.message_id.id for x in incorrect_attempts]:
+                                    msg_obj = IncorrectAttempt.objects.get(message_id=message_id)
+                                    if msg_obj.count < 3:
+                                        msg_obj.count += 1
+                                        msg_obj.save()
+                                        msg_count = msg_obj.count
+                                        left_attempts = 3 - msg_count
+                                        return Response(
+                                            {
+                                                'message': f'Incorrect answer. {left_attempts} attempts left out of 3 attempts',
+                                                'status': HTTP_400_BAD_REQUEST})
+                                    else:
+                                        return Response(
+                                            {
+                                                'message': 'Sorry you can not see the message.You have given incorrect answer 3 times',
+                                                'status': HTTP_400_BAD_REQUEST})
+                                else:
+                                    print('false case')
+                                    try:
+                                        IncorrectAttempt.objects.get(message_id=message_id)
+                                        pass
+                                    except Exception as e:
+                                        IncorrectAttempt.objects.create(
+                                            user=app_user_obj,
+                                            message_id=Message.objects.get(id=message_id),
+                                            count=1
+                                        )
+                            else:
+                                print('outer if')
+                                try:
+                                    IncorrectAttempt.objects.get(message_id=message_id)
+                                    pass
+                                except Exception as e:
+                                    IncorrectAttempt.objects.create(
+                                        user=app_user_obj,
+                                        message_id=Message.objects.get(id=message_id),
+                                        count=1
+                                    )
+                        except Exception as e:
+                            print('inside except block', e)
                             try:
                                 IncorrectAttempt.objects.get(message_id=message_id)
                                 pass
@@ -462,22 +585,11 @@ class ReadingMessage(CreateAPIView):
                                     message_id=Message.objects.get(id=message_id),
                                     count=1
                                 )
-                    except Exception as e:
-                        print('inside except block', e)
-                        try:
-                            IncorrectAttempt.objects.get(message_id=message_id)
-                            pass
-                        except Exception as e:
-                            IncorrectAttempt.objects.create(
-                                user=app_user_obj,
-                                message_id=Message.objects.get(id=message_id),
-                                count=1
-                            )
-                        # return Response({'message': 'Incorrect answer. 2 attempts left out of 3 attempts',
-                        #                  'status': HTTP_400_BAD_REQUEST})
+                            # return Response({'message': 'Incorrect answer. 2 attempts left out of 3 attempts',
+                            #                  'status': HTTP_400_BAD_REQUEST})
 
-                    return Response({'message': 'Incorrect answer. 2 attempts left out of 3 attempts',
-                                     'status': HTTP_400_BAD_REQUEST})
+                        return Response({'message': 'Incorrect answer. 2 attempts left out of 3 attempts',
+                                         'status': HTTP_400_BAD_REQUEST})
             except Exception as e:
                 x = {'error': str(e)}
                 return Response({'message': x['error'], 'status': HTTP_400_BAD_REQUEST})
@@ -695,6 +807,36 @@ class GetNotificationList(ListAPIView):
         #         message.sent_to.all().exclude(
         #             id=app_user.id)]})
         return Response({'data': notifications.values(), 'status': HTTP_200_OK})
+
+
+class DeleteAllNotification(APIView):
+    model = AppNotification
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        user = self.request.user
+        app_user = AppUser.objects.get(phone_number=user.phone_number)
+        notifications = AppNotification.objects.filter(user=app_user)
+        if notifications.count() > 0:
+            for notification in notifications:
+                notification.delete()
+            return Response({'message': 'Notifications deleted successfully', 'status': HTTP_200_OK})
+        else:
+            return Response({'message': 'No notification to be deleted', 'status': HTTP_400_BAD_REQUEST})
+
+
+class UnreadNotificationCount(APIView):
+    model = AppNotification
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        user = self.request.user
+        app_user = AppUser.objects.get(phone_number=user.phone_number)
+        notifications_count = AppNotification.objects.filter(user=app_user).filter(read=False).count()
+        print(notifications_count)
+        return Response({'count': notifications_count, 'status': HTTP_200_OK})
 
 
 class Logout(APIView):

@@ -7,7 +7,7 @@ import datetime
 MODE = (
     ('Direct', 'Direct'),
     ('Everybody', 'Everybody'),
-    ('Race Mode', 'Race Mode')
+    ('Race', 'Race')
 )
 
 
@@ -76,6 +76,7 @@ class AppNotification(models.Model):
     date_sent = models.DateField()
     mode = models.CharField(default='', max_length=100)
     # on = models.BooleanField(default=True)
+    read = models.BooleanField(default=False)
     sent_to = models.ManyToManyField(AppUser, related_name='sent_to')
 
 
