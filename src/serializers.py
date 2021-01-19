@@ -136,6 +136,10 @@ class VerifyOtpSeralizer(serializers.ModelSerializer):
 
 
 class AddToFavouritesSerializer(serializers.ModelSerializer):
+    favourite = serializers.ListField()
+
+    # favourite = serializers.ListSerializer()
+
     class Meta:
         model = Favourites
         fields = ('favourite',)
@@ -153,3 +157,9 @@ class UpdateNotificationSettingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = AppNotificationSetting
         fields = ('on',)
+
+
+class RemoveFavouritesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Favourites
+        fields = ('favourite',)

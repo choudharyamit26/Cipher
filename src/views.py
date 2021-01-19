@@ -15,7 +15,7 @@ from .models import AppUser, Message, IncorrectAttempt, Favourites, AppNotificat
 from .serializers import UserCreateSerailizer, LoginSerializer, ForgetPasswordSerializer, ComposeMessageSerializer, \
     SecretKeySerializer, ReadMessageSerializer, ProfilePicSerializer, OtpSeralizer, VerifyOtpSeralizer, \
     VerifyForgetPasswordOtpSerializer, AddToFavouritesSerializer, ResetPasswordSerializer, UpdateUserNameSerializer, \
-    UpdateNotificationSettingsSerializer
+    UpdateNotificationSettingsSerializer, RemoveFavouritesSerializer
 from adminpanel.models import User, TermsandCondition
 from authy.api import AuthyApiClient
 from twilio.rest import Client
@@ -135,7 +135,7 @@ class LoginView(ObtainAuthToken):
                 userObj.save(update_fields=['device_token'])
                 print('updated device token ', userObj.device_token)
                 token = token[0]
-                return Response({"Token": token.key, "id": user_id.id, 'username': user_id.username,
+                return Response({"token": token.key, "id": user_id.id, 'username': user_id.username,
                                  'country_code': user_id.country_code,
                                  'phone_number': user_id.phone_number, "status": HTTP_200_OK})
             else:
@@ -603,10 +603,16 @@ class AddToFavourites(CreateAPIView):
             app_user_obj = AppUser.objects.get(phone_number=user.phone_number)
             try:
                 favourite = serializer.validated_data['favourite']
-                Favourites.objects.create(
-                    user=app_user_obj,
-                    favourite=favourite
-                )
+                for x in favourite:
+                    favs = Favourites.objects.filter(user=app_user_obj)
+                    favs_list = [x.id for x in favs]
+                    if x in favs_list:
+                        pass
+                    else:
+                        Favourites.objects.create(
+                            user=app_user_obj,
+                            favourite=AppUser.objects.get(id=x)
+                        )
                 return Response({'message': 'User added to favourites successfully', 'status': HTTP_200_OK})
             except Exception as e:
                 print(e)
@@ -625,12 +631,49 @@ class GetFavourites(ListAPIView):
         user = self.request.user
         app_user = AppUser.objects.get(phone_number=user.phone_number)
         favourites = Favourites.objects.filter(user=app_user)
+        # print(favourites)
         data = []
         for fav in favourites:
             data.append({'user_id': fav.favourite.id, 'username': fav.favourite.username,
                          'country_code': fav.favourite.country_code,
-                         'phone_number': fav.favourite.phone_number})
+                         'phone_number': fav.favourite.phone_number, 'profile_pic': fav.favourite.profile_pic.url})
         return Response({'data': data, 'status': HTTP_200_OK})
+
+
+class RemoveFavourite(CreateAPIView):
+    model = Favourites
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = RemoveFavouritesSerializer
+
+    def post(self, request, *args, **kwargs):
+        user = self.request.user
+        app_user = AppUser.objects.get(phone_number=user.phone_number)
+        favourites = Favourites.objects.filter(user=app_user)
+        # print('Favourites-------------------', favourites)
+        serializer = RemoveFavouritesSerializer(data=self.request.data)
+        if serializer.is_valid():
+            favourite = serializer.validated_data['favourite']
+            # print('Input----------------', favourite.id)
+            try:
+                fav_list = [x.favourite.id for x in favourites]
+                # print('fav_obj>>>>>>> ', Favourites.objects.get(favourite=favourite).id)
+                # print('Fav List<<<<<<<<<<<<<<<<', fav_list)
+                # print('-----------------',favourite in fav_list)
+                # print(int(favourite) in fav_list)
+                if (favourite.id) in fav_list:
+                    fav_obj = Favourites.objects.filter(user=app_user).get(favourite=favourite)
+                    # print(fav_obj.id)
+                    # print(fav_obj.favourite.id)
+                    fav_obj.delete()
+                    return Response({'message': 'Removed from favourites successfully', 'status': HTTP_200_OK})
+                else:
+                    return Response({'message': 'Invalid user', 'status': HTTP_400_BAD_REQUEST})
+            except Exception as e:
+                x = {'error': str(e)}
+                return Response({'error': x['error'], 'status': HTTP_400_BAD_REQUEST})
+        else:
+            return Response({'error': serializer.errors, 'status': HTTP_400_BAD_REQUEST})
 
 
 class GetNotificationList(ListAPIView):
