@@ -13,7 +13,7 @@ utc = pytz.UTC
 @shared_task
 def expire_messages():
     # Query all the foos in our database
-    messages = Message.objects.fiilter(is_missed=False)
+    messages = Message.objects.filter(is_missed=False)
 
     # Iterate through them
     for message in messages:
