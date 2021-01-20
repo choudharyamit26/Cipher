@@ -427,7 +427,7 @@ class ReadingMessage(CreateAPIView):
                 print('Original answer>>>', message_obj.ans, type(message_obj.ans))
                 print('Message read by all', message_obj.read_by.all())
                 print('Message read by count ', message_obj.read_by.count())
-                if message_obj.mode is 'Race':
+                if message_obj.mode == 'Race':
                     if message_obj.read_by.count() > 0:
                         print('Message read by all', message_obj.read_by.all())
                         print('Message read by count ', message_obj.read_by.count())
