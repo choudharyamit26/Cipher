@@ -73,12 +73,12 @@ class AppNotification(models.Model):
     message = models.ForeignKey(Message, on_delete=models.CASCADE)
     text = models.TextField()
     date_read = models.DateTimeField(auto_now_add=True)
-    # date_sent = models.DateField()
-    # date_expired = models.DateField(null=True,blank=True)
-    # mode = models.CharField(default='', max_length=100)
-    # # on = models.BooleanField(default=True)
-    # read = models.BooleanField(default=False)
-    # sent_to = models.ManyToManyField(AppUser, related_name='sent_to')
+    date_sent = models.DateField()
+    date_expired = models.DateField(null=True, blank=True)
+    mode = models.CharField(default='', max_length=100)
+    # on = models.BooleanField(default=True)
+    read = models.BooleanField(default=False)
+    sent_to = models.ManyToManyField(AppUser, related_name='sent_to')
 
 
 class AppNotificationSetting(models.Model):
