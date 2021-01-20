@@ -14,8 +14,8 @@ app = Celery('quizlok')
 app.config_from_object('django.conf:settings', namespace='CELERY')
 app.conf.beat_schedule = {
     'delete-message': {
-        'task': 'src.tasks.delete_old_foos',
-        'schedule': 10,
+        'task': 'src.tasks.expire_messages',
+        'schedule': 60,
         # 'args':()
     }
 }

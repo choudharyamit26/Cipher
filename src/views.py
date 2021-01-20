@@ -275,6 +275,7 @@ class ComposeMessage(CreateAPIView):
                 text = serializer.validated_data['text']
                 validity = serializer.validated_data['validity']
                 attachment = serializer.validated_data['attachment']
+                # attachment = ''
                 receiver = serializer.validated_data['receiver']
                 print(receiver)
                 mode = serializer.validated_data['mode']
@@ -328,7 +329,12 @@ class ComposeMessage(CreateAPIView):
                     for obj in receiver:
                         print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', obj)
                         try:
-                            msg_obj.receiver.add(AppUser.objects.get(phone_number=obj))
+                            print('inside try block')
+                            # msg_obj.receiver.add(AppUser.objects.get(phone_number=obj))
+                            u = AppUser.objects.get(phone_number=obj)
+                            print(u)
+                            msg_obj.receiver.add(u)
+                            print([x for x in msg_obj.receiver.all()])
                         except:
                             account_sid = 'AC1f8847272f073322f7b0c073e120ad7a'
                             auth_token = '1fe5e97d3658f655c5ff73949213a801'
@@ -382,7 +388,7 @@ class InboxView(APIView):
                      'answer': message.ans, 'created_at': message.created_at, 'missed': message.is_missed,
                      'message_text': message.text, 'message_attachment': '', 'validity': message.validity})
 
-            receivers.append({"message_id": message.id, "receiver": [
+            receivers.append({"receiver": [
                 {'receiver_id': x.id, 'name': x.username, 'country_code': x.country_code,
                  'phone_number': x.phone_number,
                  'profile_pic': x.profile_pic.url} for x in
@@ -390,7 +396,7 @@ class InboxView(APIView):
                     id=app_user_obj.id)]})
         # print(receivers)
         if messages_obj.count() > 0:
-            return Response({'data': messages_values, 'receivers': receivers, 'status': HTTP_200_OK})
+            return Response({'data': [x for x in zip(messages_values, receivers)], 'status': HTTP_200_OK})
         else:
             return Response({'message': 'No messages', 'status': HTTP_400_BAD_REQUEST})
 
@@ -438,7 +444,10 @@ class ReadingMessage(CreateAPIView):
                                 # date_read=,
                                 date_sent=message_obj.created_at,
                                 mode=message_obj.mode,
+                                # sent_to=sent_to.set([x.username for x in message_obj.receiver.all()])
                             )
+                            # print('before sent_to.set')
+                            # notification.sent_to.set([x.username for x in message_obj.receiver.all()])
                             for receiver in message_obj.receiver.all():
                                 notification.sent_to.add(receiver)
                             if message_obj.attachment:
@@ -528,7 +537,10 @@ class ReadingMessage(CreateAPIView):
                             # date_read=,
                             date_sent=message_obj.created_at,
                             mode=message_obj.mode,
+                            # sent_to=[x.username for x in message_obj.receiver.all()]
                         )
+                        # print('before second sent_to')
+                        # notification.sent_to.set([x.username for x in message_obj.receiver.all()])
                         for receiver in message_obj.receiver.all():
                             notification.sent_to.add(receiver)
                         if message_obj.attachment:
@@ -810,14 +822,17 @@ class GetNotificationList(ListAPIView):
         receivers = []
         for message in notifications:
             # print(message.receiver.all().exclude(id=app_user_obj.id))
-            receivers.append({"message_id": message.id, "receiver": [
+            receivers.append({"receiver": [
                 {'receiver_id': x.id, 'name': x.username, 'country_code': x.country_code,
                  'phone_number': x.phone_number,
                  'profile_pic': x.profile_pic.url} for x in
                 message.sent_to.all().exclude(
                     id=app_user.id)]})
         # return Response({'data': notifications.values(), 'status': HTTP_200_OK})
-        return Response({'data': notifications.values(), 'receivers': receivers, 'status': HTTP_200_OK})
+        # print('>>>>>>>>>>>>', [x for x in zip(notifications.values(), receivers)])
+        for x in zip(notifications.values(), receivers):
+            print(x)
+        return Response({'data': [x for x in zip(notifications.values(), receivers)], 'status': HTTP_200_OK})
 
 
 class DeleteAllNotification(APIView):
@@ -984,3 +999,36 @@ class CustomMessage(APIView):
         )
         print(message)
         return Response({'message': message.sid, 'status': HTTP_200_OK})
+
+
+class MessageTime(APIView):
+
+    def get(self, request, *args, **kwargs):
+        messages = Message.objects.filter(is_missed=False)
+        for message in messages:
+            print(message)
+            import datetime
+            if datetime.datetime.now() > message.created_at.replace(tzinfo=None) + datetime.timedelta(
+                    hours=message.validity):
+                print('inside periodic task function')
+                print('Message id', message.id)
+                print('datetime now ', datetime.datetime.now())
+                print('message created_at ', message.created_at)
+                print('message created_at+validity ',
+                      message.created_at.replace(tzinfo=None) + datetime.timedelta(hours=message.validity))
+                print('Receivers---------', message.receiver)
+                print('Receivers---------', [x.username for x in message.receiver.all()])
+                receivers = message.receiver.all()
+                try:
+                    for receiver in receivers:
+                        AppNotification.objects.create(
+                            user=AppUser.objects.get(phone_number=receiver),
+                            text='Message Expired',
+                            date_sent=message.created_at,
+                            mode=message.mode,
+                            date_expired=datetime.datetime.now(),
+                            sent_to=[x.username for x in receivers]
+                        )
+                except Exception as e:
+                    print('Exception-------', e)
+        return Response({'fetched successfully'})

@@ -2,7 +2,7 @@ from .views import CreateUser, LoginView, SendOtpTwilio, ForgetPasswordAPIView, 
     ReadingMessage, UpdateProfilePic, VerifyOtp, CustomMessage, VerifyForgetPasswordOtp, UsersList, AddToFavourites, \
     GetFavourites, GetNotificationList, ResetPasswordAPIView, DeleteUserAccount, TermsAndConditionView, \
     UpdateUserNameView, UpdateNotificationSettings, GetUserNotificationSetting, GetUserCoins, RemoveFavourite, \
-    DeleteAllNotification,UnreadNotificationCount,UpdateNotificationStatus
+    DeleteAllNotification, UnreadNotificationCount, UpdateNotificationStatus, MessageTime
 from django.urls import path
 
 app_name = 'src'
@@ -35,4 +35,5 @@ urlpatterns = [
     path('update-notification-setting/', UpdateNotificationSettings.as_view(), name='update-notification-setting'),
     path('get-notification-setting/', GetUserNotificationSetting.as_view(), name='get-notification-setting'),
     path('get-user-coins/', GetUserCoins.as_view(), name='get-user-coins'),
+    path('get-message-time/', MessageTime.as_view(), name='get-message-time'),
 ]
