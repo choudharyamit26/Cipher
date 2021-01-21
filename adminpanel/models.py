@@ -34,7 +34,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     country_code = models.CharField(default='+91', max_length=10)
     phone_number = models.CharField(default='', max_length=13)
     profile_pic = models.ImageField(default='default_profile.png', null=True, blank=True)
-    # social_type = models.CharField(default='', max_length=500, null=True, blank=True)
+    # social_type = models.CharField(default='', max_length=500, null=True, blank=True)9180
     # social_id = models.CharField(default='', max_length=200, null=True, blank=True)
     device_token = models.CharField(default='', max_length=500, null=True, blank=True)
     remember_me = models.BooleanField(default=False)
@@ -55,9 +55,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 class UserNotification(models.Model):
     to = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(default='title', max_length=200)
-    title_in_arabic = models.CharField(default='title', max_length=200)
+    # title_in_arabic = models.CharField(default='title', max_length=200)
     body = models.CharField(default='body', max_length=200)
-    body_in_arabic = models.CharField(default='body', max_length=200)
+    # body_in_arabic = models.CharField(default='body', max_length=200)
     read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 

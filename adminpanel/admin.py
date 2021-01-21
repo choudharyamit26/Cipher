@@ -43,4 +43,5 @@ admin.site.register(AppNotification)
 admin.site.register(UserCoins)
 admin.site.register(AppNotificationSetting)
 admin.site.register(Favourites)
+admin.site.register(UserNotification)
 

@@ -16,7 +16,7 @@ from .serializers import UserCreateSerailizer, LoginSerializer, ForgetPasswordSe
     SecretKeySerializer, ReadMessageSerializer, ProfilePicSerializer, OtpSeralizer, VerifyOtpSeralizer, \
     VerifyForgetPasswordOtpSerializer, AddToFavouritesSerializer, ResetPasswordSerializer, UpdateUserNameSerializer, \
     UpdateNotificationSettingsSerializer, RemoveFavouritesSerializer
-from adminpanel.models import User, TermsandCondition
+from adminpanel.models import User, TermsandCondition, UserNotification
 from authy.api import AuthyApiClient
 from twilio.rest import Client
 
@@ -698,6 +698,12 @@ class VerifyOtp(APIView):
                 #     on=True
                 # )
                 token = Token.objects.get_or_create(user=us_obj)
+                x = UserNotification.objects.create(
+                    to=User.objects.get(email='quizlok52@gmail.com'),
+                    title='User Creation',
+                    body='New user has registered on the platform'
+                )
+                print(x)
                 return Response(
                     {'token': token[0].key, 'id': user.id, 'username': user.username, 'country_code': user.country_code,
                      'phone_number': user.phone_number, 'status': HTTP_200_OK})

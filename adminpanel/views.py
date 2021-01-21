@@ -20,6 +20,7 @@ from .filters import TransactionFilter, UserFilter
 from .forms import LoginForm, UpdateTnCForm, UserNotificationForm, UpdateContactusForm, UpdatePrivacyPolicyForm, \
     UpdateCoinForm, CreateCoinPlanForm
 from .models import User, UserNotification, Payment, TermsandCondition, ContactUs, PrivacyPolicy, Settings, Coin
+from src.models import Message, AppUser
 
 user = get_user_model()
 
@@ -219,14 +220,14 @@ class Dashboard(LoginRequiredMixin, ListView):
     login_url = 'adminpanel:login'
 
     def get(self, request, *args, **kwargs):
-        users_count = User.objects.all().exclude(is_superuser=True).count()
+        users_count = AppUser.objects.all().count()
         # orders_count = Payment.objects.filter(
         #     order__rejected_by_admin=False).exclude(order__status='Delivered').count()
         # revenue = Payment.objects.all()
-        total_revenue = Decimal(0)
-        cash = Decimal(0)
-        aisahawal = Decimal(0)
-        master_card = Decimal(0)
+        # total_revenue = Decimal(0)
+        # cash = Decimal(0)
+        # aisahawal = Decimal(0)
+        # master_card = Decimal(0)
         # cash_obj = Payment.objects.filter(payment_method='cash')
         # aisahawal_obj = Payment.objects.filter(payment_method='aisa hawala')
         # master_card_obj = Payment.objects.filter(payment_method='master card')
@@ -240,10 +241,25 @@ class Dashboard(LoginRequiredMixin, ListView):
         #     master_card += z.amount
         # for amount in revenue:
         #     total_revenue += amount.amount
+        opned_messages = []
+        i = 0
+        messages = Message.objects.all().count()
+        sent_messages = Message.objects.all()
+        for m in sent_messages:
+            if m.read_by.exists():
+                i += 1
+            else:
+                pass
+                # opned_messages.append(m.id)
+                # if m.id in opned_messages:
+                #     pass
+                # else:
+                #     i += 1
         context = {
             'users_count': users_count,
             # 'orders_count': orders_count,
-            'revenue': total_revenue,
+            'messages_sent': messages,
+            'messages_opened': i,
             # 'cash': cash,
             # 'aisahawal': aisahawal,
             # 'master_card': master_card
@@ -548,8 +564,10 @@ class NotificationCount(LoginRequiredMixin, ListView):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(email='quizlok52@gmail.com')
+        print(user)
         count = UserNotification.objects.filter(
             to=user.id).filter(read=False).count()
+        print(count)
         return HttpResponse(count)
 
 
