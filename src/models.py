@@ -91,6 +91,12 @@ class UserCoins(models.Model):
     number_of_coins = models.IntegerField(default=5)
 
 
+class HitInADay(models.Model):
+    user = models.ForeignKey(AppUser, on_delete=models.CASCADE)
+    day = models.DateTimeField(auto_now_add=True)
+    number = models.IntegerField()
+
+
 @receiver(post_save, sender=AppUser)
 def user_coins(sender, instance, created, **kwargs):
     if created:

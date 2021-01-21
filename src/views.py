@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.generics import CreateAPIView, ListAPIView
@@ -11,7 +12,8 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
-from .models import AppUser, Message, IncorrectAttempt, Favourites, AppNotification, UserCoins, AppNotificationSetting
+from .models import AppUser, Message, IncorrectAttempt, Favourites, AppNotification, UserCoins, AppNotificationSetting, \
+    HitInADay
 from .serializers import UserCreateSerailizer, LoginSerializer, ForgetPasswordSerializer, ComposeMessageSerializer, \
     SecretKeySerializer, ReadMessageSerializer, ProfilePicSerializer, OtpSeralizer, VerifyOtpSeralizer, \
     VerifyForgetPasswordOtpSerializer, AddToFavouritesSerializer, ResetPasswordSerializer, UpdateUserNameSerializer, \
@@ -989,6 +991,35 @@ class GetUserCoins(APIView):
         coins = UserCoins.objects.get(user=app_user)
         return Response({'message': 'Fetched users coins successfully', 'coins': coins.number_of_coins,
                          'status': HTTP_400_BAD_REQUEST})
+
+
+class GetNumberOfHitInDay(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        user = self.request.user
+        app_user = AppUser.objects.get(phone_number=user.phone_number)
+        try:
+            today = timezone.now().today()
+            hits = HitInADay.objects.filter(user=app_user)
+            last_hit = None
+            if hits.count() > 0:
+                for x in hits:
+                    if str(today.date()) == str(x.day.date()):
+                        x.number += 1
+                        x.save()
+                        last_hit = x.number
+                    else:
+                        print('inside else')
+            else:
+                hits = HitInADay.objects.create(user=app_user, number=1)
+            return Response({'message': 'successful hit', 'hit_count': last_hit, 'status': HTTP_200_OK})
+        except Exception as e:
+            x = {'error': str(e)}
+            print(x['error'])
+            hits = HitInADay.objects.create(user=app_user, number=1)
+            return Response({'count': hits.number, 'status': HTTP_200_OK})
 
 
 class CustomMessage(APIView):
