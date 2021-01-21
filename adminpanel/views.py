@@ -547,7 +547,7 @@ class NotificationCount(LoginRequiredMixin, ListView):
     login_url = 'adminpanel:login'
 
     def get(self, request, *args, **kwargs):
-        user = User.objects.get(email='ravichoudhary766@gmail.com')
+        user = User.objects.get(email='quizlok52@gmail.com')
         count = UserNotification.objects.filter(
             to=user.id).filter(read=False).count()
         return HttpResponse(count)
@@ -557,7 +557,7 @@ class ReadNotifications(LoginRequiredMixin, ListView):
     login_url = 'adminpanel:login'
 
     def get(self, request, *args, **kwargs):
-        user = User.objects.get(email='ravichoudhary766@gmail.com')
+        user = User.objects.get(email='quizlok52@gmail.com')
         notifications = UserNotification.objects.filter(
             to=user.id).filter(read=False)
         for obj in notifications:
