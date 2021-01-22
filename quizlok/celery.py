@@ -17,6 +17,10 @@ app.conf.beat_schedule = {
         'task': 'src.tasks.expire_messages',
         'schedule': 60,
         # 'args':()
+    },
+    'increase_coins': {
+        'task': 'src.tasks.increase_coins',
+        'schedule': 24 * 60 * 60
     }
 }
 # Load task modules from all registered Django app configs.

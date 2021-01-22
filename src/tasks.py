@@ -4,7 +4,7 @@ from celery import shared_task
 from django.utils import timezone
 
 from .fcm_notification import send_another, send_to_one
-from .models import Message, AppNotification, AppUser
+from .models import Message, AppNotification, AppUser, UserCoins, HitInADay
 import datetime
 import pytz
 
@@ -67,4 +67,21 @@ def expire_messages():
 
 
 def increase_coins():
-    pass
+    app_users = AppUser.objects.all()
+    today = timezone.now().today()
+    for user in app_users:
+        hits = HitInADay.objects.filter(user=user)
+        last_hit = None
+        if hits.count() > 0:
+            for x in hits:
+                if str(today.date()) == str(x.day.date()) and x.number == 1:
+                    user_coins = UserCoins.objects.get(user=user)
+                    user_coins.number_of_coins += 1
+                    user_coins.save()
+                    # x.number += 1
+                    # x.save()
+                    last_hit = x.number
+                else:
+                    print('inside else')
+        else:
+            pass
