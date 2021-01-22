@@ -17,7 +17,7 @@ class AppUser(models.Model):
     phone_number = models.CharField(default='', max_length=13)
     password = models.CharField(default='123456', max_length=100)
     profile_pic = models.ImageField(default='goku.jpg', null=True, blank=True)
-    device_token = models.CharField(default='',max_length=2000)
+    device_token = models.CharField(default='', max_length=2000)
 
 
 class Contact(models.Model):
@@ -71,10 +71,11 @@ class Favourites(models.Model):
 
 class AppNotification(models.Model):
     user = models.ForeignKey(AppUser, on_delete=models.CASCADE)
-    message = models.ForeignKey(Message, on_delete=models.CASCADE)
+    message = models.ForeignKey(Message, on_delete=models.CASCADE, null=True, blank=True)
     text = models.TextField()
+    title = models.CharField(default='', max_length=1000, null=True, blank=True)
     date_read = models.DateTimeField(auto_now_add=True)
-    date_sent = models.DateField()
+    date_sent = models.DateField(null=True, blank=True)
     date_expired = models.DateField(null=True, blank=True)
     mode = models.CharField(default='', max_length=100)
     # on = models.BooleanField(default=True)

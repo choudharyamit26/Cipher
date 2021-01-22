@@ -20,7 +20,10 @@ from .filters import TransactionFilter, UserFilter
 from .forms import LoginForm, UpdateTnCForm, UserNotificationForm, UpdateContactusForm, UpdatePrivacyPolicyForm, \
     UpdateCoinForm, CreateCoinPlanForm
 from .models import User, UserNotification, Payment, TermsandCondition, ContactUs, PrivacyPolicy, Settings, Coin
-from src.models import Message, AppUser
+from src.models import Message, AppUser,AppNotification
+
+from src.fcm_notification import send_another, send_to_one
+
 
 user = get_user_model()
 
@@ -451,7 +454,8 @@ class SendNotification(LoginRequiredMixin, View):
     login_url = 'adminpanel:login'
 
     def get(self, request, *args, **kwargs):
-        users = User.objects.all().exclude(is_superuser=True)
+        # users = User.objects.all().exclude(is_superuser=True)
+        users = AppUser.objects.all()
         context = {
             "users": users
         }
@@ -465,30 +469,32 @@ class SendNotification(LoginRequiredMixin, View):
         message = self.request.POST['body']
         print(message)
         for i in users_list:
-            user = User.objects.get(id=i)
+            user = AppUser.objects.get(id=i)
             fcm_token = user.device_token
             print(fcm_token)
-            UserNotification.objects.create(
-                to=user,
+            AppNotification.objects.create(
+                user=user,
                 title=title,
-                body=message,
+                text=message,
                 read=False
             )
             try:
-                # title = title
-                # body = message
+                title = title
+                body = message
                 # respo = send_to_one(fcm_token, title, body)
                 # print("FCM Response===============>0", respo)
                 data_message = {"data": {"title": title,
-                                         "body": message, "type": "adminNOtification"}}
+                                         "body": message, "type": "adminNotification"}}
                 print(title)
                 print(message)
-                # respo = send_to_one(fcm_token, data_message)
+                respo = send_to_one(fcm_token, data_message)
+                print(respo)
                 # print("FCM Response===============>0", respo)
-                message_type = "adminNOtification"
-                # respo = send_another(fcm_token, title, message, message_type)
+                message_type = "adminNotification"
+                respo = send_another(fcm_token, title, message, message_type)
                 print(title)
                 print(message)
+                print(respo)
                 # fcm_token.send_message(data)
                 # print("FCM Response===============>0", respo)
             except:

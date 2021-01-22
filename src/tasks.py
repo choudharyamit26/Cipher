@@ -2,6 +2,8 @@ from celery.schedules import crontab
 # from celery.task import periodic_task
 from celery import shared_task
 from django.utils import timezone
+
+from .fcm_notification import send_another, send_to_one
 from .models import Message, AppNotification, AppUser
 import datetime
 import pytz
@@ -39,6 +41,25 @@ def expire_messages():
                     )
                     for users in receivers:
                         notification.sent_to.add(users)
+                    fcm_token = AppUser.objects.get(phone_number=receiver).sender.device_token
+                    try:
+                        data_message = {"data": {"title": "Message Missed",
+                                                 "body": 'Message Expired',
+                                                 "type": "messageExpired"}}
+                        # data_message = json.dumps(data_message)
+                        title = "Message Missed"
+                        body = 'Message Expired'
+                        message_type = "messageExpired"
+                        respo = send_another(
+                            fcm_token, title, body, message_type)
+                        respo = send_to_one(fcm_token, data_message)
+                        print("FCM Response===============>0", respo)
+                        # title = "Profile Update"
+                        # body = "Your profile has been updated successfully"
+                        # respo = send_to_one(fcm_token, title, body)
+                        # print("FCM Response===============>0", respo)
+                    except:
+                        pass
             except Exception as e:
                 print('Exception from cron job ---->>> ', e)
             # log deletion

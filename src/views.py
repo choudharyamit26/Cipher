@@ -22,6 +22,7 @@ from adminpanel.models import User, TermsandCondition, UserNotification
 from authy.api import AuthyApiClient
 from twilio.rest import Client
 from .fcm_notification import send_to_one, send_another
+
 # Production key from authy app in twilio
 
 authy_api = AuthyApiClient('SpLBdknBezXVTlD6s2gxbXgH4NzqUDcv')
@@ -494,6 +495,25 @@ class ReadingMessage(CreateAPIView):
                             # notification.sent_to.set([x.username for x in message_obj.receiver.all()])
                             for receiver in message_obj.receiver.all():
                                 notification.sent_to.add(receiver)
+                            fcm_token = message_obj.sender.device_token
+                            try:
+                                data_message = {"data": {"title": "Message Read",
+                                                         "body": f'{app_user_obj.username} read your message',
+                                                         "type": "messageRead"}}
+                                # data_message = json.dumps(data_message)
+                                title = "Message Read"
+                                body = f'{app_user_obj.username} read your message'
+                                message_type = "messageRead"
+                                respo = send_another(
+                                    fcm_token, title, body, message_type)
+                                respo = send_to_one(fcm_token, data_message)
+                                print("FCM Response===============>0", respo)
+                                # title = "Profile Update"
+                                # body = "Your profile has been updated successfully"
+                                # respo = send_to_one(fcm_token, title, body)
+                                # print("FCM Response===============>0", respo)
+                            except:
+                                pass
                             if message_obj.attachment:
                                 # AppNotification.objects.create(
                                 #     user=message_obj.sender,
@@ -587,6 +607,25 @@ class ReadingMessage(CreateAPIView):
                         # notification.sent_to.set([x.username for x in message_obj.receiver.all()])
                         for receiver in message_obj.receiver.all():
                             notification.sent_to.add(receiver)
+                        fcm_token = message_obj.sender.device_token
+                        try:
+                            data_message = {"data": {"title": "Message Read",
+                                                     "body": f'{app_user_obj.username} read your message',
+                                                     "type": "messageRead"}}
+                            # data_message = json.dumps(data_message)
+                            title = "Message Read"
+                            body = f'{app_user_obj.username} read your message'
+                            message_type = "messageRead"
+                            respo = send_another(
+                                fcm_token, title, body, message_type)
+                            respo = send_to_one(fcm_token, data_message)
+                            print("FCM Response===============>0", respo)
+                            # title = "Profile Update"
+                            # body = "Your profile has been updated successfully"
+                            # respo = send_to_one(fcm_token, title, body)
+                            # print("FCM Response===============>0", respo)
+                        except:
+                            pass
                         if message_obj.attachment:
                             return Response({"message": "Correct answer", 'message_text': message_obj.text,
                                              'message_attachment': message_obj.attachment,
