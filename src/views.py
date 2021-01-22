@@ -21,7 +21,7 @@ from .serializers import UserCreateSerailizer, LoginSerializer, ForgetPasswordSe
 from adminpanel.models import User, TermsandCondition, UserNotification
 from authy.api import AuthyApiClient
 from twilio.rest import Client
-
+from .fcm_notification import send_to_one, send_another
 # Production key from authy app in twilio
 
 authy_api = AuthyApiClient('SpLBdknBezXVTlD6s2gxbXgH4NzqUDcv')
@@ -299,10 +299,29 @@ class ComposeMessage(CreateAPIView):
                         print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', obj)
                         try:
                             msg_obj.receiver.add(AppUser.objects.get(phone_number=obj))
+                            fcm_token = AppUser.objects.get(phone_number=obj).device_token
                             AppNotification.objects.create(
                                 user=AppUser.objects.get(phone_number=obj),
                                 text='You have a new message'
                             )
+                            try:
+                                data_message = {"data": {"title": "New Message",
+                                                         "body": "You have a new message",
+                                                         "type": "NewMessage"}}
+                                # data_message = json.dumps(data_message)
+                                title = "New Message"
+                                body = "You have a new message"
+                                message_type = "NewMessage"
+                                respo = send_another(
+                                    fcm_token, title, body, message_type)
+                                respo = send_to_one(fcm_token, data_message)
+                                print("FCM Response===============>0", respo)
+                                # title = "Profile Update"
+                                # body = "Your profile has been updated successfully"
+                                # respo = send_to_one(fcm_token, title, body)
+                                # print("FCM Response===============>0", respo)
+                            except:
+                                pass
                         except:
                             account_sid = 'AC1f8847272f073322f7b0c073e120ad7a'
                             auth_token = '1fe5e97d3658f655c5ff73949213a801'
@@ -336,6 +355,29 @@ class ComposeMessage(CreateAPIView):
                             u = AppUser.objects.get(phone_number=obj)
                             print(u)
                             msg_obj.receiver.add(u)
+                            fcm_token = AppUser.objects.get(phone_number=obj).device_token
+                            AppNotification.objects.create(
+                                user=AppUser.objects.get(phone_number=obj),
+                                text='You have a new message'
+                            )
+                            try:
+                                data_message = {"data": {"title": "New Message",
+                                                         "body": "You have a new message",
+                                                         "type": "NewMessage"}}
+                                # data_message = json.dumps(data_message)
+                                title = "New Message"
+                                body = "You have a new message"
+                                message_type = "NewMessage"
+                                respo = send_another(
+                                    fcm_token, title, body, message_type)
+                                respo = send_to_one(fcm_token, data_message)
+                                print("FCM Response===============>0", respo)
+                                # title = "Profile Update"
+                                # body = "Your profile has been updated successfully"
+                                # respo = send_to_one(fcm_token, title, body)
+                                # print("FCM Response===============>0", respo)
+                            except:
+                                pass
                             print([x for x in msg_obj.receiver.all()])
                         except:
                             account_sid = 'AC1f8847272f073322f7b0c073e120ad7a'
@@ -685,12 +727,14 @@ class VerifyOtp(APIView):
             phone_number = serializer.validated_data['phone_number']
             verification_code = serializer.validated_data['verification_code']
             password = serializer.validated_data['password']
+            device_token = serializer.validated_data['device_token']
             check = authy_api.phones.verification_check(phone_number, country_code, verification_code)
             if check.ok():
                 user = AppUser.objects.create(
                     username=username,
                     country_code=country_code,
                     phone_number=phone_number,
+                    device_token=device_token,
                 )
                 us_obj = User.objects.create(phone_number=phone_number, email=str(phone_number) + '@email.com')
                 us_obj.set_password(password)

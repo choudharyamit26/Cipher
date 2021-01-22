@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'crispy_forms',
     'ckeditor',
+    'fcm_django',
     'ckeditor_uploader',
     'django_celery_beat',
     'django_twilio'
@@ -220,4 +221,7 @@ CKEDITOR_CONFIGS = {
             'elementspath'
         ]),
     }
+}
+FCM_DJANGO_SETTINGS = {
+    "FCM_SERVER_KEY": "AAAAKjzwCrs:APA91bGgMvkyjvXV0E5gol8xUvltP6Xvc21oU2UpY-2EL-bX-JwPjaMUkYQ1sViZnCXTRcZkY4LQSDcUIdLafNkIcsUNorOR2OJ-x02JmobWH5e_pYaHc7tTsQ0xgN9eEwtYxnCyhaNz"
 }

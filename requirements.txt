@@ -19,6 +19,7 @@ django-phonenumber-field==5.0.0
 django-timezone-field==4.1.1
 django-twilio==0.13.1
 djangorestframework==3.12.2
+fcm-django==0.3.7
 idna==2.10
 importlib-metadata==3.3.0
 kombu==5.0.2
@@ -26,6 +27,7 @@ phonenumbers==8.12.15
 Pillow==8.0.1
 pkg-resources==0.0.0
 prompt-toolkit==3.0.8
+pyfcm==1.4.9
 PyJWT==2.0.0
 python-crontab==2.5.1
 python-dateutil==2.8.1

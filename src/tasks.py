@@ -43,3 +43,7 @@ def expire_messages():
                 print('Exception from cron job ---->>> ', e)
             # log deletion
     return "completed expiring messages at {}".format(timezone.now())
+
+
+def increase_coins():
+    pass
