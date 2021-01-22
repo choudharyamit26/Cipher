@@ -20,10 +20,9 @@ from .filters import TransactionFilter, UserFilter
 from .forms import LoginForm, UpdateTnCForm, UserNotificationForm, UpdateContactusForm, UpdatePrivacyPolicyForm, \
     UpdateCoinForm, CreateCoinPlanForm
 from .models import User, UserNotification, Payment, TermsandCondition, ContactUs, PrivacyPolicy, Settings, Coin
-from src.models import Message, AppUser,AppNotification
+from src.models import Message, AppUser, AppNotification
 
 from src.fcm_notification import send_another, send_to_one
-
 
 user = get_user_model()
 
@@ -285,10 +284,9 @@ class UsersList(LoginRequiredMixin, ListView):
     def get(self, request, *args, **kwargs):
         qs = self.request.GET.get('qs')
         if qs:
-            search = User.objects.filter(Q(first_name__icontains=qs) |
-                                         Q(last_name__icontains=qs) |
-                                         Q(id__icontains=qs) |
-                                         Q(phone_number__icontains=qs))
+            search = AppUser.objects.filter(Q(username__icontains=qs) |
+                                            Q(id__icontains=qs) |
+                                            Q(phone_number__icontains=qs))
 
             search_count = len(search)
             context = {
@@ -302,7 +300,7 @@ class UsersList(LoginRequiredMixin, ListView):
                 messages.info(self.request, 'No results found')
                 return render(self.request, 'user-management.html', context)
         else:
-            users = User.objects.all().exclude(is_superuser=True)
+            users = AppUser.objects.all()
             myfilter = UserFilter(self.request.GET, queryset=users)
             users = myfilter.qs
             print(users.count())
@@ -591,18 +589,21 @@ class ReadNotifications(LoginRequiredMixin, ListView):
 
 
 class UserDetail(LoginRequiredMixin, DetailView):
-    model = User
+    model = AppUser
     template_name = 'user-details.html'
     login_url = 'adminpanel:login'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user = User.objects.get(id=self.kwargs.get('pk'))
+        user = AppUser.objects.get(id=self.kwargs.get('pk'))
         try:
             # address = Address.objects.filter(user=user).get(default_address=True)
             # if address:
             #     context['address'] = address
-            context['promocode'] = UserPromoCode.objects.get(user=user)
+            # context['promocode'] = UserPromoCode.objects.get(user=user)
+            context['sent_messages'] = Message.objects.filter(sender=user).count()
+            context['received_messages'] = Message.objects.filter(receiver=user).count()
+            print('>>>>>>>>>>>>>>>', context['received_messages'])
         # else:
         except Exception as e:
             print(e)
@@ -616,7 +617,7 @@ class UserDelete(LoginRequiredMixin, DeleteView):
     def get(self, request, *args, **kwargs):
         request_kwargs = kwargs
         object_id = request_kwargs['pk']
-        UserObj = User.objects.get(id=object_id)
+        UserObj = AppUser.objects.get(id=object_id)
         UserObj.delete()
         messages.success(self.request, "User deleted successfully")
         return HttpResponseRedirect('/adminpanel/users-list/')
@@ -629,7 +630,7 @@ class BlockUnblockUser(View):
         print(self.request.GET)
         print(args)
         print(kwargs)
-        user_object = User.objects.get(id=kwargs['pk'])
+        user_object = AppUser.objects.get(id=kwargs['pk'])
         print(user_object)
         print(user_object.is_blocked)
         if user_object.is_blocked:

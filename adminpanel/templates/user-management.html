@@ -96,8 +96,8 @@
                         <tr>
                             <th>S. No</th>
                             <th>User ID</th>
-                            <th>First Name of the user</th>
-                            <th>Last Name of the user</th>
+                            <th>Name of the user</th>
+<!--                            <th>Last Name of the user</th>-->
                             <th>Profile Photo</th>
                             <th>Phone Number</th>
                             <th>Action</th>
@@ -108,8 +108,8 @@
                         <tr>
                             <td>{{forloop.counter}}</td>
                             <td>{{object.id}}</td>
-                            <td>{{object.first_name}}</td>
-                            <td>{{object.last_name}}</td>
+                            <td>{{object.username}}</td>
+<!--                            <td>{{object.last_name}}</td>-->
                             {% if object.profile_pic %}
                             <td>
                                 <figure><img src="{{object.profile_pic.url}}" alt="Profile pic"></figure>
@@ -184,7 +184,7 @@
                                 </center>
                             </td>
                             {% endif %}
-                            <td>{{object.first_name}}</td>
+                            <td>{{object.username}}</td>
 <!--                            <td>{{object.last_name}}</td>-->
                             <td>{{object.phone_number}}</td>
                             <td>
@@ -250,7 +250,7 @@
                                 </center>
                             </td>
                             {% endif %}
-                            <td>{{object.first_name}}</td>
+                            <td>{{object.username}}</td>
 <!--                            <td>{{object.last_name}}</td>-->
                             <td>{{object.phone_number}}</td>
                             <td>

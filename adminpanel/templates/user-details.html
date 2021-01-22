@@ -21,7 +21,7 @@
                     </li>
 
                     <li>
-                        <span>Name of the user</span>{{object.first_name}} {{object.last_name}}
+                        <span>Name of the user</span>{{object.username}}
                     </li>
 
                     <li>
@@ -36,10 +36,10 @@
                         <span>Created at</span>{{object.created_at|date:'M. d, Y'}}
                     </li>
                     <li>
-                        <span>Number of Sent Messages </span>0
+                        <span>Number of Sent Messages </span>{{sent_messages}}
                     </li>
                     <li>
-                        <span>Number of Received Messages</span>0
+                        <span>Number of Received Messages</span>{{received_messages}}
                     </li>
                     <li>
                         <span>Number of Contacts </span>0
