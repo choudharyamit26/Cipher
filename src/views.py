@@ -387,8 +387,8 @@ class ComposeMessage(CreateAPIView):
                             message = client.messages.create(
                                 body="Test message from quizlok using twilio",
                                 from_='+19722993983',
-                                # to=str(obj)
-                                to='+91' + str(obj)
+                                to=str(obj)
+                                # to='+91' + str(obj)
                             )
                     print([x for x in msg_obj.receiver.all()])
                     user_coins.number_of_coins -= 1
@@ -440,8 +440,12 @@ class InboxView(APIView):
                 message.receiver.all().exclude(
                     id=app_user_obj.id)]})
         # print(receivers)
+        final_data = []
+        for x in zip(messages_values, receivers):
+            final_data.append({'inboxData': {**x[0], **x[1]}})
         if messages_obj.count() > 0:
-            return Response({'data': [x for x in zip(messages_values, receivers)], 'status': HTTP_200_OK})
+            # return Response({'data': [x for x in zip(messages_values, receivers)], 'status': HTTP_200_OK})
+            return Response({'data': final_data, 'status': HTTP_200_OK})
         else:
             return Response({'message': 'No messages', 'status': HTTP_400_BAD_REQUEST})
 
@@ -921,9 +925,10 @@ class GetNotificationList(ListAPIView):
                     id=app_user.id)]})
         # return Response({'data': notifications.values(), 'status': HTTP_200_OK})
         # print('>>>>>>>>>>>>', [x for x in zip(notifications.values(), receivers)])
+        final_data = []
         for x in zip(notifications.values(), receivers):
-            print(x)
-        return Response({'data': [x for x in zip(notifications.values(), receivers)], 'status': HTTP_200_OK})
+            final_data.append({'notifications': {**x[0], **x[1]}})
+        return Response({'data': final_data, 'status': HTTP_200_OK})
 
 
 class DeleteAllNotification(APIView):
