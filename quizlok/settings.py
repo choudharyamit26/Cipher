@@ -226,9 +226,9 @@ FCM_DJANGO_SETTINGS = {
     "FCM_SERVER_KEY": "AAAAKjzwCrs:APA91bGgMvkyjvXV0E5gol8xUvltP6Xvc21oU2UpY-2EL-bX-JwPjaMUkYQ1sViZnCXTRcZkY4LQSDcUIdLafNkIcsUNorOR2OJ-x02JmobWH5e_pYaHc7tTsQ0xgN9eEwtYxnCyhaNz"
 }
 
-BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'UTC'
+# BROKER_URL = 'amqp://guest:guest@localhost:5672//'
+# CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+# CELERY_ACCEPT_CONTENT = ['application/json']
+# CELERY_TASK_SERIALIZER = 'json'
+# CELERY_RESULT_SERIALIZER = 'json'
+# CELERY_TIMEZONE = 'UTC'
