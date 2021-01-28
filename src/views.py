@@ -277,8 +277,8 @@ class ComposeMessage(CreateAPIView):
                 sender = AppUser.objects.get(phone_number=user.phone_number)
                 text = serializer.validated_data['text']
                 validity = serializer.validated_data['validity']
-                attachment = serializer.validated_data['attachment']
-                # attachment = ''
+                # attachment = serializer.validated_data['attachment']
+                attachment = ''
                 receiver = serializer.validated_data['receiver']
                 print(receiver)
                 mode = serializer.validated_data['mode']
@@ -290,7 +290,7 @@ class ComposeMessage(CreateAPIView):
                         sender=sender,
                         text=text,
                         validity=validity,
-                        attachment=attachment,
+                        # attachment=attachment,
                         mode=mode,
                         ques=ques,
                         ans=ans,
@@ -387,8 +387,8 @@ class ComposeMessage(CreateAPIView):
                             message = client.messages.create(
                                 body="Test message from quizlok using twilio",
                                 from_='+19722993983',
-                                to=str(obj)
-                                # to='+91' + str(obj)
+                                # to=str(obj)
+                                to='+91' + str(obj)
                             )
                     print([x for x in msg_obj.receiver.all()])
                     user_coins.number_of_coins -= 1
@@ -1124,6 +1124,16 @@ class CustomMessage(APIView):
         )
         print(message)
         return Response({'message': message.sid, 'status': HTTP_200_OK})
+
+
+class GetUserProfilePic(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        user = self.request.user
+        app_user = AppUser.objects.get(phone_number=user.phone_number)
+        return Response({'profile_pic': app_user.profile_pic.url, 'status': HTTP_200_OK})
 
 
 class MessageTime(APIView):

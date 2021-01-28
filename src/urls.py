@@ -2,7 +2,8 @@ from .views import CreateUser, LoginView, SendOtpTwilio, ForgetPasswordAPIView, 
     ReadingMessage, UpdateProfilePic, VerifyOtp, CustomMessage, VerifyForgetPasswordOtp, UsersList, AddToFavourites, \
     GetFavourites, GetNotificationList, ResetPasswordAPIView, DeleteUserAccount, TermsAndConditionView, \
     UpdateUserNameView, UpdateNotificationSettings, GetUserNotificationSetting, GetUserCoins, RemoveFavourite, \
-    DeleteAllNotification, UnreadNotificationCount, UpdateNotificationStatus, MessageTime,GetNumberOfHitInDay
+    DeleteAllNotification, UnreadNotificationCount, UpdateNotificationStatus, MessageTime, GetNumberOfHitInDay, \
+    GetUserProfilePic
 from django.urls import path
 
 app_name = 'src'
@@ -37,4 +38,5 @@ urlpatterns = [
     path('get-user-coins/', GetUserCoins.as_view(), name='get-user-coins'),
     path('get-message-time/', MessageTime.as_view(), name='get-message-time'),
     path('number-of-hits/', GetNumberOfHitInDay.as_view(), name='number-of-hits'),
+    path('get-profile-pic/', GetUserProfilePic.as_view(), name='get-profile-pic')
 ]
