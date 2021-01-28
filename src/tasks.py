@@ -22,7 +22,8 @@ def expire_messages():
 
         # If the expiration date is bigger than now delete it
         # if message.created_at.replace(tzinfo=None) < datetime.datetime.now() - datetime.timedelta(seconds=5):
-        if datetime.datetime.now() > message.created_at.replace(tzinfo=None) + datetime.timedelta(hours=message.validity):
+        if datetime.datetime.now() > message.created_at.replace(tzinfo=None) + datetime.timedelta(
+                hours=message.validity):
             print('inside periodic task function')
             print(message.id)
             message.is_missed = True
@@ -65,6 +66,7 @@ def expire_messages():
     return "completed expiring messages at {}".format(timezone.now())
 
 
+@shared_task
 def increase_coins():
     app_users = AppUser.objects.all()
     today = timezone.now().today()
@@ -84,3 +86,4 @@ def increase_coins():
                     print('inside else')
         else:
             pass
+    return "running increase coins function"

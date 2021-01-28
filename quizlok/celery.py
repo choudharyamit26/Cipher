@@ -15,12 +15,13 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 app.conf.beat_schedule = {
     'delete-message': {
         'task': 'src.tasks.expire_messages',
-        'schedule': 60,
-        # 'args':()
+        'schedule': 10,
+        # 'args': (1, 2)
     },
     'increase_coins': {
         'task': 'src.tasks.increase_coins',
-        'schedule': 24 * 60 * 60
+        'schedule': 24*60*60,
+        # 'args': (3, 4)
     }
 }
 # Load task modules from all registered Django app configs.
