@@ -22,8 +22,7 @@ def expire_messages():
 
         # If the expiration date is bigger than now delete it
         # if message.created_at.replace(tzinfo=None) < datetime.datetime.now() - datetime.timedelta(seconds=5):
-        if datetime.datetime.now() > message.created_at.replace(tzinfo=None) + datetime.timedelta(
-                hours=message.validity):
+        if datetime.datetime.now() > message.created_at.replace(tzinfo=None) + datetime.timedelta(hours=message.validity):
             print('inside periodic task function')
             print(message.id)
             message.is_missed = True
