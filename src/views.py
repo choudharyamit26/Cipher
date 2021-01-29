@@ -1,3 +1,5 @@
+import json
+
 from django.shortcuts import render
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -267,7 +269,10 @@ class ComposeMessage(CreateAPIView):
     def post(self, request, *args, **kwargs):
         user = self.request.user
         print(user)
-        print(self.request.data)
+        print('Request Data----->>', self.request.data['receiver'])
+        print('Request Data----->>', self.request.data)
+        print('Request Data----->>', type(self.request.data['receiver']))
+
         serializer = ComposeMessageSerializer(data=self.request.data)
         if serializer.is_valid():
             user_obj = AppUser.objects.get(phone_number=user.phone_number)
@@ -285,6 +290,9 @@ class ComposeMessage(CreateAPIView):
                 ques = serializer.validated_data['ques']
                 ans = serializer.validated_data['ans']
                 # ques_attachment = serializer.validated_data['ques_attachment']
+                for x in json.loads(serializer.validated_data['receiver']):
+                # for x in serializer.validated_data['receiver']:
+                    print('>>>>>>>>>>>>>>>>>>>>>>>>>>>-----', x)
                 if attachment:
                     msg_obj = Message.objects.create(
                         sender=sender,
@@ -296,7 +304,7 @@ class ComposeMessage(CreateAPIView):
                         ans=ans,
                         # ques_attachment=ques_attachment
                     )
-                    for obj in receiver:
+                    for obj in json.loads(serializer.validated_data['receiver']):
                         print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', obj)
                         try:
                             msg_obj.receiver.add(AppUser.objects.get(phone_number=obj))
@@ -348,7 +356,7 @@ class ComposeMessage(CreateAPIView):
                         ans=ans,
                         # ques_attachment=ques_attachment
                     )
-                    for obj in receiver:
+                    for obj in json.loads(serializer.validated_data['receiver']):
                         print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', obj)
                         try:
                             print('inside try block')

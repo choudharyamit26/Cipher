@@ -73,9 +73,10 @@ class VerifyForgetPasswordOtpSerializer(serializers.Serializer):
 
 
 class ComposeMessageSerializer(serializers.ModelSerializer):
-    receiver = serializers.ListField()
+    # receiver = serializers.ListField()
+    receiver = serializers.CharField()
     mode = serializers.CharField()
-    attachment = serializers.FileField(allow_null=True,required=False)
+    attachment = serializers.FileField(allow_null=True, required=False)
     # attachment = serializers.FileField(null=True,b)
     # attachment = serializers.FileField(allow_null=True)
     ques = serializers.CharField()
@@ -133,7 +134,7 @@ class VerifyOtpSeralizer(serializers.ModelSerializer):
 
     class Meta:
         model = AppUser
-        fields = ('username', 'country_code', 'phone_number', 'verification_code', 'password','device_token')
+        fields = ('username', 'country_code', 'phone_number', 'verification_code', 'password', 'device_token')
 
 
 class AddToFavouritesSerializer(serializers.ModelSerializer):
