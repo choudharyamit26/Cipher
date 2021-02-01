@@ -395,8 +395,8 @@ class ComposeMessage(CreateAPIView):
                             message = client.messages.create(
                                 body="Test message from quizlok using twilio",
                                 from_='+19722993983',
-                                # to=str(obj)
-                                to='+91' + str(obj)
+                                to=str(obj)
+                                # to='+91' + str(obj)
                             )
                     print([x for x in msg_obj.receiver.all()])
                     user_coins.number_of_coins -= 1
