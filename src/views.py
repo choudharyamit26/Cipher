@@ -842,10 +842,13 @@ class AddToFavourites(CreateAPIView):
                 favourite = serializer.validated_data['favourite']
                 for x in favourite:
                     favs = Favourites.objects.filter(user=app_user_obj)
-                    favs_list = [x.id for x in favs]
+                    favs_list = [x.favourite.id for x in favs]
+                    print(favs_list)
                     if x in favs_list:
+                        print('inside if case')
                         pass
                     else:
+                        print('inside else case')
                         Favourites.objects.create(
                             user=app_user_obj,
                             favourite=AppUser.objects.get(id=x)
@@ -867,13 +870,18 @@ class GetFavourites(ListAPIView):
     def get(self, request, *args, **kwargs):
         user = self.request.user
         app_user = AppUser.objects.get(phone_number=user.phone_number)
-        favourites = Favourites.objects.filter(user=app_user)
-        # print(favourites)
+        print(app_user)
+        favourites = Favourites.objects.filter(user=app_user).distinct()
+        print(favourites)
         data = []
         for fav in favourites:
-            data.append({'user_id': fav.favourite.id, 'username': fav.favourite.username,
-                         'country_code': fav.favourite.country_code,
-                         'phone_number': fav.favourite.phone_number, 'profile_pic': fav.favourite.profile_pic.url})
+            print(fav.favourite.id)
+            if fav.favourite.id in data:
+                pass
+            else:
+                data.append({'user_id': fav.favourite.id, 'username': fav.favourite.username,
+                             'country_code': fav.favourite.country_code,
+                             'phone_number': fav.favourite.phone_number, 'profile_pic': fav.favourite.profile_pic.url})
         return Response({'data': data, 'status': HTTP_200_OK})
 
 
