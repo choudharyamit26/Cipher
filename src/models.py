@@ -16,7 +16,7 @@ class AppUser(models.Model):
     country_code = models.CharField(default='+91', max_length=10)
     phone_number = models.CharField(default='', max_length=13)
     password = models.CharField(default='123456', max_length=100)
-    profile_pic = models.ImageField(default='goku.jpg', null=True, blank=True)
+    profile_pic = models.ImageField(default='default_profile.png', null=True, blank=True)
     device_token = models.CharField(default='', max_length=2000)
     created_at = models.DateTimeField(auto_now_add=True)
 
