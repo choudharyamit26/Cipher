@@ -131,20 +131,23 @@ class LoginView(ObtainAuthToken):
             #     return Response({'token': token[0].key, 'id': user.id, 'status': HTTP_200_OK})
             userObj = User.objects.get(phone_number=phone_number)
             user_id = AppUser.objects.get(phone_number=phone_number)
-            check_pass = userObj.check_password(password)
-            if check_pass:
-                token = Token.objects.get_or_create(user=userObj)
-                user_device_token = userObj.device_token
-                print('previous token ', user_device_token)
-                userObj.device_token = device_token
-                userObj.save(update_fields=['device_token'])
-                print('updated device token ', userObj.device_token)
-                token = token[0]
-                return Response({"token": token.key, "id": user_id.id, 'username': user_id.username,
-                                 'country_code': user_id.country_code,
-                                 'phone_number': user_id.phone_number, "status": HTTP_200_OK})
+            if user_id.country_code == country_code:
+                check_pass = userObj.check_password(password)
+                if check_pass:
+                    token = Token.objects.get_or_create(user=userObj)
+                    user_device_token = userObj.device_token
+                    print('previous token ', user_device_token)
+                    userObj.device_token = device_token
+                    userObj.save(update_fields=['device_token'])
+                    print('updated device token ', userObj.device_token)
+                    token = token[0]
+                    return Response({"token": token.key, "id": user_id.id, 'username': user_id.username,
+                                     'country_code': user_id.country_code,
+                                     'phone_number': user_id.phone_number, "status": HTTP_200_OK})
+                else:
+                    return Response({"message": "Wrong password", "status": HTTP_400_BAD_REQUEST})
             else:
-                return Response({"message": "Wrong password", "status": HTTP_400_BAD_REQUEST})
+                return Response({"message": "Wrong country code", "status": HTTP_400_BAD_REQUEST})
         except Exception as e:
             x = {"Error": str(e)}
             return Response({'message': x['Error'], "status": HTTP_400_BAD_REQUEST})
