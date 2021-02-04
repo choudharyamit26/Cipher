@@ -107,7 +107,7 @@ def user_coins(sender, instance, created, **kwargs):
         user = AppUser.objects.get(id=user_id)
         UserCoins.objects.create(
             user=user,
-            number_of_coins=5
+            number_of_coins=50
         )
         AppNotificationSetting.objects.create(
             user=user,
