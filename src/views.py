@@ -397,7 +397,7 @@ class ComposeMessage(CreateAPIView):
                             auth_token = '1fe5e97d3658f655c5ff73949213a801'
                             client = Client(account_sid, auth_token)
                             message = client.messages.create(
-                                body="Hi,{} has sent you a message! https://quizlok.page.link/?link=http://quizlok.com&apn=com.e.quizlok".format(
+                                body="You received a secret message from {}. Click here to read it. https://quizlok.page.link/?link=http://quizlok.com&apn=com.e.quizlok".format(
                                     sender.username),
                                 from_='+19722993983',
                                 to=str(obj)
