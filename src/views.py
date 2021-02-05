@@ -130,7 +130,7 @@ class LoginView(ObtainAuthToken):
             #     print(token[0].key)
             #     return Response({'token': token[0].key, 'id': user.id, 'status': HTTP_200_OK})
             userObj = User.objects.get(phone_number=phone_number)
-            user_id = AppUser.objects.get(phone_number=phone_number)
+            user_id = AppUser.objects.get(phone_number=int(str(country_code) + str(phone_number)))
             print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>', '+' + user_id.country_code)
             if ('+' + user_id.country_code) == country_code:
                 check_pass = userObj.check_password(password)
@@ -279,11 +279,11 @@ class ComposeMessage(CreateAPIView):
 
         serializer = ComposeMessageSerializer(data=self.request.data)
         if serializer.is_valid():
-            user_obj = AppUser.objects.get(phone_number=user.phone_number)
+            user_obj = AppUser.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
             user_coins = UserCoins.objects.get(user=user_obj)
             print('Coins-----------', user_coins)
             if user_coins.number_of_coins > 0:
-                sender = AppUser.objects.get(phone_number=user.phone_number)
+                sender = AppUser.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
                 text = serializer.validated_data['text']
                 validity = serializer.validated_data['validity']
                 # attachment = serializer.validated_data['attachment']
@@ -342,7 +342,7 @@ class ComposeMessage(CreateAPIView):
                             message = client.messages.create(
                                 body="Test message from quizlok using twilio",
                                 from_='+19722993983',
-                                to=str(obj)
+                                to='+' + str(obj)
                                 # to='+91' + str(obj)
                             )
                     print([x for x in msg_obj.receiver.all()])
@@ -374,9 +374,9 @@ class ComposeMessage(CreateAPIView):
                                 text='You have a new message'
                             )
                             try:
-                                data_message = {"data": {"title": "New Message",
-                                                         "body": "You have a new message",
-                                                         "type": "NewMessage"}}
+                                data_message = {"Notification": {"title": "New Message",
+                                                                 "body": "You have a new message",
+                                                                 "type": "NewMessage"}}
                                 # data_message = json.dumps(data_message)
                                 title = "New Message"
                                 body = "You have a new message"
@@ -400,7 +400,7 @@ class ComposeMessage(CreateAPIView):
                                 body="You received a secret message from {}. Click here to read it. https://quizlok.page.link/?link=http://quizlok.com&apn=com.e.quizlok".format(
                                     sender.username),
                                 from_='+19722993983',
-                                to=str(obj)
+                                to='+' + str(obj)
                                 # to='+91' + str(obj)
                             )
                     print([x for x in msg_obj.receiver.all()])
@@ -422,7 +422,7 @@ class InboxView(APIView):
 
     def get(self, request, *args, **kwargs):
         user = self.request.user
-        app_user_obj = AppUser.objects.get(phone_number=user.phone_number)
+        app_user_obj = AppUser.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
         messages_obj = Message.objects.filter(receiver=app_user_obj.id)
         receivers = []
         messages_values = []
@@ -478,7 +478,7 @@ class ReadingMessage(CreateAPIView):
         user = self.request.user
         serializer = ReadMessageSerializer(data=self.request.data)
         if serializer.is_valid():
-            app_user_obj = AppUser.objects.get(phone_number=user.phone_number)
+            app_user_obj = AppUser.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
             message_id = serializer.validated_data['message_id']
             print(message_id)
             ans = serializer.validated_data['ans']
@@ -606,7 +606,6 @@ class ReadingMessage(CreateAPIView):
 
                             return Response({'message': 'Incorrect answer. 2 attempts left out of 3 attempts',
                                              'status': HTTP_400_BAD_REQUEST})
-
                 else:
                     if ans == message_obj.ans:
                         message_obj.read_by.add(app_user_obj.id)
@@ -740,7 +739,7 @@ class UpdateProfilePic(UpdateAPIView):
         # Response({'message': 'Profile picture updated successfully', 'status': HTTP_200_OK})
         serializer = ProfilePicSerializer(data=self.request.data)
         if serializer.is_valid():
-            app_user_obj = AppUser.objects.get(phone_number=user.phone_number)
+            app_user_obj = AppUser.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
             profile_pic = serializer.validated_data['profile_pic']
             app_user_obj.profile_pic = profile_pic
             # app_user_obj.save()
@@ -789,7 +788,7 @@ class VerifyOtp(APIView):
                 user = AppUser.objects.create(
                     username=username,
                     country_code=country_code,
-                    phone_number=phone_number,
+                    phone_number=str(country_code) + str(phone_number),
                     device_token=device_token,
                 )
                 us_obj = User.objects.create(phone_number=phone_number, email=str(phone_number) + '@email.com')
@@ -842,7 +841,7 @@ class AddToFavourites(CreateAPIView):
         user = self.request.user
         serializer = AddToFavouritesSerializer(data=self.request.data)
         if serializer.is_valid():
-            app_user_obj = AppUser.objects.get(phone_number=user.phone_number)
+            app_user_obj = AppUser.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
             try:
                 favourite = serializer.validated_data['favourite']
                 for x in favourite:
@@ -874,7 +873,7 @@ class GetFavourites(ListAPIView):
 
     def get(self, request, *args, **kwargs):
         user = self.request.user
-        app_user = AppUser.objects.get(phone_number=user.phone_number)
+        app_user = AppUser.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
         print(app_user)
         favourites = Favourites.objects.filter(user=app_user).distinct()
         print(favourites)
@@ -898,7 +897,7 @@ class RemoveFavourite(CreateAPIView):
 
     def post(self, request, *args, **kwargs):
         user = self.request.user
-        app_user = AppUser.objects.get(phone_number=user.phone_number)
+        app_user = AppUser.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
         favourites = Favourites.objects.filter(user=app_user)
         # print('Favourites-------------------', favourites)
         serializer = RemoveFavouritesSerializer(data=self.request.data)
@@ -933,7 +932,7 @@ class GetNotificationList(ListAPIView):
 
     def get(self, request, *args, **kwargs):
         user = self.request.user
-        app_user = AppUser.objects.get(phone_number=user.phone_number)
+        app_user = AppUser.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
         notifications = AppNotification.objects.filter(user=app_user)
         receivers = []
         for message in notifications:
@@ -959,7 +958,7 @@ class DeleteAllNotification(APIView):
 
     def post(self, request, *args, **kwargs):
         user = self.request.user
-        app_user = AppUser.objects.get(phone_number=user.phone_number)
+        app_user = AppUser.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
         notifications = AppNotification.objects.filter(user=app_user)
         if notifications.count() > 0:
             for notification in notifications:
@@ -976,7 +975,7 @@ class UpdateNotificationStatus(APIView):
 
     def get(self, request, *args, **kwargs):
         user = self.request.user
-        app_user = AppUser.objects.get(phone_number=user.phone_number)
+        app_user = AppUser.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
         notifications = AppNotification.objects.filter(user=app_user).filter(read=False)
         if notifications.count() > 0:
             for notification in notifications:
@@ -995,7 +994,7 @@ class UnreadNotificationCount(APIView):
 
     def get(self, request, *args, **kwargs):
         user = self.request.user
-        app_user = AppUser.objects.get(phone_number=user.phone_number)
+        app_user = AppUser.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
         notifications_count = AppNotification.objects.filter(user=app_user).filter(read=False).count()
         print(notifications_count)
         return Response({'count': notifications_count, 'status': HTTP_200_OK})
@@ -1017,9 +1016,9 @@ class DeleteUserAccount(APIView):
     def post(self, request, *args, **kwargs):
         try:
             user = self.request.user
-            user_obj = User.objects.get(phone_number=user.phone_number)
+            user_obj = User.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
             user_obj.delete()
-            app_user = AppUser.objects.get(phone_number=user.phone_number)
+            app_user = AppUser.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
             app_user.delete()
             return Response({'message': 'Account deleted successfully', 'status': HTTP_200_OK})
         except Exception as e:
@@ -1047,7 +1046,7 @@ class UpdateUserNameView(APIView):
         serializer = UpdateUserNameSerializer(data=self.request.data)
         if serializer.is_valid():
             username = serializer.validated_data['username']
-            app_user = AppUser.objects.get(phone_number=user.phone_number)
+            app_user = AppUser.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
             app_user.username = username
             app_user.save()
             return Response({'message': 'Username updates successfully', 'status': HTTP_200_OK})
@@ -1066,7 +1065,7 @@ class UpdateNotificationSettings(APIView):
         serializer = UpdateNotificationSettingsSerializer(data=self.request.data)
         if serializer.is_valid():
             on = serializer.validated_data['on']
-            app_user = AppUser.objects.get(phone_number=user.phone_number)
+            app_user = AppUser.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
             settings = AppNotificationSetting.objects.get(user=app_user)
             # on = str(on).capitalize()
             # settings.on = on.capitalize()
@@ -1083,7 +1082,8 @@ class GetUserNotificationSetting(APIView):
 
     def get(self, request, *args, **kwargs):
         user = self.request.user
-        app_user = AppUser.objects.get(phone_number=user.phone_number)
+        print('---------------------------', int(str(user.country_code) + str(user.phone_number)))
+        app_user = AppUser.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
         settings = AppNotificationSetting.objects.get(user=app_user)
         print(settings.on)
         return Response(
@@ -1096,7 +1096,7 @@ class GetUserCoins(APIView):
 
     def get(self, request, *args, **kwargs):
         user = self.request.user
-        app_user = AppUser.objects.get(phone_number=user.phone_number)
+        app_user = AppUser.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
         coins = UserCoins.objects.get(user=app_user)
         return Response({'message': 'Fetched users coins successfully', 'coins': coins.number_of_coins,
                          'status': HTTP_400_BAD_REQUEST})
@@ -1108,7 +1108,7 @@ class GetNumberOfHitInDay(APIView):
 
     def post(self, request, *args, **kwargs):
         user = self.request.user
-        app_user = AppUser.objects.get(phone_number=user.phone_number)
+        app_user = AppUser.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
         try:
             today = timezone.now().today()
             hits = HitInADay.objects.filter(user=app_user)
@@ -1153,7 +1153,7 @@ class GetUserProfilePic(APIView):
 
     def get(self, request, *args, **kwargs):
         user = self.request.user
-        app_user = AppUser.objects.get(phone_number=user.phone_number)
+        app_user = AppUser.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
         return Response({'profile_pic': app_user.profile_pic.url, 'status': HTTP_200_OK})
 
 
