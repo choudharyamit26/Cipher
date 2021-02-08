@@ -340,9 +340,9 @@ class ComposeMessage(CreateAPIView):
                 ques = serializer.validated_data['ques']
                 ans = serializer.validated_data['ans']
                 # ques_attachment = serializer.validated_data['ques_attachment']
-                for x in serializer.validated_data['receiver']:
-                    print('from android loop')
-                    print(x)
+                # for x in serializer.validated_data['receiver']:
+                #     print('from android loop')
+                #     print(x)
                 # for x in json.loads(serializer.validated_data['receiver']):
                 for x in serializer.validated_data['receiver']:
                     # for x in serializer.validated_data['receiver']:
