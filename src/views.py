@@ -363,23 +363,27 @@ class ComposeMessage(CreateAPIView):
                                 user=AppUser.objects.get(phone_number=obj),
                                 text='You have a new message'
                             )
-                            try:
-                                data_message = {"data": {"title": "New Message",
-                                                         "body": "You have a new message",
-                                                         "type": "NewMessage"}}
-                                # data_message = json.dumps(data_message)
-                                title = "New Message"
-                                body = "You have a new message"
-                                message_type = "NewMessage"
-                                respo = send_another(
-                                    fcm_token, title, body, message_type)
-                                respo = send_to_one(fcm_token, data_message)
-                                print("FCM Response===============>0", respo)
-                                # title = "Profile Update"
-                                # body = "Your profile has been updated successfully"
-                                # respo = send_to_one(fcm_token, title, body)
-                                # print("FCM Response===============>0", respo)
-                            except:
+                            print(AppNotificationSetting.objects.get(user=AppUser.objects.get(phone_number=obj)).on)
+                            if AppNotificationSetting.objects.get(user=AppUser.objects.get(phone_number=obj)).on:
+                                try:
+                                    data_message = {"data": {"title": "New Message",
+                                                             "body": "You have a new message",
+                                                             "type": "NewMessage"}}
+                                    # data_message = json.dumps(data_message)
+                                    title = "New Message"
+                                    body = "You have a new message"
+                                    message_type = "NewMessage"
+                                    respo = send_another(
+                                        fcm_token, title, body, message_type)
+                                    respo = send_to_one(fcm_token, data_message)
+                                    print("FCM Response===============>0", respo)
+                                    # title = "Profile Update"
+                                    # body = "Your profile has been updated successfully"
+                                    # respo = send_to_one(fcm_token, title, body)
+                                    # print("FCM Response===============>0", respo)
+                                except:
+                                    pass
+                            else:
                                 pass
                         except:
                             account_sid = 'AC1f8847272f073322f7b0c073e120ad7a'
@@ -407,7 +411,7 @@ class ComposeMessage(CreateAPIView):
                         # ques_attachment=ques_attachment
                     )
                     for obj in json.loads(str(serializer.validated_data['receiver'])):
-                    # for obj in serializer.validated_data['receiver']:
+                        # for obj in serializer.validated_data['receiver']:
                         print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', obj)
                         try:
                             print('inside try block')
@@ -420,23 +424,26 @@ class ComposeMessage(CreateAPIView):
                                 user=AppUser.objects.get(phone_number=obj),
                                 text='You have a new message'
                             )
-                            try:
-                                data_message = {"Notification": {"title": "New Message",
-                                                                 "body": "You have a new message",
-                                                                 "type": "NewMessage"}}
-                                # data_message = json.dumps(data_message)
-                                title = "New Message"
-                                body = "You have a new message"
-                                message_type = "NewMessage"
-                                respo = send_another(
-                                    fcm_token, title, body, message_type)
-                                respo = send_to_one(fcm_token, data_message)
-                                print("FCM Response===============>0", respo)
-                                # title = "Profile Update"
-                                # body = "Your profile has been updated successfully"
-                                # respo = send_to_one(fcm_token, title, body)
-                                # print("FCM Response===============>0", respo)
-                            except:
+                            if AppNotificationSetting.objects.get(user=AppUser.objects.get(phone_number=obj)).on:
+                                try:
+                                    data_message = {"Notification": {"title": "New Message",
+                                                                     "body": "You have a new message",
+                                                                     "type": "NewMessage"}}
+                                    # data_message = json.dumps(data_message)
+                                    title = "New Message"
+                                    body = "You have a new message"
+                                    message_type = "NewMessage"
+                                    respo = send_another(
+                                        fcm_token, title, body, message_type)
+                                    respo = send_to_one(fcm_token, data_message)
+                                    print("FCM Response===============>0", respo)
+                                    # title = "Profile Update"
+                                    # body = "Your profile has been updated successfully"
+                                    # respo = send_to_one(fcm_token, title, body)
+                                    # print("FCM Response===============>0", respo)
+                                except:
+                                    pass
+                            else:
                                 pass
                             print([x for x in msg_obj.receiver.all()])
                         except:
@@ -459,157 +466,6 @@ class ComposeMessage(CreateAPIView):
                     {"message": "You cannot send message.Insufficient coins", "status": HTTP_400_BAD_REQUEST})
         else:
             return Response({'message': serializer.errors, 'status': HTTP_400_BAD_REQUEST})
-
-    # def post(self, request, *args, **kwargs):
-    #     user = self.request.user
-    #     print(user)
-    #     print('Request Data----->>', self.request.data['receiver'])
-    #     print('Request Data----->>', self.request.data)
-    #     print('Request Data----->>', type(self.request.data['receiver']))
-    #
-    #     serializer = ComposeMessageSerializer(data=self.request.data)
-    #     if serializer.is_valid():
-    #         user_obj = AppUser.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
-    #         user_coins = UserCoins.objects.get(user=user_obj)
-    #         print('Coins-----------', user_coins)
-    #         if user_coins.number_of_coins > 0:
-    #             sender = AppUser.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
-    #             text = serializer.validated_data['text']
-    #             validity = serializer.validated_data['validity']
-    #             # attachment = serializer.validated_data['attachment']
-    #             attachment = ''
-    #             receiver = serializer.validated_data['receiver']
-    #             print(receiver)
-    #             mode = serializer.validated_data['mode']
-    #             ques = serializer.validated_data['ques']
-    #             ans = serializer.validated_data['ans']
-    #             # ques_attachment = serializer.validated_data['ques_attachment']
-    #             # for x in serializer.validated_data['receiver']:
-    #             #     print('from android loop')
-    #             #     print(x)
-    #             # for x in json.loads(serializer.validated_data['receiver']):
-    #             for x in serializer.validated_data['receiver']:
-    #                 # for x in serializer.validated_data['receiver']:
-    #                 print('>>>>>>>>>>>>>>>>>>>>>>>>>>>-----', x)
-    #             if attachment:
-    #                 msg_obj = Message.objects.create(
-    #                     sender=sender,
-    #                     text=text,
-    #                     validity=validity,
-    #                     # attachment=attachment,
-    #                     mode=mode,
-    #                     ques=ques,
-    #                     ans=ans,
-    #                     # ques_attachment=ques_attachment
-    #                 )
-    #                 for obj in json.loads(serializer.validated_data['receiver']):
-    #                 # for obj in serializer.validated_data['receiver']:
-    #                     print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', obj)
-    #                     try:
-    #                         msg_obj.receiver.add(AppUser.objects.get(phone_number=obj))
-    #                         fcm_token = AppUser.objects.get(phone_number=obj).device_token
-    #                         AppNotification.objects.create(
-    #                             user=AppUser.objects.get(phone_number=obj),
-    #                             text='You have a new message'
-    #                         )
-    #                         try:
-    #                             data_message = {"data": {"title": "New Message",
-    #                                                      "body": "You have a new message",
-    #                                                      "type": "NewMessage"}}
-    #                             # data_message = json.dumps(data_message)
-    #                             title = "New Message"
-    #                             body = "You have a new message"
-    #                             message_type = "NewMessage"
-    #                             respo = send_another(
-    #                                 fcm_token, title, body, message_type)
-    #                             respo = send_to_one(fcm_token, data_message)
-    #                             print("FCM Response===============>0", respo)
-    #                             # title = "Profile Update"
-    #                             # body = "Your profile has been updated successfully"
-    #                             # respo = send_to_one(fcm_token, title, body)
-    #                             # print("FCM Response===============>0", respo)
-    #                         except:
-    #                             pass
-    #                     except:
-    #                         account_sid = 'AC1f8847272f073322f7b0c073e120ad7a'
-    #                         auth_token = '1fe5e97d3658f655c5ff73949213a801'
-    #                         client = Client(account_sid, auth_token)
-    #                         message = client.messages.create(
-    #                             body="Test message from quizlok using twilio",
-    #                             from_='+19722993983',
-    #                             to='+' + str(obj)
-    #                             # to='+91' + str(obj)
-    #                         )
-    #                 print([x for x in msg_obj.receiver.all()])
-    #                 user_coins.number_of_coins -= 1
-    #                 user_coins.save()
-    #                 return Response({"message": "Message sent successfully", "status": HTTP_200_OK})
-    #             else:
-    #                 msg_obj = Message.objects.create(
-    #                     sender=sender,
-    #                     text=text,
-    #                     validity=validity,
-    #                     # attachment=attachment,
-    #                     mode=mode,
-    #                     ques=ques,
-    #                     ans=ans,
-    #                     # ques_attachment=ques_attachment
-    #                 )
-    #                 # for obj in json.loads(serializer.validated_data['receiver']):
-    #                 for obj in serializer.validated_data['receiver']:
-    #                     print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', obj)
-    #                     try:
-    #                         print('inside try block')
-    #                         # msg_obj.receiver.add(AppUser.objects.get(phone_number=obj))
-    #                         u = AppUser.objects.get(phone_number=obj)
-    #                         print(u)
-    #                         msg_obj.receiver.add(u)
-    #                         fcm_token = AppUser.objects.get(phone_number=obj).device_token
-    #                         AppNotification.objects.create(
-    #                             user=AppUser.objects.get(phone_number=obj),
-    #                             text='You have a new message'
-    #                         )
-    #                         try:
-    #                             data_message = {"Notification": {"title": "New Message",
-    #                                                              "body": "You have a new message",
-    #                                                              "type": "NewMessage"}}
-    #                             # data_message = json.dumps(data_message)
-    #                             title = "New Message"
-    #                             body = "You have a new message"
-    #                             message_type = "NewMessage"
-    #                             respo = send_another(
-    #                                 fcm_token, title, body, message_type)
-    #                             respo = send_to_one(fcm_token, data_message)
-    #                             print("FCM Response===============>0", respo)
-    #                             # title = "Profile Update"
-    #                             # body = "Your profile has been updated successfully"
-    #                             # respo = send_to_one(fcm_token, title, body)
-    #                             # print("FCM Response===============>0", respo)
-    #                         except:
-    #                             pass
-    #                         print([x for x in msg_obj.receiver.all()])
-    #                     except:
-    #                         account_sid = 'AC1f8847272f073322f7b0c073e120ad7a'
-    #                         auth_token = '1fe5e97d3658f655c5ff73949213a801'
-    #                         client = Client(account_sid, auth_token)
-    #                         message = client.messages.create(
-    #                             body="You received a secret message from {}. Click here to read it. https://quizlok.page.link/?link=http://quizlok.com&apn=com.e.quizlok".format(
-    #                                 sender.username),
-    #                             from_='+19722993983',
-    #                             to='+' + str(obj)
-    #                             # to='+91' + str(obj)
-    #                         )
-    #                 print([x for x in msg_obj.receiver.all()])
-    #                 user_coins.number_of_coins -= 1
-    #                 user_coins.save()
-    #                 return Response({"message": "Message sent successfully", "status": HTTP_200_OK})
-    #         else:
-    #             return Response(
-    #                 {"message": "You cannot send message.Insufficient coins", "status": HTTP_400_BAD_REQUEST})
-    #     else:
-    #         print('inside serializer not valid------>>>')
-    #         print('inside serializer not valid------>>>', serializer.errors)
-    #         return Response({'message': serializer.errors, 'status': HTTP_400_BAD_REQUEST})
 
 
 class InboxView(APIView):
