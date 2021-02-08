@@ -1,4 +1,5 @@
 import json
+from random import randint
 
 from django.shortcuts import render
 from django.utils import timezone
@@ -15,7 +16,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from .models import AppUser, Message, IncorrectAttempt, Favourites, AppNotification, UserCoins, AppNotificationSetting, \
-    HitInADay
+    HitInADay, UserOtp
 from .serializers import UserCreateSerailizer, LoginSerializer, ForgetPasswordSerializer, ComposeMessageSerializer, \
     SecretKeySerializer, ReadMessageSerializer, ProfilePicSerializer, OtpSeralizer, VerifyOtpSeralizer, \
     VerifyForgetPasswordOtpSerializer, AddToFavouritesSerializer, ResetPasswordSerializer, UpdateUserNameSerializer, \
@@ -50,20 +51,34 @@ class CreateUser(APIView):
             password = serializer.validated_data['password']
             confirm_password = serializer.validated_data['confirm_password']
             try:
+                print('inside try block------')
                 app_user = AppUser.objects.get(phone_number=phone_number)
                 print(app_user)
                 if app_user:
                     return Response(
                         {'message': "User already registered with this number", "status": HTTP_400_BAD_REQUEST})
                 elif password == confirm_password:
-                    request = authy_api.phones.verification_start(phone_number, country_code, via='sms', locale='en')
-                    if request.content['success']:
-                        return Response({'success': True, 'message': request.content['message'], 'status': HTTP_200_OK})
-                    else:
-                        return Response({
-                            'success': False,
-                            'message': request.content['message'],
-                            'status': HTTP_400_BAD_REQUEST})
+                    otp = randint(1000, 9999)
+                    account_sid = 'AC1f8847272f073322f7b0c073e120ad7a'
+                    auth_token = '1fe5e97d3658f655c5ff73949213a801'
+                    client = Client(account_sid, auth_token)
+                    client.messages.create(
+                        body=str(otp),
+                        from_='+19722993983',
+                        to='+' + str(str(int(country_code)) + phone_number)
+                    )
+                    UserOtp.objects.create(
+                        phone_number=str(phone_number),
+                        otp=str(otp)
+                    )
+                    # request = authy_api.phones.verification_start(phone_number, country_code, via='sms', locale='en')
+                    # if request.content['success']:
+                    #     return Response({'success': True, 'message': request.content['message'], 'status': HTTP_200_OK})
+                    # else:
+                    #     return Response({
+                    #         'success': False,
+                    #         'message': request.content['message'],
+                    #         'status': HTTP_400_BAD_REQUEST})
                 else:
                     return Response(
                         {'message': "Password and Confirm Password do not match", "status": HTTP_400_BAD_REQUEST})
@@ -78,14 +93,30 @@ class CreateUser(APIView):
             except Exception as e:
                 print(e)
                 if password == confirm_password:
-                    request = authy_api.phones.verification_start(phone_number, country_code, via='sms', locale='en')
-                    if request.content['success']:
-                        return Response({'success': True, 'message': request.content['message'], 'status': HTTP_200_OK})
-                    else:
-                        return Response({
-                            'success': False,
-                            'message': request.content['message'],
-                            'status': HTTP_400_BAD_REQUEST})
+                    otp = randint(1000, 9999)
+                    account_sid = 'AC1f8847272f073322f7b0c073e120ad7a'
+                    auth_token = '1fe5e97d3658f655c5ff73949213a801'
+                    client = Client(account_sid, auth_token)
+                    client.messages.create(
+                        body='Your quizlok verification code is: ' + str(otp),
+                        from_='+19722993983',
+                        to='+' + str(str(int(country_code)) + str(phone_number))
+                    )
+                    UserOtp.objects.create(
+                        phone_number=str(phone_number),
+                        otp=str(otp)
+                    )
+                    return Response(
+                        {'success': True, 'message': f'Text message sent to +{country_code} {phone_number}.',
+                         'status': HTTP_200_OK})
+                # request = authy_api.phones.verification_start(phone_number, country_code, via='sms', locale='en')
+                # if request.content['success']:
+                #     return Response({'success': True, 'message': request.content['message'], 'status': HTTP_200_OK})
+                # else:
+                #     return Response({
+                #         'success': False,
+                #         'message': request.content['message'],
+                #         'status': HTTP_400_BAD_REQUEST})
                 else:
                     return Response(
                         {'message': "Password and Confirm Password do not match", "status": HTTP_400_BAD_REQUEST})
@@ -173,25 +204,25 @@ class ForgetPasswordAPIView(CreateAPIView):
             # confirm_password = data['confirm_password']
             try:
                 user = User.objects.get(phone_number=phone_number)
-                request = authy_api.phones.verification_start(phone_number, country_code, via='sms', locale='en')
-                if request.content['success']:
-                    return Response({'success': True, 'message': request.content['message'], 'status': HTTP_200_OK})
-                else:
-                    return Response({
-                        'success': False,
-                        'message': request.content['message'],
-                        'status': HTTP_400_BAD_REQUEST})
-
-                # if password == confirm_password and country_code:
-                #     user.set_password(password)
-                #     user.save()
-                #     return Response({"message": "Your Password has been updated Successfully.", "status": HTTP_200_OK})
-                # else:
-                #     return Response(
-                #         {"message": "Password and Confirm password did not match", "status": HTTP_400_BAD_REQUEST})
+                otp = randint(1000, 9999)
+                account_sid = 'AC1f8847272f073322f7b0c073e120ad7a'
+                auth_token = '1fe5e97d3658f655c5ff73949213a801'
+                client = Client(account_sid, auth_token)
+                client.messages.create(
+                    body='Your quizlok verification code is: ' + str(otp),
+                    from_='+19722993983',
+                    to='+' + str(str(int(country_code)) + str(phone_number))
+                )
+                UserOtp.objects.create(
+                    phone_number=str(phone_number),
+                    otp=str(otp)
+                )
+                return Response({'success': True, 'message': f'Text message sent to +{country_code} {phone_number}.',
+                                 'status': HTTP_200_OK})
             except Exception as e:
                 print(e)
-                return Response({"message": "User does not exists", "status": HTTP_400_BAD_REQUEST})
+                x = {'error': str(e)}
+                return Response({"message": x['error'], "status": HTTP_400_BAD_REQUEST})
         else:
             return Response({"message": serializer.errors, "status": HTTP_400_BAD_REQUEST})
 
@@ -209,14 +240,29 @@ class VerifyForgetPasswordOtp(CreateAPIView):
     def post(self, request, *args, **kwargs):
         serializer = VerifyForgetPasswordOtpSerializer(data=self.request.data)
         if serializer.is_valid():
-            otp = serializer.validated_data['otp']
+            input_otp = serializer.validated_data['otp']
             country_code = serializer.validated_data['country_code']
             phone_number = serializer.validated_data['phone_number']
-            check = authy_api.phones.verification_check(phone_number, country_code, otp)
-            if check.ok():
-                return Response({'success': True, 'msg': check.content['message'], 'status': HTTP_200_OK})
-            else:
-                return Response({'success': False, 'msg': check.content['message'], 'status': HTTP_400_BAD_REQUEST})
+            try:
+                otp = UserOtp.objects.filter(phone_number=phone_number).last()
+                print(otp.otp)
+                print(otp)
+                if int(otp.otp) == int(input_otp):
+                    for otp in UserOtp.objects.filter(phone_number=phone_number):
+                        otp.delete()
+                    return Response({'success': True, 'msg': 'Verification code is correct.', 'status': HTTP_200_OK})
+                else:
+                    return Response(
+                        {'success': False, 'msg': 'Verification code is incorrect.', 'status': HTTP_400_BAD_REQUEST})
+            except Exception as e:
+                print(e)
+                return Response({'message': 'No pending verification found.', 'status': HTTP_400_BAD_REQUEST})
+
+        # check = authy_api.phones.verification_check(phone_number, country_code, otp)
+        # if check.ok():
+        #     return Response({'success': True, 'msg': check.content['message'], 'status': HTTP_200_OK})
+        # else:
+        #     return Response({'success': False, 'msg': check.content['message'], 'status': HTTP_400_BAD_REQUEST})
         else:
             return Response({'message': serializer.errors, 'status': HTTP_400_BAD_REQUEST})
 
@@ -294,7 +340,11 @@ class ComposeMessage(CreateAPIView):
                 ques = serializer.validated_data['ques']
                 ans = serializer.validated_data['ans']
                 # ques_attachment = serializer.validated_data['ques_attachment']
-                for x in json.loads(serializer.validated_data['receiver']):
+                for x in serializer.validated_data['receiver']:
+                    print('from android loop')
+                    print(x)
+                # for x in json.loads(serializer.validated_data['receiver']):
+                for x in serializer.validated_data['receiver']:
                     # for x in serializer.validated_data['receiver']:
                     print('>>>>>>>>>>>>>>>>>>>>>>>>>>>-----', x)
                 if attachment:
@@ -309,6 +359,7 @@ class ComposeMessage(CreateAPIView):
                         # ques_attachment=ques_attachment
                     )
                     for obj in json.loads(serializer.validated_data['receiver']):
+                    # for obj in serializer.validated_data['receiver']:
                         print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', obj)
                         try:
                             msg_obj.receiver.add(AppUser.objects.get(phone_number=obj))
@@ -361,6 +412,7 @@ class ComposeMessage(CreateAPIView):
                         # ques_attachment=ques_attachment
                     )
                     for obj in json.loads(serializer.validated_data['receiver']):
+                    # for obj in serializer.validated_data['receiver']:
                         print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', obj)
                         try:
                             print('inside try block')
@@ -411,6 +463,8 @@ class ComposeMessage(CreateAPIView):
                 return Response(
                     {"message": "You cannot send message.Insufficient coins", "status": HTTP_400_BAD_REQUEST})
         else:
+            print('inside serializer not valid------>>>')
+            print('inside serializer not valid------>>>', serializer.errors)
             return Response({'message': serializer.errors, 'status': HTTP_400_BAD_REQUEST})
 
 
@@ -783,34 +837,46 @@ class VerifyOtp(APIView):
             verification_code = serializer.validated_data['verification_code']
             password = serializer.validated_data['password']
             device_token = serializer.validated_data['device_token']
-            check = authy_api.phones.verification_check(phone_number, country_code, verification_code)
-            if check.ok():
-                user = AppUser.objects.create(
-                    username=username,
-                    country_code=country_code,
-                    phone_number=str(country_code) + str(phone_number),
-                    device_token=device_token,
-                )
-                us_obj = User.objects.create(phone_number=phone_number, email=str(phone_number) + '@email.com')
-                us_obj.set_password(password)
-                us_obj.save()
-                # AppNotification.objects.create(
-                #     user=user,
-                #     on=True
-                # )
-                token = Token.objects.get_or_create(user=us_obj)
-                x = UserNotification.objects.create(
-                    to=User.objects.get(email='quizlok52@gmail.com'),
-                    title='User Creation',
-                    body='New user has registered on the platform'
-                )
-                print(x)
-                return Response(
-                    {'token': token[0].key, 'id': user.id, 'username': user.username, 'country_code': user.country_code,
-                     'phone_number': user.phone_number, 'status': HTTP_200_OK})
-                # return Response({'success': True, 'msg': check.content['message']}, status=HTTP_200_OK)
-            else:
-                return Response({'success': False, 'msg': check.content['message']}, status=HTTP_400_BAD_REQUEST)
+            # check = authy_api.phones.verification_check(phone_number, country_code, verification_code)
+            # if check.ok():
+            try:
+                otp = UserOtp.objects.filter(phone_number=phone_number).last()
+                print(otp.otp)
+                print(verification_code)
+                if int(otp.otp) == int(verification_code):
+                    user = AppUser.objects.create(
+                        username=username,
+                        country_code=country_code,
+                        phone_number=str(country_code) + str(phone_number),
+                        device_token=device_token,
+                    )
+                    us_obj = User.objects.create(phone_number=phone_number, email=str(phone_number) + '@email.com')
+                    us_obj.set_password(password)
+                    us_obj.save()
+                    # AppNotification.objects.create(
+                    #     user=user,
+                    #     on=True
+                    # )
+                    token = Token.objects.get_or_create(user=us_obj)
+                    x = UserNotification.objects.create(
+                        to=User.objects.get(email='quizlok52@gmail.com'),
+                        title='User Creation',
+                        body='New user has registered on the platform'
+                    )
+                    print(x)
+                    for otp in UserOtp.objects.filter(phone_number=phone_number):
+                        otp.delete()
+                    return Response(
+                        {'token': token[0].key, 'id': user.id, 'username': user.username,
+                         'country_code': user.country_code,
+                         'phone_number': user.phone_number, 'status': HTTP_200_OK})
+                else:
+                    return Response({'message': 'Incorrect Otp', 'status': HTTP_400_BAD_REQUEST})
+                    # return Response({'success': True, 'msg': check.content['message']}, status=HTTP_200_OK)
+            except Exception as e:
+                print(e)
+                x = {'error': str(e)}
+                return Response({'success': False, 'msg': 'No pending verification found'}, status=HTTP_400_BAD_REQUEST)
         else:
             return Response({'message': serializer.errors, 'status': HTTP_400_BAD_REQUEST})
 

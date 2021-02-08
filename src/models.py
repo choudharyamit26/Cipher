@@ -100,6 +100,11 @@ class HitInADay(models.Model):
     number = models.IntegerField()
 
 
+class UserOtp(models.Model):
+    phone_number = models.CharField(max_length=100)
+    otp = models.CharField(max_length=5)
+
+
 @receiver(post_save, sender=AppUser)
 def user_coins(sender, instance, created, **kwargs):
     if created:

@@ -45,4 +45,5 @@ admin.site.register(AppNotificationSetting)
 admin.site.register(Favourites)
 admin.site.register(UserNotification)
 admin.site.register(HitInADay)
+admin.site.register(UserOtp)
 
