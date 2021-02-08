@@ -1082,7 +1082,10 @@ class DeleteUserAccount(APIView):
     def post(self, request, *args, **kwargs):
         try:
             user = self.request.user
-            user_obj = User.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
+            print(user.country_code)
+            print(user.phone_number)
+            request.user.auth_token.delete()
+            user_obj = User.objects.get(phone_number=user.phone_number)
             user_obj.delete()
             app_user = AppUser.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
             app_user.delete()
