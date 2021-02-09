@@ -619,6 +619,8 @@ class UserDelete(LoginRequiredMixin, DeleteView):
         object_id = request_kwargs['pk']
         UserObj = AppUser.objects.get(id=object_id)
         UserObj.delete()
+        user = User.objects.get(email=str(UserObj.email + '@email.com'))
+        user.delete()
         messages.success(self.request, "User deleted successfully")
         return HttpResponseRedirect('/adminpanel/users-list/')
 
