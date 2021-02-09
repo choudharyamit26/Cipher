@@ -876,7 +876,7 @@ class VerifyOtp(APIView):
             except Exception as e:
                 print(e)
                 x = {'error': str(e)}
-                return Response({'success': False, 'msg': 'No pending verification found'}, status=HTTP_400_BAD_REQUEST)
+                return Response({'success': False, 'msg': x['error']}, status=HTTP_400_BAD_REQUEST)
         else:
             return Response({'message': serializer.errors, 'status': HTTP_400_BAD_REQUEST})
 
