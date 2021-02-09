@@ -829,6 +829,7 @@ class VerifyOtp(APIView):
     serializer_class = VerifyOtpSeralizer
 
     def post(self, request, *args, **kwargs):
+        print(self.request.POST)
         serializer = VerifyOtpSeralizer(data=self.request.data)
         if serializer.is_valid():
             username = serializer.validated_data['username']
@@ -850,7 +851,8 @@ class VerifyOtp(APIView):
                         phone_number=str(country_code) + str(phone_number),
                         device_token=device_token,
                     )
-                    us_obj = User.objects.create(phone_number=phone_number, email=str(phone_number) + '@email.com')
+                    us_obj = User.objects.create(country_code=country_code, phone_number=phone_number,
+                                                 email=str(phone_number) + '@email.com')
                     us_obj.set_password(password)
                     us_obj.save()
                     # AppNotification.objects.create(
@@ -1222,7 +1224,11 @@ class GetUserProfilePic(APIView):
 
     def get(self, request, *args, **kwargs):
         user = self.request.user
+        print('Country code ', user.country_code)
+        print('Phone number ', user.phone_number)
+        print(int(str(user.country_code + str(user.phone_number))))
         app_user = AppUser.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
+        print(app_user)
         return Response({'profile_pic': app_user.profile_pic.url, 'status': HTTP_200_OK})
 
 
