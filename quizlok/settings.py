@@ -223,7 +223,7 @@ CKEDITOR_CONFIGS = {
     }
 }
 FCM_DJANGO_SETTINGS = {
-    "FCM_SERVER_KEY": "AAAAKjzwCrs:APA91bGgMvkyjvXV0E5gol8xUvltP6Xvc21oU2UpY-2EL-bX-JwPjaMUkYQ1sViZnCXTRcZkY4LQSDcUIdLafNkIcsUNorOR2OJ-x02JmobWH5e_pYaHc7tTsQ0xgN9eEwtYxnCyhaNz"
+    "FCM_SERVER_KEY": "AAAA5WfFzCM:APA91bE67gBkY2Wn-H7Qw8oZ6stwWtlg9hsihIRhy-A8mMDTmAwVhqmoFekYw5dCLy8ylZV5YngDWr0MMAXlPR0CpQkVxjnkSTzLltpgZDLRj_ca16k9WiT-Vb_HY8EosNFlLTUrzOqu"
 }
 
 # BROKER_URL = 'amqp://guest:guest@localhost:5672//'

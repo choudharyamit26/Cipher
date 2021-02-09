@@ -390,7 +390,8 @@ class ComposeMessage(CreateAPIView):
                             auth_token = '1fe5e97d3658f655c5ff73949213a801'
                             client = Client(account_sid, auth_token)
                             message = client.messages.create(
-                                body="Test message from quizlok using twilio",
+                                body="You received a secret message from {}. Click here to read it.https://quizlock.page.link/?link=http://quizlock.com&apn=com.quiz.quizlok&isi=1552200449&ibi=com.Quizlok.app.Quizlok".format(
+                                    sender.username),
                                 from_='+19722993983',
                                 to='+' + str(obj)
                                 # to='+91' + str(obj)
@@ -451,7 +452,7 @@ class ComposeMessage(CreateAPIView):
                             auth_token = '1fe5e97d3658f655c5ff73949213a801'
                             client = Client(account_sid, auth_token)
                             message = client.messages.create(
-                                body="You received a secret message from {}. Click here to read it. https://quizlok.page.link/?link=http://quizlok.com&apn=com.e.quizlok".format(
+                                body="You received a secret message from {}. Click here to read it.https://quizlock.page.link/?link=http://quizlock.com&apn=com.quiz.quizlok&isi=1552200449&ibi=com.Quizlok.app.Quizlok".format(
                                     sender.username),
                                 from_='+19722993983',
                                 to='+' + str(obj)
