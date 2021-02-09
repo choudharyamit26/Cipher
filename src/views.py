@@ -390,7 +390,7 @@ class ComposeMessage(CreateAPIView):
                             auth_token = '1fe5e97d3658f655c5ff73949213a801'
                             client = Client(account_sid, auth_token)
                             message = client.messages.create(
-                                body="You received a secret message from {}. Click here to read it.https://quizlock.page.link/?link=http://quizlock.com&apn=com.quiz.quizlok&isi=1552200449&ibi=com.Quizlok.app.Quizlok".format(
+                                body="You received a secret message from {}. Click here to read it.https://quizlock.page.link/mVFa".format(
                                     sender.username),
                                 from_='+19722993983',
                                 to='+' + str(obj)
@@ -452,7 +452,7 @@ class ComposeMessage(CreateAPIView):
                             auth_token = '1fe5e97d3658f655c5ff73949213a801'
                             client = Client(account_sid, auth_token)
                             message = client.messages.create(
-                                body="You received a secret message from {}. Click here to read it.https://quizlock.page.link/?link=http://quizlock.com&apn=com.quiz.quizlok&isi=1552200449&ibi=com.Quizlok.app.Quizlok".format(
+                                body="You received a secret message from {}. Click here to read it.https://quizlock.page.link/mVFa".format(
                                     sender.username),
                                 from_='+19722993983',
                                 to='+' + str(obj)
