@@ -411,7 +411,7 @@ class ComposeMessage(CreateAPIView):
                         ans=ans,
                         # ques_attachment=ques_attachment
                     )
-                    for obj in json.loads(str(serializer.validated_data['receiver'])):
+                    for obj in json.loads(serializer.validated_data['receiver']):
                         # for obj in serializer.validated_data['receiver']:
                         print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', obj)
                         try:
