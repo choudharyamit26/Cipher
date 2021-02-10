@@ -166,6 +166,9 @@ class LoginView(ObtainAuthToken):
             if ('+' + user_id.country_code) == country_code:
                 check_pass = userObj.check_password(password)
                 if check_pass:
+                    # request.user.auth_token.delete()
+                    existing_token = Token.objects.get(user=userObj)
+                    existing_token.delete()
                     token = Token.objects.get_or_create(user=userObj)
                     user_device_token = user_id.device_token
                     print('previous token ', user_device_token)
@@ -394,7 +397,6 @@ class ComposeMessage(CreateAPIView):
                                     sender.username),
                                 from_='+19722993983',
                                 to='+' + str(obj)
-                                # to='+91' + str(obj)
                             )
                     print([x for x in msg_obj.receiver.all()])
                     user_coins.number_of_coins -= 1
@@ -456,7 +458,6 @@ class ComposeMessage(CreateAPIView):
                                     sender.username),
                                 from_='+19722993983',
                                 to='+' + str(obj)
-                                # to='+91' + str(obj)
                             )
                     print([x for x in msg_obj.receiver.all()])
                     user_coins.number_of_coins -= 1
@@ -1171,7 +1172,7 @@ class GetUserCoins(APIView):
         app_user = AppUser.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
         coins = UserCoins.objects.get(user=app_user)
         return Response({'message': 'Fetched users coins successfully', 'coins': coins.number_of_coins,
-                         'status': HTTP_400_BAD_REQUEST})
+                         'status': HTTP_200_OK})
 
 
 class GetNumberOfHitInDay(APIView):
