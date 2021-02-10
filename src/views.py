@@ -52,7 +52,7 @@ class CreateUser(APIView):
             confirm_password = serializer.validated_data['confirm_password']
             try:
                 print('inside try block------')
-                app_user = AppUser.objects.get(phone_number=phone_number)
+                app_user = AppUser.objects.get(phone_number=int(str(country_code)+str(phone_number)))
                 print(app_user)
                 if app_user:
                     return Response(
