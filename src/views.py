@@ -167,18 +167,20 @@ class LoginView(ObtainAuthToken):
                 check_pass = userObj.check_password(password)
                 if check_pass:
                     # request.user.auth_token.delete()
-                    existing_token = Token.objects.get(user=userObj)
-                    existing_token.delete()
-                    token = Token.objects.get_or_create(user=userObj)
-                    user_device_token = user_id.device_token
-                    print('previous token ', user_device_token)
-                    user_id.device_token = device_token
-                    user_id.save(update_fields=['device_token'])
-                    print('updated device token ', userObj.device_token)
-                    token = token[0]
-                    return Response({"token": token.key, "id": user_id.id, 'username': user_id.username,
-                                     'country_code': user_id.country_code,
-                                     'phone_number': user_id.phone_number, "status": HTTP_200_OK})
+                    try:
+                        existing_token = Token.objects.get(user=userObj)
+                        existing_token.delete()
+                    except Exception as e:
+                        token = Token.objects.get_or_create(user=userObj)
+                        user_device_token = user_id.device_token
+                        print('previous token ', user_device_token)
+                        user_id.device_token = device_token
+                        user_id.save(update_fields=['device_token'])
+                        print('updated device token ', userObj.device_token)
+                        token = token[0]
+                        return Response({"token": token.key, "id": user_id.id, 'username': user_id.username,
+                                         'country_code': user_id.country_code,
+                                         'phone_number': user_id.phone_number, "status": HTTP_200_OK})
                 else:
                     return Response({"message": "Wrong password", "status": HTTP_400_BAD_REQUEST})
             else:
