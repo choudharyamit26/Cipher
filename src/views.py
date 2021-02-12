@@ -347,8 +347,8 @@ class ComposeMessage(CreateAPIView):
                 sender = AppUser.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
                 text = serializer.validated_data['text']
                 validity = serializer.validated_data['validity']
-                attachment = serializer.validated_data['attachment']
-                # attachment = ''
+                # attachment = serializer.validated_data['attachment']
+                attachment = ''
                 receiver = serializer.validated_data['receiver']
                 print(receiver)
                 mode = serializer.validated_data['mode']
