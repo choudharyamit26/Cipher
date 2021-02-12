@@ -382,9 +382,9 @@ class ComposeMessage(CreateAPIView):
                             print(AppNotificationSetting.objects.get(user=AppUser.objects.get(phone_number=obj)).on)
                             if AppNotificationSetting.objects.get(user=AppUser.objects.get(phone_number=obj)).on:
                                 try:
-                                    data_message = {"data": {"title": "New Message",
-                                                             "body": "You have a new message",
-                                                             "type": "NewMessage"}}
+                                    # data_message = {"data": {"title": "New Message",
+                                    #                          "body": "You have a new message",
+                                    #                          "type": "NewMessage"}}
                                     # data_message = json.dumps(data_message)
                                     title = "New Message"
                                     body = "You have a new message"
@@ -442,9 +442,9 @@ class ComposeMessage(CreateAPIView):
                             )
                             if AppNotificationSetting.objects.get(user=AppUser.objects.get(phone_number=obj)).on:
                                 try:
-                                    data_message = {"Notification": {"title": "New Message",
-                                                                     "body": "You have a new message",
-                                                                     "type": "NewMessage"}}
+                                    # data_message = {"Notification": {"title": "New Message",
+                                    #                                  "body": "You have a new message",
+                                    #                                  "type": "NewMessage"}}
                                     # data_message = json.dumps(data_message)
                                     title = "New Message"
                                     body = "You have a new message"
