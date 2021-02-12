@@ -363,7 +363,7 @@ class ComposeMessage(CreateAPIView):
                         sender=sender,
                         text=text,
                         validity=validity,
-                        # attachment=attachment,
+                        attachment=attachment,
                         mode=mode,
                         ques=ques,
                         ans=ans,
