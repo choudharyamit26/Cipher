@@ -225,7 +225,7 @@ CKEDITOR_CONFIGS = {
 FCM_DJANGO_SETTINGS = {
     "FCM_SERVER_KEY": "AAAA5WfFzCM:APA91bE67gBkY2Wn-H7Qw8oZ6stwWtlg9hsihIRhy-A8mMDTmAwVhqmoFekYw5dCLy8ylZV5YngDWr0MMAXlPR0CpQkVxjnkSTzLltpgZDLRj_ca16k9WiT-Vb_HY8EosNFlLTUrzOqu"
 }
-
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880 #5mb
 # BROKER_URL = 'amqp://guest:guest@localhost:5672//'
 # CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 # CELERY_ACCEPT_CONTENT = ['application/json']
