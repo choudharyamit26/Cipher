@@ -270,7 +270,7 @@ class VerifyForgetPasswordOtp(CreateAPIView):
                     return Response(
                         {'success': False, 'msg': 'Verification code is incorrect.', 'status': HTTP_400_BAD_REQUEST})
             except Exception as e:
-                print(e)
+                print('Exception---->>',e)
                 return Response({'message': 'No pending verification found.', 'status': HTTP_400_BAD_REQUEST})
 
         # check = authy_api.phones.verification_check(phone_number, country_code, otp)
@@ -390,7 +390,7 @@ class ComposeMessage(CreateAPIView):
                                     message_type = "NewMessage"
                                     respo = send_another(
                                         fcm_token, title, body, message_type)
-                                    # respo = send_to_one(fcm_token, data_message)
+                                    respo = send_to_one(fcm_token, data_message)
                                     print("FCM Response===============>0", respo)
                                     # title = "Profile Update"
                                     # body = "Your profile has been updated successfully"
@@ -450,7 +450,7 @@ class ComposeMessage(CreateAPIView):
                                     message_type = "NewMessage"
                                     respo = send_another(
                                         fcm_token, title, body, message_type)
-                                    # respo = send_to_one(fcm_token, data_message)
+                                    respo = send_to_one(fcm_token, data_message)
                                     print("FCM Response===============>0", respo)
                                     # title = "Profile Update"
                                     # body = "Your profile has been updated successfully"
