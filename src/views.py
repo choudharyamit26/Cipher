@@ -98,7 +98,7 @@ class CreateUser(APIView):
                     auth_token = '1fe5e97d3658f655c5ff73949213a801'
                     client = Client(account_sid, auth_token)
                     client.messages.create(
-                        body='Your quizlok verification code is: ' + str(otp),
+                        body='Your QuizLock verification code is: ' + str(otp),
                         from_='+19722993983',
                         to='+' + str(str(int(country_code)) + str(phone_number))
                     )
@@ -224,7 +224,7 @@ class ForgetPasswordAPIView(CreateAPIView):
                 auth_token = '1fe5e97d3658f655c5ff73949213a801'
                 client = Client(account_sid, auth_token)
                 client.messages.create(
-                    body='Your quizlok verification code is: ' + str(otp),
+                    body='Your QuizLock verification code is: ' + str(otp),
                     from_='+19722993983',
                     to='+' + str(str(int(country_code)) + str(phone_number))
                 )
@@ -1225,7 +1225,7 @@ class CustomMessage(APIView):
         auth_token = '1fe5e97d3658f655c5ff73949213a801'
         client = Client(account_sid, auth_token)
         message = client.messages.create(
-            body="Test message from quizlok using twilio",
+            body="Test message from QuizLock using twilio",
             from_='+19722993983',
             to='+918279623598'
         )
