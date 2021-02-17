@@ -552,7 +552,7 @@ class InboxView(APIView):
                 # print(message.receiver.all().exclude(id=app_user_obj.id))
                 if message.attachment:
                     messages_values.append(
-                        {'id': message.id, 'sender_id': message.id, 'sender_name': message.sender.username,
+                        {'id': message.id, 'sender_id': message.sender.id, 'sender_name': message.sender.username,
                          'sender_country_code': message.sender.country_code,
                          'sender_profile_pic': message.sender.profile_pic.url,
                          'sender_phone_number': message.sender.phone_number, 'mode': message.mode,
@@ -562,7 +562,7 @@ class InboxView(APIView):
                          'validity': message.validity})
                 else:
                     messages_values.append(
-                        {'id': message.id, 'sender_id': message.id, 'sender_name': message.sender.username,
+                        {'id': message.id, 'sender_id': message.sender.id, 'sender_name': message.sender.username,
                          'sender_country_code': message.sender.country_code,
                          'sender_profile_pic': message.sender.profile_pic.url,
                          'sender_phone_number': message.sender.phone_number, 'mode': message.mode,
