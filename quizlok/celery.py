@@ -3,6 +3,8 @@ import os
 from celery import Celery
 
 # set the default Django settings module for the 'celery' program.
+from celery.schedules import crontab
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'quizlok.settings')
 
 app = Celery('quizlok')
@@ -20,7 +22,10 @@ app.conf.beat_schedule = {
     },
     'increase_coins': {
         'task': 'src.tasks.increase_coins',
-        'schedule': 24*60*60,
+        'schedule': crontab(hour=8, minute=53),
+        # 'schedule': crontab(minute=11, hour='*/13'),
+        # 'schedule': crontab(second=5),crontab(minute=0, hour='*/6')
+        # 'schedule': 10,
         # 'args': (3, 4)
     }
 }

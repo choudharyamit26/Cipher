@@ -11,7 +11,7 @@ import pytz
 utc = pytz.UTC
 
 
-# @periodic_task(run_every=crontab(seconds='*/5'))
+# @periodic_task(run_every=crontab('minute=0, hour='*/6'))
 @shared_task
 def expire_messages():
     # Query all the foos in our database
@@ -66,24 +66,29 @@ def expire_messages():
     return "completed expiring messages at {}".format(timezone.now())
 
 
+# @periodic_task(run_every=crontab(minute=0, hour='*/6'))
 @shared_task
 def increase_coins():
     app_users = AppUser.objects.all()
-    today = timezone.now().today()
+    # today = timezone.now().today()
     for user in app_users:
-        hits = HitInADay.objects.filter(user=user)
-        last_hit = None
-        if hits.count() > 0:
-            for x in hits:
-                if str(today.date()) == str(x.day.date()) and x.number == 1:
-                    user_coins = UserCoins.objects.get(user=user)
-                    user_coins.number_of_coins += 1
-                    user_coins.save()
-                    # x.number += 1
-                    # x.save()
-                    last_hit = x.number
-                else:
-                    print('inside else')
-        else:
-            pass
+        user_coins = UserCoins.objects.get(user=user)
+        if user_coins.number_of_coins < 5:
+            user_coins.number_of_coins += 1
+        # hits = HitInADay.objects.filter(user=user)
+        # last_hit = None
+        # if hits.count() > 0:
+        #     for x in hits:
+        #         if str(today.date()) == str(x.day.date()) and x.number == 1:
+        #             user_coins = UserCoins.objects.get(user=user)
+        #             user_coins.number_of_coins += 1
+        #             user_coins.save()
+        #             # x.number += 1
+        #             # x.save()
+        #             last_hit = x.number
+        #         else:
+        #             print('inside else')
+        # else:
+        #     pass
+
     return "running increase coins function"
