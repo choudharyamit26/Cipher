@@ -16,7 +16,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from .models import AppUser, Message, IncorrectAttempt, Favourites, AppNotification, UserCoins, AppNotificationSetting, \
-    HitInADay, UserOtp
+    HitInADay, UserOtp, UnRegisteredMessage
 from .serializers import UserCreateSerailizer, LoginSerializer, ForgetPasswordSerializer, ComposeMessageSerializer, \
     SecretKeySerializer, ReadMessageSerializer, ProfilePicSerializer, OtpSeralizer, VerifyOtpSeralizer, \
     VerifyForgetPasswordOtpSerializer, AddToFavouritesSerializer, ResetPasswordSerializer, UpdateUserNameSerializer, \
@@ -52,7 +52,7 @@ class CreateUser(APIView):
             confirm_password = serializer.validated_data['confirm_password']
             try:
                 print('inside try block------')
-                app_user = AppUser.objects.get(phone_number=int(str(country_code)+str(phone_number)))
+                app_user = AppUser.objects.get(phone_number=int(str(country_code) + str(phone_number)))
                 print(app_user)
                 if app_user:
                     return Response(
@@ -270,7 +270,7 @@ class VerifyForgetPasswordOtp(CreateAPIView):
                     return Response(
                         {'success': False, 'msg': 'Verification code is incorrect.', 'status': HTTP_400_BAD_REQUEST})
             except Exception as e:
-                print('Exception---->>',e)
+                print('Exception---->>', e)
                 return Response({'message': 'No pending verification found.', 'status': HTTP_400_BAD_REQUEST})
 
         # check = authy_api.phones.verification_check(phone_number, country_code, otp)
@@ -411,6 +411,10 @@ class ComposeMessage(CreateAPIView):
                                 from_='+19722993983',
                                 to='+' + str(obj)
                             )
+                            UnRegisteredMessage.objects.create(
+                                phone_number=obj,
+                                message=msg_obj
+                            )
                     print([x for x in msg_obj.receiver.all()])
                     user_coins.number_of_coins -= 1
                     user_coins.save()
@@ -472,6 +476,10 @@ class ComposeMessage(CreateAPIView):
                                 from_='+19722993983',
                                 to='+' + str(obj)
                             )
+                            UnRegisteredMessage.objects.create(
+                                phone_number=obj,
+                                message=msg_obj
+                            )
                     print([x for x in msg_obj.receiver.all()])
                     user_coins.number_of_coins -= 1
                     user_coins.save()
@@ -495,32 +503,79 @@ class InboxView(APIView):
         messages_obj = Message.objects.filter(receiver=app_user_obj.id)
         receivers = []
         messages_values = []
-        for message in messages_obj:
-            # print(message.receiver.all().exclude(id=app_user_obj.id))
-            if message.attachment:
-                messages_values.append(
-                    {'id': message.id, 'sender_id': message.id, 'sender_name': message.sender.username,
-                     'sender_country_code': message.sender.country_code,
-                     'sender_profile_pic': message.sender.profile_pic.url,
-                     'sender_phone_number': message.sender.phone_number, 'mode': message.mode, 'question': message.ques,
-                     'answer': message.ans, 'created_at': message.created_at, 'missed': message.is_missed,
-                     'message_text': message.text, 'message_attachment': message.attachment.url,
-                     'validity': message.validity})
+        try:
+            unregistered_messages = UnRegisteredMessage.objects.filter(phone_number=app_user_obj.phone_number)
+            for message in unregistered_messages:
+                try:
+                    msg_obj = Message.objects.get(id=message.message.id)
+                    msg_obj.receiver.add(app_user_obj)
+                except:
+                    pass
+                message.delete()
+            messages_obj = Message.objects.filter(receiver=app_user_obj.id)
+            for message in messages_obj:
+                if message.attachment:
+                    messages_values.append(
+                        {'id': message.id, 'sender_id': message.id, 'sender_name': message.sender.username,
+                         'sender_country_code': message.sender.country_code,
+                         'sender_profile_pic': message.sender.profile_pic.url,
+                         'sender_phone_number': message.sender.phone_number, 'mode': message.mode,
+                         'question': message.ques,
+                         'answer': message.ans, 'created_at': message.created_at, 'missed': message.is_missed,
+                         'message_text': message.text, 'message_attachment': message.attachment.url,
+                         'validity': message.validity})
+                else:
+                    messages_values.append(
+                        {'id': message.id, 'sender_id': message.id, 'sender_name': message.sender.username,
+                         'sender_country_code': message.sender.country_code,
+                         'sender_profile_pic': message.sender.profile_pic.url,
+                         'sender_phone_number': message.sender.phone_number, 'mode': message.mode,
+                         'question': message.ques,
+                         'answer': message.ans, 'created_at': message.created_at, 'missed': message.is_missed,
+                         'message_text': message.text, 'message_attachment': '', 'validity': message.validity})
+                receivers.append({"receiver": [
+                    {'receiver_id': x.id, 'name': x.username, 'country_code': x.country_code,
+                     'phone_number': x.phone_number,
+                     'profile_pic': x.profile_pic.url} for x in
+                    message.receiver.all().exclude(
+                        id=app_user_obj.id)]})
+            final_data = []
+            for x in zip(messages_values, receivers):
+                final_data.append({'inboxData': {**x[0], **x[1]}})
+            if messages_obj.count() > 0:
+                # return Response({'data': [x for x in zip(messages_values, receivers)], 'status': HTTP_200_OK})
+                return Response({'data': final_data, 'status': HTTP_200_OK})
             else:
-                messages_values.append(
-                    {'id': message.id, 'sender_id': message.id, 'sender_name': message.sender.username,
-                     'sender_country_code': message.sender.country_code,
-                     'sender_profile_pic': message.sender.profile_pic.url,
-                     'sender_phone_number': message.sender.phone_number, 'mode': message.mode, 'question': message.ques,
-                     'answer': message.ans, 'created_at': message.created_at, 'missed': message.is_missed,
-                     'message_text': message.text, 'message_attachment': '', 'validity': message.validity})
+                return Response({'message': 'No messages', 'status': HTTP_400_BAD_REQUEST})
+        except Exception as e:
+            for message in messages_obj:
+                # print(message.receiver.all().exclude(id=app_user_obj.id))
+                if message.attachment:
+                    messages_values.append(
+                        {'id': message.id, 'sender_id': message.id, 'sender_name': message.sender.username,
+                         'sender_country_code': message.sender.country_code,
+                         'sender_profile_pic': message.sender.profile_pic.url,
+                         'sender_phone_number': message.sender.phone_number, 'mode': message.mode,
+                         'question': message.ques,
+                         'answer': message.ans, 'created_at': message.created_at, 'missed': message.is_missed,
+                         'message_text': message.text, 'message_attachment': message.attachment.url,
+                         'validity': message.validity})
+                else:
+                    messages_values.append(
+                        {'id': message.id, 'sender_id': message.id, 'sender_name': message.sender.username,
+                         'sender_country_code': message.sender.country_code,
+                         'sender_profile_pic': message.sender.profile_pic.url,
+                         'sender_phone_number': message.sender.phone_number, 'mode': message.mode,
+                         'question': message.ques,
+                         'answer': message.ans, 'created_at': message.created_at, 'missed': message.is_missed,
+                         'message_text': message.text, 'message_attachment': '', 'validity': message.validity})
 
-            receivers.append({"receiver": [
-                {'receiver_id': x.id, 'name': x.username, 'country_code': x.country_code,
-                 'phone_number': x.phone_number,
-                 'profile_pic': x.profile_pic.url} for x in
-                message.receiver.all().exclude(
-                    id=app_user_obj.id)]})
+                receivers.append({"receiver": [
+                    {'receiver_id': x.id, 'name': x.username, 'country_code': x.country_code,
+                     'phone_number': x.phone_number,
+                     'profile_pic': x.profile_pic.url} for x in
+                    message.receiver.all().exclude(
+                        id=app_user_obj.id)]})
         # print(receivers)
         final_data = []
         for x in zip(messages_values, receivers):

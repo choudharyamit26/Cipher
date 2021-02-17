@@ -50,6 +50,11 @@ class Message(models.Model):
     is_missed = models.BooleanField(default=False)
 
 
+class UnRegisteredMessage(models.Model):
+    phone_number = models.CharField(default='', max_length=20)
+    message = models.ForeignKey(Message, on_delete=models.CASCADE)
+
+
 class IncorrectAttempt(models.Model):
     user = models.ForeignKey(AppUser, on_delete=models.CASCADE)
     message_id = models.ForeignKey(Message, on_delete=models.CASCADE)
