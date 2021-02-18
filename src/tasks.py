@@ -99,6 +99,6 @@ def delete_message_from_database():
     messages = Message.objects.all()
     for message in messages:
         print(message.created_at)
-        if datetime.datetime.now() > message.created_at.replace(tzinfo=None) + datetime.timedelta(hours=120):
+        if datetime.datetime.now() > message.created_at.replace(tzinfo=None) + datetime.timedelta(hours=24*30):
             message.delete()
     return "deleting messages from database"

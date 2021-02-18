@@ -688,6 +688,7 @@ class ReadingMessage(CreateAPIView):
                                                     'message': f'Incorrect answer. {left_attempts} attempts left out of 3 attempts',
                                                     'status': HTTP_400_BAD_REQUEST})
                                         else:
+                                            message_obj.receiver.remove(app_user_obj)
                                             return Response(
                                                 {
                                                     'message': 'Sorry you can not see the message.You have given incorrect answer 3 times',
@@ -793,6 +794,7 @@ class ReadingMessage(CreateAPIView):
                                                 'message': f'Incorrect answer. {left_attempts} attempts left out of 3 attempts',
                                                 'status': HTTP_400_BAD_REQUEST})
                                     else:
+                                        message_obj.receiver.remove(app_user_obj)
                                         return Response(
                                             {
                                                 'message': 'Sorry you can not see the message.You have given incorrect answer 3 times',
