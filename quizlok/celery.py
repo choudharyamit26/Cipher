@@ -27,6 +27,10 @@ app.conf.beat_schedule = {
         # 'schedule': crontab(second=5),crontab(minute=0, hour='*/6')
         # 'schedule': 10,
         # 'args': (3, 4)
+    },
+    'delete-message-from-database': {
+        'task': 'src.task.delete_message_from_database',
+        'schedule': crontab(hour=6, minute=0),
     }
 }
 # Load task modules from all registered Django app configs.

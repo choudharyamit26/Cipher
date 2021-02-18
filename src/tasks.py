@@ -52,7 +52,7 @@ def expire_messages():
                         message_type = "messageExpired"
                         respo = send_another(
                             fcm_token, title, body, message_type)
-                        respo = send_to_one(fcm_token, data_message)
+                        # respo = send_to_one(fcm_token, data_message)
                         print("FCM Response===============>0", respo)
                         # title = "Profile Update"
                         # body = "Your profile has been updated successfully"
@@ -92,3 +92,13 @@ def increase_coins():
         #     pass
 
     return "running increase coins function"
+
+
+@shared_task
+def delete_message_from_database():
+    messages = Message.objects.all()
+    for message in messages:
+        print(message.created_at)
+        if datetime.datetime.now() > message.created_at.replace(tzinfo=None) + datetime.timedelta(hours=120):
+            message.delete()
+    return "deleting messages from database"
