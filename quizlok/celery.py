@@ -22,7 +22,7 @@ app.conf.beat_schedule = {
     },
     'increase_coins': {
         'task': 'src.tasks.increase_coins',
-        'schedule': crontab(hour=8, minute=53),
+        'schedule': crontab(hour=6, minute=0),
         # 'schedule': crontab(minute=11, hour='*/13'),
         # 'schedule': crontab(second=5),crontab(minute=0, hour='*/6')
         # 'schedule': 10,
