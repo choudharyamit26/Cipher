@@ -1304,6 +1304,19 @@ class GetUserProfilePic(APIView):
         return Response({'profile_pic': app_user.profile_pic.url, 'status': HTTP_200_OK})
 
 
+class RemoveMissedMessages(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        message_id = self.request.query_params.get('message_id')
+        receiver_id = self.request.query_params.get('receiver_id')
+        message_obj = Message.objects.get(id=message_id)
+        receiver = AppUser.objects.get(id=receiver_id)
+        message_obj.receiver.remove(receiver)
+        return Response({'message': 'Removed message successfully', 'status': HTTP_400_BAD_REQUEST})
+
+
 class MessageTime(APIView):
 
     def get(self, request, *args, **kwargs):
