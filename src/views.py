@@ -537,8 +537,7 @@ class InboxView(APIView):
                     {'receiver_id': x.id, 'name': x.username, 'country_code': x.country_code,
                      'phone_number': x.phone_number,
                      'profile_pic': x.profile_pic.url} for x in
-                    message.receiver.all().exclude(
-                        id=app_user_obj.id)]})
+                    message.receiver.all()]})
             final_data = []
             for x in zip(messages_values, receivers):
                 final_data.append({'inboxData': {**x[0], **x[1]}})
@@ -574,8 +573,7 @@ class InboxView(APIView):
                     {'receiver_id': x.id, 'name': x.username, 'country_code': x.country_code,
                      'phone_number': x.phone_number,
                      'profile_pic': x.profile_pic.url} for x in
-                    message.receiver.all().exclude(
-                        id=app_user_obj.id)]})
+                    message.receiver.all()]})
         # print(receivers)
         final_data = []
         for x in zip(messages_values, receivers):
