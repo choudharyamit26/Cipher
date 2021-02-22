@@ -663,7 +663,7 @@ class ReadingMessage(CreateAPIView):
                                 #     mode=message_obj.mode
                                 # )
                                 return Response({"message": "Correct answer", 'message_text': message_obj.text,
-                                                 'message_attachment': message_obj.attachment,
+                                                 'message_attachment': message_obj.attachment.url,
                                                  'sender_name': message_obj.sender.username, 'status': HTTP_200_OK})
                             else:
                                 return Response(
