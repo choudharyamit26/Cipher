@@ -681,12 +681,13 @@ class ReadingMessage(CreateAPIView):
                                             msg_obj.save()
                                             msg_count = msg_obj.count
                                             left_attempts = 3 - msg_count
+                                            if left_attempts == 0:
+                                                message_obj.receiver.remove(app_user_obj)
                                             return Response(
                                                 {
                                                     'message': f'Incorrect answer. {left_attempts} attempts left out of 3 attempts',
                                                     'status': HTTP_400_BAD_REQUEST, 'attempts_left': left_attempts})
                                         else:
-                                            message_obj.receiver.remove(app_user_obj)
                                             return Response(
                                                 {
                                                     'message': 'Sorry you can not see the message.You have given incorrect answer 3 times',
@@ -787,12 +788,13 @@ class ReadingMessage(CreateAPIView):
                                         msg_obj.save()
                                         msg_count = msg_obj.count
                                         left_attempts = 3 - msg_count
+                                        if left_attempts == 0:
+                                            message_obj.receiver.remove(app_user_obj)
                                         return Response(
                                             {
                                                 'message': f'Incorrect answer. {left_attempts} attempts left out of 3 attempts',
                                                 'status': HTTP_400_BAD_REQUEST,'attempts_left':left_attempts})
                                     else:
-                                        message_obj.receiver.remove(app_user_obj)
                                         return Response(
                                             {
                                                 'message': 'Sorry you can not see the message.You have given incorrect answer 3 times',
