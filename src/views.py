@@ -686,7 +686,7 @@ class ReadingMessage(CreateAPIView):
                                             return Response(
                                                 {
                                                     'message': f'Incorrect answer. {left_attempts} attempts left out of 3 attempts',
-                                                    'status': HTTP_400_BAD_REQUEST})
+                                                    'status': HTTP_400_BAD_REQUEST, 'attempts_left': left_attempts})
                                         else:
                                             message_obj.receiver.remove(app_user_obj)
                                             return Response(
@@ -730,7 +730,7 @@ class ReadingMessage(CreateAPIView):
                                 #                  'status': HTTP_400_BAD_REQUEST})
 
                             return Response({'message': 'Incorrect answer. 2 attempts left out of 3 attempts',
-                                             'status': HTTP_400_BAD_REQUEST})
+                                             'status': HTTP_400_BAD_REQUEST,'attempts_left':2})
                 else:
                     if ans == message_obj.ans:
                         message_obj.read_by.add(app_user_obj.id)
@@ -792,7 +792,7 @@ class ReadingMessage(CreateAPIView):
                                         return Response(
                                             {
                                                 'message': f'Incorrect answer. {left_attempts} attempts left out of 3 attempts',
-                                                'status': HTTP_400_BAD_REQUEST})
+                                                'status': HTTP_400_BAD_REQUEST,'attempts_left':left_attempts})
                                     else:
                                         message_obj.receiver.remove(app_user_obj)
                                         return Response(
@@ -836,7 +836,7 @@ class ReadingMessage(CreateAPIView):
                             #                  'status': HTTP_400_BAD_REQUEST})
 
                         return Response({'message': 'Incorrect answer. 2 attempts left out of 3 attempts',
-                                         'status': HTTP_400_BAD_REQUEST})
+                                         'status': HTTP_400_BAD_REQUEST,'attempts_left':2})
             except Exception as e:
                 x = {'error': str(e)}
                 return Response({'message': x['error'], 'status': HTTP_400_BAD_REQUEST})
