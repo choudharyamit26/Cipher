@@ -662,11 +662,16 @@ class ReadingMessage(CreateAPIView):
                                 # )
                                 return Response({"message": "Correct answer", 'message_text': message_obj.text,
                                                  'message_attachment': message_obj.attachment.url,
-                                                 'sender_name': message_obj.sender.username, 'status': HTTP_200_OK})
+                                                 'sender_name': message_obj.sender.username,
+                                                 'country_code': message_obj.sender.country_code,
+                                                 'phone_number': message_obj.sender.phone_number,
+                                                 'status': HTTP_200_OK})
                             else:
                                 return Response(
                                     {"message": "Correct answer", 'message_text': message_obj.text,
-                                     'sender_name': message_obj.sender.username, 'status': HTTP_200_OK})
+                                     'sender_name': message_obj.sender.username,
+                                     'country_code': message_obj.sender.country_code,
+                                     'phone_number': message_obj.sender.phone_number, 'status': HTTP_200_OK})
                         else:
                             message_obj.incorrect_attempts_by.add(app_user_obj.id)
                             try:
@@ -729,7 +734,7 @@ class ReadingMessage(CreateAPIView):
                                 #                  'status': HTTP_400_BAD_REQUEST})
 
                             return Response({'message': 'Incorrect answer. 2 attempts left out of 3 attempts',
-                                             'status': HTTP_400_BAD_REQUEST,'attempts_left':2})
+                                             'status': HTTP_400_BAD_REQUEST, 'attempts_left': 2})
                 else:
                     if ans == message_obj.ans:
                         message_obj.read_by.add(app_user_obj.id)
@@ -769,11 +774,15 @@ class ReadingMessage(CreateAPIView):
                         if message_obj.attachment:
                             return Response({"message": "Correct answer", 'message_text': message_obj.text,
                                              'message_attachment': message_obj.attachment.url,
-                                             'sender_name': message_obj.sender.username, 'status': HTTP_200_OK})
+                                             'sender_name': message_obj.sender.username,
+                                             'country_code': message_obj.sender.country_code,
+                                             'phone_number': message_obj.sender.phone_number, 'status': HTTP_200_OK})
                         else:
                             return Response(
                                 {"message": "Correct answer", 'message_text': message_obj.text,
-                                 'sender_name': message_obj.sender.username, 'status': HTTP_200_OK})
+                                 'sender_name': message_obj.sender.username,
+                                 'country_code': message_obj.sender.country_code,
+                                 'phone_number': message_obj.sender.phone_number, 'status': HTTP_200_OK})
                     else:
                         message_obj.incorrect_attempts_by.add(app_user_obj.id)
                         try:
@@ -793,7 +802,7 @@ class ReadingMessage(CreateAPIView):
                                         return Response(
                                             {
                                                 'message': f'Incorrect answer. {left_attempts} attempts left out of 3 attempts',
-                                                'status': HTTP_400_BAD_REQUEST,'attempts_left':left_attempts})
+                                                'status': HTTP_400_BAD_REQUEST, 'attempts_left': left_attempts})
                                     else:
                                         return Response(
                                             {
@@ -836,7 +845,7 @@ class ReadingMessage(CreateAPIView):
                             #                  'status': HTTP_400_BAD_REQUEST})
 
                         return Response({'message': 'Incorrect answer. 2 attempts left out of 3 attempts',
-                                         'status': HTTP_400_BAD_REQUEST,'attempts_left':2})
+                                         'status': HTTP_400_BAD_REQUEST, 'attempts_left': 2})
             except Exception as e:
                 x = {'error': str(e)}
                 return Response({'message': x['error'], 'status': HTTP_400_BAD_REQUEST})
