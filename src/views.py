@@ -645,7 +645,7 @@ class ReadingMessage(CreateAPIView):
                                 message_type = "messageRead"
                                 respo = send_another(
                                     fcm_token, title, body, message_type)
-                                respo = send_to_one(fcm_token, data_message)
+                                # respo = send_to_one(fcm_token, data_message)
                                 print("FCM Response===============>0", respo)
                                 # title = "Profile Update"
                                 # body = "Your profile has been updated successfully"
@@ -758,7 +758,7 @@ class ReadingMessage(CreateAPIView):
                             message_type = "messageRead"
                             respo = send_another(
                                 fcm_token, title, body, message_type)
-                            respo = send_to_one(fcm_token, data_message)
+                            # respo = send_to_one(fcm_token, data_message)
                             print("FCM Response===============>0", respo)
                             # title = "Profile Update"
                             # body = "Your profile has been updated successfully"
