@@ -1357,3 +1357,17 @@ class MessageTime(APIView):
                 except Exception as e:
                     print('Exception-------', e)
         return Response({'fetched successfully'})
+
+
+class GetAttemptNumber(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        message_id = self.request.query_params.get('message_id')
+        try:
+            msg_obj = IncorrectAttempt.objects.get(message_id=message_id)
+            return Response({'attempts_left': msg_obj.count, 'status': HTTP_200_OK})
+        except Exception as e:
+            x = {'error': str(e)}
+            return Response({'message': x['error'], 'status': HTTP_400_BAD_REQUEST})
