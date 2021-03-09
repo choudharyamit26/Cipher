@@ -61,6 +61,12 @@ class IncorrectAttempt(models.Model):
     count = models.IntegerField()
 
 
+class ReadMessage(models.Model):
+    user = models.ForeignKey(AppUser, on_delete=models.CASCADE)
+    message = models.ForeignKey(Message, on_delete=models.CASCADE)
+    read = models.BooleanField(default=False)
+
+
 class SecretKey(models.Model):
     message = models.ForeignKey(Message, on_delete=models.CASCADE)
     ques = models.TextField()

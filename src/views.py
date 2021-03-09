@@ -16,7 +16,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from .models import AppUser, Message, IncorrectAttempt, Favourites, AppNotification, UserCoins, AppNotificationSetting, \
-    HitInADay, UserOtp, UnRegisteredMessage
+    HitInADay, UserOtp, UnRegisteredMessage, ReadMessage
 from .serializers import UserCreateSerailizer, LoginSerializer, ForgetPasswordSerializer, ComposeMessageSerializer, \
     SecretKeySerializer, ReadMessageSerializer, ProfilePicSerializer, OtpSeralizer, VerifyOtpSeralizer, \
     VerifyForgetPasswordOtpSerializer, AddToFavouritesSerializer, ResetPasswordSerializer, UpdateUserNameSerializer, \
@@ -1368,6 +1368,41 @@ class GetAttemptNumber(APIView):
         try:
             msg_obj = IncorrectAttempt.objects.get(message_id=message_id)
             return Response({'attempts_left': msg_obj.count, 'status': HTTP_200_OK})
+        except Exception as e:
+            x = {'error': str(e)}
+            return Response({'message': x['error'], 'status': HTTP_400_BAD_REQUEST})
+
+
+class UpdateMessageReadStatus(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        message_id = self.request.POST['message_id']
+        try:
+            # message_obj = Message.objects.get(id=message_id)
+            user = self.request.user
+            app_user = AppUser.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
+            message_obj = Message.objects.get(id=message_id)
+            message, created = ReadMessage.objects.get_or_create(user=app_user, message=message_obj)
+            print(created)
+            message.read = True
+            message.save()
+            return Response({'message': 'Message read status updated successfully', 'status': HTTP_200_OK})
+        except Exception as e:
+            x = {'error': str(e)}
+            return Response({'message': x['error'], 'status': HTTP_400_BAD_REQUEST})
+
+
+class GetMessageReadStatus(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        message_id = self.request.query_params.get('message_id')
+        try:
+            message = ReadMessage.objects.get(message=message_id)
+            return Response({'message_status': message.read, 'status': HTTP_200_OK})
         except Exception as e:
             x = {'error': str(e)}
             return Response({'message': x['error'], 'status': HTTP_400_BAD_REQUEST})
