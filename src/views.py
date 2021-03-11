@@ -1365,9 +1365,10 @@ class GetAttemptNumber(APIView):
 
     def get(self, request, *args, **kwargs):
         message_id = self.request.query_params.get('message_id')
+        user_id = self.request.query_params.get('user_id')
         try:
-            msg_obj = IncorrectAttempt.objects.get(message_id=message_id)
-            return Response({'attempts_left': 3-msg_obj.count, 'status': HTTP_200_OK})
+            msg_obj = IncorrectAttempt.objects.get(user=user_id, message_id=message_id)
+            return Response({'attempts_left': 3 - msg_obj.count, 'status': HTTP_200_OK})
         except Exception as e:
             x = {'error': str(e)}
             return Response({'message': x['error'], 'status': HTTP_400_BAD_REQUEST})
