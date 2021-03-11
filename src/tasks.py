@@ -31,6 +31,8 @@ def expire_messages():
             receivers = message.receiver.all()
             try:
                 for receiver in receivers:
+                    print('From Celery Missed Messages',receiver)
+                    print('-----------From missed messages',AppUser.objects.get(phone_number=receiver))
                     notification = AppNotification.objects.create(
                         user=AppUser.objects.get(phone_number=receiver),
                         text='Message Expired',
