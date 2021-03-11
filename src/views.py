@@ -683,6 +683,7 @@ class ReadingMessage(CreateAPIView):
                                     if int(message_id) in [x.message_id.id for x in incorrect_attempts]:
                                         print('inside if case---->>>')
                                         msg_obj = IncorrectAttempt.objects.get(user=app_user_obj, message_id=message_id)
+                                        print('>>>>>>>>>', msg_obj)
                                         if msg_obj.count < 3:
                                             msg_obj.count += 1
                                             msg_obj.save()
@@ -725,7 +726,7 @@ class ReadingMessage(CreateAPIView):
                                 else:
                                     print('outer if')
                                     try:
-                                        IncorrectAttempt.objects.get(message_id=message_id)
+                                        IncorrectAttempt.objects.get(user=app_user_obj, message_id=message_id)
                                         pass
                                     except Exception as e:
                                         IncorrectAttempt.objects.create(
@@ -736,7 +737,7 @@ class ReadingMessage(CreateAPIView):
                             except Exception as e:
                                 print('inside except block', e)
                                 try:
-                                    IncorrectAttempt.objects.get(message_id=message_id)
+                                    IncorrectAttempt.objects.get(user=app_user_obj, message_id=message_id)
                                     pass
                                 except Exception as e:
                                     IncorrectAttempt.objects.create(
