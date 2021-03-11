@@ -519,6 +519,7 @@ class InboxView(APIView):
                 message.delete()
             messages_obj = Message.objects.filter(receiver=app_user_obj.id)
             for message in messages_obj:
+                print([x.id for x in message.read_by.all()])
                 if message.attachment:
                     messages_values.append(
                         {'id': message.id, 'sender_id': message.sender.id, 'sender_name': message.sender.username,
@@ -528,7 +529,7 @@ class InboxView(APIView):
                          'question': message.ques,
                          'answer': message.ans, 'created_at': message.created_at, 'missed': message.is_missed,
                          'message_text': message.text, 'message_attachment': message.attachment.url,
-                         'validity': message.validity})
+                         'validity': message.validity, 'message_read_by': [x.id for x in message.read_by.all()]})
                 else:
                     messages_values.append(
                         {'id': message.id, 'sender_id': message.sender.id, 'sender_name': message.sender.username,
@@ -537,7 +538,8 @@ class InboxView(APIView):
                          'sender_phone_number': message.sender.phone_number, 'mode': message.mode,
                          'question': message.ques,
                          'answer': message.ans, 'created_at': message.created_at, 'missed': message.is_missed,
-                         'message_text': message.text, 'message_attachment': '', 'validity': message.validity})
+                         'message_text': message.text, 'message_attachment': '', 'validity': message.validity,
+                         'message_read_by': [x.id for x in message.read_by.all()]})
                 receivers.append({"receiver": [
                     {'receiver_id': x.id, 'name': x.username, 'country_code': x.country_code,
                      'phone_number': x.phone_number,
@@ -563,7 +565,7 @@ class InboxView(APIView):
                          'question': message.ques,
                          'answer': message.ans, 'created_at': message.created_at, 'missed': message.is_missed,
                          'message_text': message.text, 'message_attachment': message.attachment.url,
-                         'validity': message.validity})
+                         'validity': message.validity,'message_read_by':[x.id for x in message.read_by.all()]})
                 else:
                     messages_values.append(
                         {'id': message.id, 'sender_id': message.sender.id, 'sender_name': message.sender.username,
@@ -572,7 +574,7 @@ class InboxView(APIView):
                          'sender_phone_number': message.sender.phone_number, 'mode': message.mode,
                          'question': message.ques,
                          'answer': message.ans, 'created_at': message.created_at, 'missed': message.is_missed,
-                         'message_text': message.text, 'message_attachment': '', 'validity': message.validity})
+                         'message_text': message.text, 'message_attachment': '', 'validity': message.validity,'message_read_by':[x.id for x in message.read_by.all()]})
 
                 receivers.append({"receiver": [
                     {'receiver_id': x.id, 'name': x.username, 'country_code': x.country_code,
