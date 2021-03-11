@@ -378,7 +378,7 @@ class ComposeMessage(CreateAPIView):
                             AppNotification.objects.create(
                                 user=AppUser.objects.get(phone_number=obj),
                                 text='You have a new message',
-                                # date_sent=msg_obj.created_at,
+                                date_sent=msg_obj.created_at,
                                 # mode=msg_obj.mode
                             )
                             print(AppNotificationSetting.objects.get(user=AppUser.objects.get(phone_number=obj)).on)
@@ -447,7 +447,7 @@ class ComposeMessage(CreateAPIView):
                             AppNotification.objects.create(
                                 user=AppUser.objects.get(phone_number=obj),
                                 text='You have a new message',
-
+                                date_sent=msg_obj.created_at
                             )
                             if AppNotificationSetting.objects.get(user=AppUser.objects.get(phone_number=obj)).on:
                                 try:
