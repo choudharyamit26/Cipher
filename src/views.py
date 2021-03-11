@@ -825,16 +825,26 @@ class ReadingMessage(CreateAPIView):
                                 else:
                                     print('false case')
                                     print('******************')
-                                    try:
-                                        IncorrectAttempt.objects.get(message_id=message_id)
-                                        pass
-                                    except Exception as e:
-                                        print('After false case',e)
-                                        IncorrectAttempt.objects.create(
-                                            user=app_user_obj,
-                                            message_id=Message.objects.get(id=message_id),
-                                            count=1
-                                        )
+                                    IncorrectAttempt.objects.create(
+                                        user=app_user_obj,
+                                        message_id=Message.objects.get(id=message_id),
+                                        count=1
+                                    )
+                                    return Response(
+                                        {
+                                            'message': 'Incorrect answer. 2 attempts left out of 3 attempts',
+                                            'status': HTTP_400_BAD_REQUEST, 'attempts_left': 2})
+
+                                    # try:
+                                    #     IncorrectAttempt.objects.get(message_id=message_id)
+                                    #     pass
+                                    # except Exception as e:
+                                    #     print('After false case',e)
+                                    #     IncorrectAttempt.objects.create(
+                                    #         user=app_user_obj,
+                                    #         message_id=Message.objects.get(id=message_id),
+                                    #         count=1
+                                    #     )
                             else:
                                 print('outer if')
                                 try:
