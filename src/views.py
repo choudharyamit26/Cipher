@@ -824,10 +824,12 @@ class ReadingMessage(CreateAPIView):
                                                 'status': HTTP_400_BAD_REQUEST})
                                 else:
                                     print('false case')
+                                    print('******************')
                                     try:
                                         IncorrectAttempt.objects.get(message_id=message_id)
                                         pass
                                     except Exception as e:
+                                        print('After false case',e)
                                         IncorrectAttempt.objects.create(
                                             user=app_user_obj,
                                             message_id=Message.objects.get(id=message_id),
