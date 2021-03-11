@@ -377,7 +377,9 @@ class ComposeMessage(CreateAPIView):
                             fcm_token = AppUser.objects.get(phone_number=obj).device_token
                             AppNotification.objects.create(
                                 user=AppUser.objects.get(phone_number=obj),
-                                text='You have a new message'
+                                text='You have a new message',
+                                date_sent=msg_obj.created_at,
+                                mode=msg_obj.mode
                             )
                             print(AppNotificationSetting.objects.get(user=AppUser.objects.get(phone_number=obj)).on)
                             if AppNotificationSetting.objects.get(user=AppUser.objects.get(phone_number=obj)).on:
@@ -413,7 +415,9 @@ class ComposeMessage(CreateAPIView):
                             )
                             UnRegisteredMessage.objects.create(
                                 phone_number=obj,
-                                message=msg_obj
+                                message=msg_obj,
+                                date_sent=msg_obj.created_at,
+                                mode=msg_obj.mode
                             )
                     print([x for x in msg_obj.receiver.all()])
                     user_coins.number_of_coins -= 1
@@ -442,7 +446,8 @@ class ComposeMessage(CreateAPIView):
                             fcm_token = AppUser.objects.get(phone_number=obj).device_token
                             AppNotification.objects.create(
                                 user=AppUser.objects.get(phone_number=obj),
-                                text='You have a new message'
+                                text='You have a new message',
+
                             )
                             if AppNotificationSetting.objects.get(user=AppUser.objects.get(phone_number=obj)).on:
                                 try:
@@ -1435,3 +1440,60 @@ class GetMessageReadStatus(APIView):
         except Exception as e:
             x = {'error': str(e)}
             return Response({'message': x['error'], 'status': HTTP_400_BAD_REQUEST})
+
+
+class GetExpiredMessage(APIView):
+
+    def get(self, request, *args, **Kwargs):
+        messages = Message.objects.filter(is_missed=False)
+        print(messages)
+        # Iterate through them
+        import datetime
+        for message in messages:
+
+            # If the expiration date is bigger than now delete it
+            # if message.created_at.replace(tzinfo=None) < datetime.datetime.now() - datetime.timedelta(seconds=5):
+            if datetime.datetime.now() > message.created_at.replace(tzinfo=None) + datetime.timedelta(
+                    hours=message.validity):
+                print('inside periodic task function')
+                print(message.id)
+                message.is_missed = True
+                message.save()
+                receivers = message.receiver.all()
+                try:
+                    for receiver in receivers:
+                        print('From Celery Missed Messages', receiver)
+                        print('-----------From missed messages', AppUser.objects.get(id=receiver.id))
+                        notification = AppNotification.objects.create(
+                            user=AppUser.objects.get(id=receiver.id),
+                            text='Message Expired',
+                            date_sent=message.created_at,
+                            mode=message.mode,
+                            date_expired=datetime.datetime.now(),
+                            # sent_to=[x.username for x in receivers]
+                        )
+                        for users in receivers:
+                            notification.sent_to.add(users)
+                        fcm_token = AppUser.objects.get(id=receiver.id).sender.device_token
+                        try:
+                            data_message = {"data": {"title": "Message Missed",
+                                                     "body": 'Message Expired',
+                                                     "type": "messageExpired"}}
+                            # data_message = json.dumps(data_message)
+                            title = "Message Missed"
+                            body = 'Message Expired'
+                            message_type = "messageExpired"
+                            respo = send_another(
+                                fcm_token, title, body, message_type)
+                            # respo = send_to_one(fcm_token, data_message)
+                            print("FCM Response===============>0", respo)
+                            # title = "Profile Update"
+                            # body = "Your profile has been updated successfully"
+                            # respo = send_to_one(fcm_token, title, body)
+                            # print("FCM Response===============>0", respo)
+                        except:
+                            pass
+                except Exception as e:
+                    print('Exception from cron job ---->>> ', e)
+                # log deletion
+        return Response({'message': 'Success'})

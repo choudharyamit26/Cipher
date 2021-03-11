@@ -3,7 +3,7 @@ from .views import CreateUser, LoginView, SendOtpTwilio, ForgetPasswordAPIView, 
     GetFavourites, GetNotificationList, ResetPasswordAPIView, DeleteUserAccount, TermsAndConditionView, \
     UpdateUserNameView, UpdateNotificationSettings, GetUserNotificationSetting, GetUserCoins, RemoveFavourite, \
     DeleteAllNotification, UnreadNotificationCount, UpdateNotificationStatus, MessageTime, GetNumberOfHitInDay, \
-    GetUserProfilePic, RemoveMissedMessages,GetAttemptNumber,UpdateMessageReadStatus,GetMessageReadStatus
+    GetUserProfilePic, RemoveMissedMessages,GetAttemptNumber,UpdateMessageReadStatus,GetMessageReadStatus,GetExpiredMessage
 from django.urls import path
 
 app_name = 'src'
@@ -43,4 +43,5 @@ urlpatterns = [
     path('get-attempt-number/', GetAttemptNumber.as_view(), name='get-attempt-number'),
     path('update-message-read-status/', UpdateMessageReadStatus.as_view(), name='update-message-read-status'),
     path('get-message-read-status/', GetMessageReadStatus.as_view(), name='get-message-read-status'),
+    path('get-expired-message/', GetExpiredMessage.as_view(), name='get-expired-message'),
 ]

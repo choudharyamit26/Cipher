@@ -31,10 +31,10 @@ def expire_messages():
             receivers = message.receiver.all()
             try:
                 for receiver in receivers:
-                    print('From Celery Missed Messages',receiver)
-                    print('-----------From missed messages',AppUser.objects.get(phone_number=receiver))
+                    print('From Celery Missed Messages', receiver)
+                    print('-----------From missed messages', AppUser.objects.get(id=receiver.id))
                     notification = AppNotification.objects.create(
-                        user=AppUser.objects.get(phone_number=receiver),
+                        user=AppUser.objects.get(id=receiver.id),
                         text='Message Expired',
                         date_sent=message.created_at,
                         mode=message.mode,
@@ -43,7 +43,7 @@ def expire_messages():
                     )
                     for users in receivers:
                         notification.sent_to.add(users)
-                    fcm_token = AppUser.objects.get(phone_number=receiver).sender.device_token
+                    fcm_token = AppUser.objects.get(id=receiver.id).sender.device_token
                     try:
                         data_message = {"data": {"title": "Message Missed",
                                                  "body": 'Message Expired',
@@ -101,6 +101,6 @@ def delete_message_from_database():
     messages = Message.objects.all()
     for message in messages:
         print(message.created_at)
-        if datetime.datetime.now() > message.created_at.replace(tzinfo=None) + datetime.timedelta(hours=24*30):
+        if datetime.datetime.now() > message.created_at.replace(tzinfo=None) + datetime.timedelta(hours=24 * 30):
             message.delete()
     return "deleting messages from database"
