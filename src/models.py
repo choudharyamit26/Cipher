@@ -40,7 +40,7 @@ class Message(models.Model):
     attachment = models.FileField(null=True, blank=True)
     # number_of_tries = models.IntegerField()
     validity = models.IntegerField()
-    mode = models.CharField(default='', choices=MODE, max_length=100)
+    mode = models.CharField(default='', max_length=100)
     ques = models.TextField(default='')
     ans = models.TextField(default='')
     # ques_attachment = models.FileField(null=True, blank=True)
