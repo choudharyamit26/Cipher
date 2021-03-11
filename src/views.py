@@ -505,7 +505,7 @@ class InboxView(APIView):
     def get(self, request, *args, **kwargs):
         user = self.request.user
         app_user_obj = AppUser.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
-        messages_obj = Message.objects.filter(receiver=app_user_obj.id).order_by('id')
+        messages_obj = Message.objects.filter(receiver=app_user_obj.id).order_by('-created_at')
         receivers = []
         messages_values = []
         try:
