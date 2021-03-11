@@ -701,17 +701,27 @@ class ReadingMessage(CreateAPIView):
                                                     'status': HTTP_400_BAD_REQUEST})
                                     else:
                                         print('false case')
-                                        try:
-                                            print('else try block after false---->>> ')
-                                            IncorrectAttempt.objects.get(message_id=message_id)
-                                            pass
-                                        except Exception as e:
-                                            print('inside except block after false case')
-                                            IncorrectAttempt.objects.create(
-                                                user=app_user_obj,
-                                                message_id=Message.objects.get(id=message_id),
-                                                count=1
-                                            )
+                                        x = IncorrectAttempt.objects.create(
+                                            user=app_user_obj,
+                                            message_id=Message.objects.get(id=message_id),
+                                            count=1
+                                        )
+                                        print('----------------------------', x.id, x.user.id, x.count)
+                                        return Response(
+                                            {
+                                                'message': 'Incorrect answer. 2 attempts left out of 3 attempts',
+                                                'status': HTTP_400_BAD_REQUEST, 'attempts_left': 2})
+                                        # try:
+                                        #     print('else try block after false---->>> ')
+                                        #     IncorrectAttempt.objects.get(message_id=message_id)
+                                        #     pass
+                                        # except Exception as e:
+                                        #     print('inside except block after false case')
+                                        #     IncorrectAttempt.objects.create(
+                                        #         user=app_user_obj,
+                                        #         message_id=Message.objects.get(id=message_id),
+                                        #         count=1
+                                        #     )
                                 else:
                                     print('outer if')
                                     try:
