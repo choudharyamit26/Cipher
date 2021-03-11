@@ -1117,7 +1117,7 @@ class GetNotificationList(ListAPIView):
     def get(self, request, *args, **kwargs):
         user = self.request.user
         app_user = AppUser.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
-        notifications = AppNotification.objects.filter(user=app_user).order_by('id')
+        notifications = AppNotification.objects.filter(user=app_user).order_by('-id')
         receivers = []
         for message in notifications:
             # print(message.receiver.all().exclude(id=app_user_obj.id))
