@@ -682,7 +682,7 @@ class ReadingMessage(CreateAPIView):
                                     print('inside read message incorrect answer')
                                     if int(message_id) in [x.message_id.id for x in incorrect_attempts]:
                                         print('inside if case---->>>')
-                                        msg_obj = IncorrectAttempt.objects.get(message_id=message_id)
+                                        msg_obj = IncorrectAttempt.objects.get(user=app_user_obj, message_id=message_id)
                                         if msg_obj.count < 3:
                                             msg_obj.count += 1
                                             msg_obj.save()
