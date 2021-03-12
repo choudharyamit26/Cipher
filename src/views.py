@@ -565,7 +565,7 @@ class InboxView(APIView):
                          'question': message.ques,
                          'answer': message.ans, 'created_at': message.created_at, 'missed': message.is_missed,
                          'message_text': message.text, 'message_attachment': message.attachment.url,
-                         'validity': message.validity,'message_read_by':[x.id for x in message.read_by.all()]})
+                         'validity': message.validity, 'message_read_by': [x.id for x in message.read_by.all()]})
                 else:
                     messages_values.append(
                         {'id': message.id, 'sender_id': message.sender.id, 'sender_name': message.sender.username,
@@ -574,7 +574,8 @@ class InboxView(APIView):
                          'sender_phone_number': message.sender.phone_number, 'mode': message.mode,
                          'question': message.ques,
                          'answer': message.ans, 'created_at': message.created_at, 'missed': message.is_missed,
-                         'message_text': message.text, 'message_attachment': '', 'validity': message.validity,'message_read_by':[x.id for x in message.read_by.all()]})
+                         'message_text': message.text, 'message_attachment': '', 'validity': message.validity,
+                         'message_read_by': [x.id for x in message.read_by.all()]})
 
                 receivers.append({"receiver": [
                     {'receiver_id': x.id, 'name': x.username, 'country_code': x.country_code,
@@ -641,7 +642,7 @@ class ReadingMessage(CreateAPIView):
                             # notification.sent_to.set([x.username for x in message_obj.receiver.all()])
                             for receiver in message_obj.receiver.all():
                                 notification.sent_to.add(receiver)
-                                print('Race mode else case notification sent user list',notification.sent_to.all())
+                                print('Race mode else case notification sent user list', notification.sent_to.all())
                             fcm_token = message_obj.sender.device_token
                             try:
                                 data_message = {"data": {"title": "Message Read",
@@ -775,7 +776,7 @@ class ReadingMessage(CreateAPIView):
                         # notification.sent_to.set([x.username for x in message_obj.receiver.all()])
                         for receiver in message_obj.receiver.all():
                             notification.sent_to.add(receiver)
-                            print('notification receivers------>>>',notification.sent_to.all())
+                            print('notification receivers------>>>', notification.sent_to.all())
                         fcm_token = message_obj.sender.device_token
                         try:
                             data_message = {"data": {"title": "Message Read",
@@ -1442,8 +1443,9 @@ class GetMessageReadStatus(APIView):
 
     def get(self, request, *args, **kwargs):
         message_id = self.request.query_params.get('message_id')
+        user_id = self.request.query_params.get('user_id')
         try:
-            message = ReadMessage.objects.get(message=message_id)
+            message = ReadMessage.objects.get(user=user_id, message=message_id)
             return Response({'message_status': message.read, 'status': HTTP_200_OK})
         except Exception as e:
             x = {'error': str(e)}
