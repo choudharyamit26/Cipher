@@ -641,6 +641,7 @@ class ReadingMessage(CreateAPIView):
                             # notification.sent_to.set([x.username for x in message_obj.receiver.all()])
                             for receiver in message_obj.receiver.all():
                                 notification.sent_to.add(receiver)
+                                print('Race mode else case notification sent user list',notification.sent_to.all())
                             fcm_token = message_obj.sender.device_token
                             try:
                                 data_message = {"data": {"title": "Message Read",
