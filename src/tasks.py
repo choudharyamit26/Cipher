@@ -76,7 +76,7 @@ def increase_coins():
     for user in app_users:
         user_coins = UserCoins.objects.get(user=user)
         print(user_coins.number_of_coins)
-        if user_coins.number_of_coins < 50:
+        if user_coins.number_of_coins < 5:
             user_coins.number_of_coins += 1
             user_coins.save()
     return "running increase coins function"
