@@ -4,8 +4,8 @@ from .views import CreateUser, LoginView, SendOtpTwilio, ForgetPasswordAPIView, 
     UpdateUserNameView, UpdateNotificationSettings, GetUserNotificationSetting, GetUserCoins, RemoveFavourite, \
     DeleteAllNotification, UnreadNotificationCount, UpdateNotificationStatus, MessageTime, GetNumberOfHitInDay, \
     GetUserProfilePic, RemoveMissedMessages, GetAttemptNumber, UpdateMessageReadStatus, GetMessageReadStatus, \
-    GetExpiredMessage,TransactionManagement
-    # VerifyAppStorePurchase, VerifyPlayStorePurchase
+    GetExpiredMessage, TransactionManagement, IncreaseUserCoins
+# VerifyAppStorePurchase, VerifyPlayStorePurchase
 from django.urls import path
 
 app_name = 'src'
@@ -47,6 +47,7 @@ urlpatterns = [
     path('get-message-read-status/', GetMessageReadStatus.as_view(), name='get-message-read-status'),
     path('get-expired-message/', GetExpiredMessage.as_view(), name='get-expired-message'),
     path('transaction-management/', TransactionManagement.as_view(), name='transaction-management'),
+    path('increase-coins/', IncreaseUserCoins.as_view(), name='increase-coins'),
     # path('verify-app-store/', VerifyAppStorePurchase.as_view(), name='verify-app-store'),
     # path('verify-play-store/', VerifyPlayStorePurchase.as_view(), name='verify-play-store'),
 ]

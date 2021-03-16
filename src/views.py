@@ -1543,6 +1543,7 @@ class TransactionManagement(APIView):
         )
         return Response({'message': 'Transaction completed successfully', 'status': HTTP_200_OK})
 
+
 # class VerifyAppStorePurchase(APIView):
 #     permission_classes = (IsAuthenticated,)
 #     authentication_classes = (TokenAuthentication,)
@@ -1604,3 +1605,19 @@ class TransactionManagement(APIView):
 #         except InAppPyValidationError as e:
 #             # handle validation error
 #             return Response({'message': str(e), 'status': HTTP_400_BAD_REQUEST})
+
+
+class IncreaseUserCoins(APIView):
+
+    def get(self, request, *args, **kwargs):
+        app_users = AppUser.objects.all()
+        # today = timezone.now().today()
+        print(app_users)
+        for user in app_users:
+            print(user)
+            user_coins = UserCoins.objects.get(user=user)
+            print(user_coins.number_of_coins)
+            if user_coins.number_of_coins < 50:
+                user_coins.number_of_coins += 1
+                user_coins.save()
+        return Response("running increase coins function")

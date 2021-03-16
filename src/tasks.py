@@ -75,24 +75,10 @@ def increase_coins():
     # today = timezone.now().today()
     for user in app_users:
         user_coins = UserCoins.objects.get(user=user)
-        if user_coins.number_of_coins < 5:
+        print(user_coins.number_of_coins)
+        if user_coins.number_of_coins < 50:
             user_coins.number_of_coins += 1
-        # hits = HitInADay.objects.filter(user=user)
-        # last_hit = None
-        # if hits.count() > 0:
-        #     for x in hits:
-        #         if str(today.date()) == str(x.day.date()) and x.number == 1:
-        #             user_coins = UserCoins.objects.get(user=user)
-        #             user_coins.number_of_coins += 1
-        #             user_coins.save()
-        #             # x.number += 1
-        #             # x.save()
-        #             last_hit = x.number
-        #         else:
-        #             print('inside else')
-        # else:
-        #     pass
-
+            user_coins.save()
     return "running increase coins function"
 
 
