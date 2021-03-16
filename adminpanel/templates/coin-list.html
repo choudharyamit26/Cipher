@@ -17,7 +17,7 @@
                 <h4 class="Title">Coin Plan Management</h4>
             </div>
 <!--            <div class="enterKey">-->
-                <a class="btn btn-primary float-right" href="{% url 'adminpanel:create-coin-plan' %}" style="margin-top:-45px;">Create New Plan</a>
+<!--                <a class="btn btn-primary float-right" href="{% url 'adminpanel:create-coin-plan' %}" style="margin-top:-45px;">Create New Plan</a>-->
 <!--            </div>-->
             <div class="TableList">
                 <div class="dragscroll">
@@ -26,9 +26,14 @@
                         <thead>
                         <tr>
                             <th>S.No</th>
+                            <th>User Id</th>
+                            <th>Username</th>
+                            <th>Phone Number</th>
+                            <th>Transaction Id</th>
                             <th>Number of coins</th>
                             <th>Amount</th>
-                            <th>Actions</th>
+                            <th>Date</th>
+<!--                            <th>Actions</th>-->
                         </tr>
                         </thead>
                         <tbody>
@@ -36,11 +41,16 @@
                         <tr>
                             </td>
                             <td>{{forloop.counter}}</td>
-                            <td>{{obj.number_of_coins}}</td>
+                            <td>{{obj.user.id}}</td>
+                            <td>{{obj.user.username}}</td>
+                            <td>{{obj.user.phone_number}}</td>
+                            <td>{{obj.transaction_id}}</td>
+                            <td>{{obj.coins}}</td>
                             <td>{{obj.amount}}</td>
-                            <td><a href="{% url 'adminpanel:coin-plan-detail' obj.id %}"><i class="fa fa-eye"></i></a>
-                                <a href="{% url 'adminpanel:update-coin-plan' obj.id %}"><i
-                                        class="fa fa-pencil-square-o"></i></a></td>
+                            <td>{{obj.created_at}}</td>
+<!--                            <td><a href="{% url 'adminpanel:coin-plan-detail' obj.id %}"><i class="fa fa-eye"></i></a>-->
+<!--                                <a href="{% url 'adminpanel:update-coin-plan' obj.id %}"><i-->
+<!--                                        class="fa fa-pencil-square-o"></i></a></td>-->
                         </tr>
                         {% endfor %}
                         </tbody>

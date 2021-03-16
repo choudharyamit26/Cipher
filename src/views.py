@@ -1,6 +1,7 @@
 import json
 from random import randint
-
+import requests
+from django.conf.global_settings import DEBUG
 from django.shortcuts import render
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -16,7 +17,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from .models import AppUser, Message, IncorrectAttempt, Favourites, AppNotification, UserCoins, AppNotificationSetting, \
-    HitInADay, UserOtp, UnRegisteredMessage, ReadMessage
+    HitInADay, UserOtp, UnRegisteredMessage, ReadMessage, Transactions
 from .serializers import UserCreateSerailizer, LoginSerializer, ForgetPasswordSerializer, ComposeMessageSerializer, \
     SecretKeySerializer, ReadMessageSerializer, ProfilePicSerializer, OtpSeralizer, VerifyOtpSeralizer, \
     VerifyForgetPasswordOtpSerializer, AddToFavouritesSerializer, ResetPasswordSerializer, UpdateUserNameSerializer, \
@@ -25,6 +26,8 @@ from adminpanel.models import User, TermsandCondition, UserNotification
 from authy.api import AuthyApiClient
 from twilio.rest import Client
 from .fcm_notification import send_to_one, send_another
+from inapppy import AppStoreValidator, InAppPyValidationError
+from inapppy import GooglePlayValidator, InAppPyValidationError
 
 # Production key from authy app in twilio
 
@@ -1517,3 +1520,87 @@ class GetExpiredMessage(APIView):
                     print('Exception from cron job ---->>> ', e)
                 # log deletion
         return Response({'message': 'Success'})
+
+
+class TransactionManagement(APIView):
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+
+    def post(self, request, *args, **kwargs):
+        user = self.request.user
+        transaction_id = self.request.POST['transaction_id']
+        number_of_coins = self.request.POST['number_of_coins']
+        amount = self.request.POST['amount']
+        user_obj = AppUser.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
+        user_coins_obj = UserCoins.objects.get(user=user_obj)
+        user_coins_obj.number_of_coins += int(number_of_coins)
+        user_coins_obj.save()
+        Transactions.objects.create(
+            user=user_obj,
+            transaction_id=transaction_id,
+            coins=number_of_coins,
+            amount=amount
+        )
+        return Response({'message': 'Transaction completed successfully', 'status': HTTP_200_OK})
+
+# class VerifyAppStorePurchase(APIView):
+#     permission_classes = (IsAuthenticated,)
+#     authentication_classes = (TokenAuthentication,)
+#
+#     def post(self, request, *args, **kwargs):
+#         receipt = self.request.POST['receipt']
+#         APPLE_PRODUCT_VERIFY_URL = 'https://buy.itunes.apple.com/verifyReceipt'
+#         APPLE_SANDBOX_VERIFY_URL = 'https://sandbox.itunes.apple.com/verifyReceipt'
+#         receipt_json = json.dumps({"receipt-data": receipt, "password": '099eddbf89bf4c53b2ec8d9bce1df11d'})
+#         verifyUrl = APPLE_PRODUCT_VERIFY_URL if not DEBUG else APPLE_SANDBOX_VERIFY_URL
+#         response = requests.request(
+#             method='POST',
+#             url=verifyUrl,
+#             headers={'Content-Type': 'application/x-www-form-urlencoded'},
+#             data=receipt_json
+#         )
+#         if response.status_code == 200:
+#             resJson = response.json()
+#             if resJson['status'] == 0:
+#                 # verify success
+#                 return True
+#             return Response({'message': resJson, 'status': resJson['status']})
+#         else:
+#             return Response({'message': response.json, 'status': response.status_code})
+#         # secret_key = '099eddbf89bf4c53b2ec8d9bce1df11d'
+#         # bundle_id = 'com.Quizlok.app'
+#         # auto_retry_wrong_env_request = False  # if True, automatically query sandbox endpoint if
+#         # # validation fails on production endpoint
+#         # validator = AppStoreValidator(bundle_id, auto_retry_wrong_env_request=auto_retry_wrong_env_request)
+#         # print('Validator---', validator)
+#         # try:
+#         #     exclude_old_transactions = False  # if True, include only the latest renewal transaction
+#         #     validation_result = validator.validate(receipt)
+#         #     print('-------->>>>', validation_result)
+#         #     return Response({'message': 'Success', 'status': HTTP_200_OK})
+#         # except InAppPyValidationError as ex:
+#         #     # handle validation error
+#         #     error = {"e": str(ex)}
+#         #     print('Exception====', ex)
+#         #     response_from_apple = ex.raw_response
+#         #     print('>>>>>>>>>>>>>>>>>>>>>', response_from_apple)
+#         #     return Response({'message': error['e'], 'status': HTTP_400_BAD_REQUEST})
+#
+#
+# class VerifyPlayStorePurchase(APIView):
+#     permission_classes = (IsAuthenticated,)
+#     authentication_classes = (TokenAuthentication,)
+#
+#     def post(self, request, *args, **kwargs):
+#
+#         bundle_id = 'com.yourcompany.yourapp'
+#         api_key = 'API key from the developer console'
+#         validator = GooglePlayValidator(bundle_id, api_key)
+#
+#         try:
+#             # receipt means `androidData` in result of purchase
+#             # signature means `signatureAndroid` in result of purchase
+#             validation_result = validator.validate('receipt', 'signature')
+#         except InAppPyValidationError as e:
+#             # handle validation error
+#             return Response({'message': str(e), 'status': HTTP_400_BAD_REQUEST})

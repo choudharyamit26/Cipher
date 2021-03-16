@@ -116,6 +116,14 @@ class UserOtp(models.Model):
     otp = models.CharField(max_length=5)
 
 
+class Transactions(models.Model):
+    user = models.ForeignKey(AppUser, null=True, on_delete=models.SET_NULL)
+    transaction_id = models.CharField(default='', max_length=256)
+    coins = models.IntegerField(default=0)
+    amount = models.DecimalField(max_digits=100, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
 @receiver(post_save, sender=AppUser)
 def user_coins(sender, instance, created, **kwargs):
     if created:

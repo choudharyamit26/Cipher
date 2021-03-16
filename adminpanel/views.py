@@ -24,6 +24,8 @@ from src.models import Message, AppUser, AppNotification
 
 from src.fcm_notification import send_another, send_to_one
 
+from src.models import Transactions
+
 user = get_user_model()
 
 
@@ -536,7 +538,7 @@ class CreateCoinPlan(LoginRequiredMixin, CreateView):
 
 
 class ListCoinPlan(LoginRequiredMixin, ListView):
-    model = Coin
+    model = Transactions
     login_url = 'adminpanel:login'
     template_name = 'coin-list.html'
 
