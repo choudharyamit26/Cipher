@@ -653,8 +653,8 @@ class ReadingMessage(CreateAPIView):
                                 # body = f'{app_user_obj.username} read your message' + 'Message Sent:' + str(
                                 #     message_obj.created_at) + ', ' + str(message_obj.mode) + ':' + str(
                                 #     [x.username for x in message_obj.receiver.all()])
-                                body = f'{app_user_obj.username} read your message' + '  Message Sent:' + str(
-                                    message_obj.created_at.strftime("%B %d, %Y.")) + ', ' + str(
+                                body = f'{app_user_obj.username} read your message' + ' Message Sent: ' + str(
+                                    message_obj.created_at.strftime("%B %d, %Y.")) + str(
                                     message_obj.mode) + ':' + str(", ".join(
                                     [x.username for x in message_obj.receiver.all()]))
                                 message_type = "messageRead"
