@@ -498,7 +498,8 @@ class SendNotification(LoginRequiredMixin, View):
                 print(respo)
                 # fcm_token.send_message(data)
                 print("FCM Response===============>0", respo)
-            except:
+            except Exception as e:
+                print('EXCEPTION------>>>',e)
                 pass
         messages.success(self.request, "Notification sent successfully")
         return HttpResponseRedirect(self.request.path_info)
