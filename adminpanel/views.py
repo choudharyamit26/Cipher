@@ -467,6 +467,7 @@ class SendNotification(LoginRequiredMixin, View):
         title = self.request.POST['title']
         print(title)
         message = self.request.POST['body']
+        sound = 'notifications.mp3'
         print(message)
         for i in users_list:
             user = AppUser.objects.get(id=i)
@@ -487,11 +488,11 @@ class SendNotification(LoginRequiredMixin, View):
                                          "body": message, "type": "adminNotification"}}
                 print(title)
                 print(message)
-                respo = send_to_one(fcm_token, data_message)
+                # respo = send_to_one(fcm_token, data_message)
                 print(respo)
                 # print("FCM Response===============>0", respo)
                 message_type = "adminNotification"
-                respo = send_another(fcm_token, title, message, message_type)
+                respo = send_another(fcm_token, title, message, message_type, sound)
                 print(title)
                 print(message)
                 print(respo)
