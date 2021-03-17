@@ -489,7 +489,7 @@ class SendNotification(LoginRequiredMixin, View):
                 print(title)
                 print(message)
                 # respo = send_to_one(fcm_token, data_message)
-                print(respo)
+                # print(respo)
                 # print("FCM Response===============>0", respo)
                 message_type = "adminNotification"
                 respo = send_another(fcm_token, title, message, message_type, sound)
