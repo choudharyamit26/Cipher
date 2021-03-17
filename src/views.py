@@ -394,7 +394,7 @@ class ComposeMessage(CreateAPIView):
                                     title = "New Message"
                                     body = "You have a new message"
                                     message_type = "NewMessage"
-                                    sound = 'notifications'
+                                    sound = 'notifications.mp3'
                                     respo = send_another(
                                         fcm_token, title, body, message_type,sound)
                                     # respo = send_to_one(fcm_token, data_message)
@@ -462,7 +462,7 @@ class ComposeMessage(CreateAPIView):
                                     title = "New Message"
                                     body = "You have a new message"
                                     message_type = "NewMessage"
-                                    sound = 'notifications'
+                                    sound = 'notifications.mp3'
                                     respo = send_another(
                                         fcm_token, title, body, message_type,sound)
                                     # respo = send_to_one(fcm_token, data_message)
