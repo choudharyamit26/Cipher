@@ -117,7 +117,7 @@ class UserOtp(models.Model):
 
 
 class Transactions(models.Model):
-    user = models.ForeignKey(AppUser, null=True, on_delete=models.SET_NULL)
+    user = models.ForeignKey(AppUser, null=True, on_delete=models.CASCADE)
     transaction_id = models.CharField(default='', max_length=256)
     coins = models.IntegerField(default=0)
     amount = models.DecimalField(max_digits=100, decimal_places=2)
@@ -131,7 +131,7 @@ def user_coins(sender, instance, created, **kwargs):
         user = AppUser.objects.get(id=user_id)
         UserCoins.objects.create(
             user=user,
-            number_of_coins=5
+            number_of_coins=10
         )
         AppNotificationSetting.objects.create(
             user=user,
