@@ -394,8 +394,9 @@ class ComposeMessage(CreateAPIView):
                                     title = "New Message"
                                     body = "You have a new message"
                                     message_type = "NewMessage"
+                                    sound = 'notifications'
                                     respo = send_another(
-                                        fcm_token, title, body, message_type)
+                                        fcm_token, title, body, message_type,sound)
                                     # respo = send_to_one(fcm_token, data_message)
                                     print("FCM Response===============>0", respo)
                                     # title = "Profile Update"
@@ -461,8 +462,9 @@ class ComposeMessage(CreateAPIView):
                                     title = "New Message"
                                     body = "You have a new message"
                                     message_type = "NewMessage"
+                                    sound = 'notifications'
                                     respo = send_another(
-                                        fcm_token, title, body, message_type)
+                                        fcm_token, title, body, message_type,sound)
                                     # respo = send_to_one(fcm_token, data_message)
                                     print("FCM Response===============>0", respo)
                                     # title = "Profile Update"
