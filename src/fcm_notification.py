@@ -33,7 +33,7 @@ def send_to_one(registration_id, data_message):
 def send_another(registration_id, message_title, message_body, message_type,sound):
     print(registration_id, message_title, message_body, message_type)
     result = push_service.notify_single_device(
-        registration_id, message_body, message_title, message_type)
+        registration_id, message_body, message_title, message_type,sound)
     print("<----------------------------------------------------->", result)
 
 
