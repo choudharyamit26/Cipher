@@ -45,9 +45,9 @@ def expire_messages():
                         notification.sent_to.add(users)
                     fcm_token = AppUser.objects.get(id=receiver.id).sender.device_token
                     try:
-                        data_message = {"data": {"title": "Message Missed",
+                        data_message = {"title": "Message Missed",
                                                  "body": 'Message Expired',
-                                                 "type": "messageExpired","sound":"notifications.mp3"}}
+                                                 "type": "messageExpired","sound":"notifications.mp3"}
                         respo = send_to_one(fcm_token, data_message)
 
                         # data_message = json.dumps(data_message)

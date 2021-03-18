@@ -387,9 +387,9 @@ class ComposeMessage(CreateAPIView):
                             print(AppNotificationSetting.objects.get(user=AppUser.objects.get(phone_number=obj)).on)
                             if AppNotificationSetting.objects.get(user=AppUser.objects.get(phone_number=obj)).on:
                                 try:
-                                    data_message = {"data": {"title": "New Message",
+                                    data_message = {"title": "New Message",
                                                              "body": "You have a new message",
-                                                             "type": "NewMessage", "sound": "notifications.mp3"}}
+                                                             "type": "NewMessage", "sound": "notifications.mp3"}
                                     respo = send_to_one(fcm_token, data_message)
                                     # data_message = json.dumps(data_message)
                                     title = "New Message"
@@ -455,10 +455,10 @@ class ComposeMessage(CreateAPIView):
                             # )
                             if AppNotificationSetting.objects.get(user=AppUser.objects.get(phone_number=obj)).on:
                                 try:
-                                    data_message = {"Notification": {"title": "New Message",
-                                                                     "body": "You have a new message",
-                                                                     "type": "NewMessage",
-                                                                     "sound": "notifications.mp3"}}
+                                    data_message = {"title": "New Message",
+                                                    "body": "You have a new message",
+                                                    "type": "NewMessage",
+                                                    "sound": "notifications.mp3"}
                                     respo = send_to_one(fcm_token, data_message)
                                     # data_message = json.dumps(data_message)
                                     title = "New Message"
@@ -652,9 +652,9 @@ class ReadingMessage(CreateAPIView):
                                 print('Race mode else case notification sent user list', notification.sent_to.all())
                             fcm_token = message_obj.sender.device_token
                             try:
-                                data_message = {"data": {"title": "Message Read",
-                                                         "body": f'{app_user_obj.username} read your message',
-                                                         "type": "messageRead", "sound": 'notifications.mp3'}}
+                                data_message = {"title": "Message Read",
+                                                "body": f'{app_user_obj.username} read your message',
+                                                "type": "messageRead", "sound": 'notifications.mp3'}
                                 # data_message = json.dumps(data_message)
                                 title = ""
                                 # body = f'{app_user_obj.username} read your message' + 'Message Sent:' + str(
@@ -793,9 +793,9 @@ class ReadingMessage(CreateAPIView):
                             print('notification receivers------>>>', notification.sent_to.all())
                         fcm_token = message_obj.sender.device_token
                         try:
-                            data_message = {"data": {"title": "Message Read",
+                            data_message = {"title": "Message Read",
                                                      "body": f'{app_user_obj.username} read your message',
-                                                     "type": "messageRead", "sound": 'notifications.mp3'}}
+                                                     "type": "messageRead", "sound": 'notifications.mp3'}
                             # data_message = json.dumps(data_message)
                             title = ""
                             # body = f'{app_user_obj.username} read your message'
