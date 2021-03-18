@@ -47,7 +47,9 @@ def expire_messages():
                     try:
                         data_message = {"data": {"title": "Message Missed",
                                                  "body": 'Message Expired',
-                                                 "type": "messageExpired"}}
+                                                 "type": "messageExpired","sound":"notifications.mp3"}}
+                        respo = send_to_one(fcm_token, data_message)
+
                         # data_message = json.dumps(data_message)
                         title = "Message Missed"
                         body = 'Message Expired'
@@ -55,7 +57,6 @@ def expire_messages():
                         sound = 'notifications.mp3'
                         respo = send_another(
                             fcm_token, title, body, message_type,sound)
-                        # respo = send_to_one(fcm_token, data_message)
                         print("FCM Response===============>0", respo)
                         # title = "Profile Update"
                         # body = "Your profile has been updated successfully"
