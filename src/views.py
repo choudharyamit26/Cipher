@@ -155,6 +155,7 @@ class LoginView(ObtainAuthToken):
         phone_number = self.request.data['phone_number']
         password = self.request.data['password']
         device_token = self.request.data['device_token']
+        device_type = self.request.data['device_type']
         x = {}
         try:
             # user = User.objects.get(phone_number=phone_number)
@@ -387,18 +388,21 @@ class ComposeMessage(CreateAPIView):
                             print(AppNotificationSetting.objects.get(user=AppUser.objects.get(phone_number=obj)).on)
                             if AppNotificationSetting.objects.get(user=AppUser.objects.get(phone_number=obj)).on:
                                 try:
-                                    data_message = {"title": "New Message",
-                                                             "body": "You have a new message",
-                                                             "type": "NewMessage", "sound": "notifications.mp3"}
-                                    respo = send_to_one(fcm_token, data_message)
-                                    # data_message = json.dumps(data_message)
-                                    title = "New Message"
-                                    body = "You have a new message"
-                                    message_type = "NewMessage"
-                                    sound = 'notifications.mp3'
-                                    respo = send_another(
-                                        fcm_token, title, body, message_type, sound)
-                                    print("FCM Response===============>0", respo)
+                                    if AppUser.objects.get(phone_number=obj).device_type == 'android':
+                                        data_message = {"title": "New Message",
+                                                        "body": "You have a new message",
+                                                        "type": "NewMessage", "sound": "notifications.mp3"}
+                                        respo = send_to_one(fcm_token, data_message)
+                                        print(respo)
+                                    else:
+                                        # data_message = json.dumps(data_message)
+                                        title = "New Message"
+                                        body = "You have a new message"
+                                        message_type = "NewMessage"
+                                        sound = 'notifications.mp3'
+                                        respo = send_another(
+                                            fcm_token, title, body, message_type, sound)
+                                        print("FCM Response===============>0", respo)
                                     # title = "Profile Update"
                                     # body = "Your profile has been updated successfully"
                                     # respo = send_to_one(fcm_token, title, body)
@@ -455,20 +459,22 @@ class ComposeMessage(CreateAPIView):
                             # )
                             if AppNotificationSetting.objects.get(user=AppUser.objects.get(phone_number=obj)).on:
                                 try:
-                                    data_message = {"title": "New Message",
-                                                    "body": "You have a new message",
-                                                    "type": "NewMessage",
-                                                    "sound": "notifications.mp3"}
-                                    respo = send_to_one(fcm_token, data_message)
-                                    # data_message = json.dumps(data_message)
-                                    title = "New Message"
-                                    body = "You have a new message"
-                                    message_type = "NewMessage"
-                                    sound = 'notifications.mp3'
-                                    respo = send_another(
-                                        fcm_token, title, body, message_type, sound)
-                                    # respo = send_to_one(fcm_token, data_message)
-                                    print("FCM Response===============>0", respo)
+                                    if AppUser.objects.get(phone_number=obj).device_type == 'android':
+                                        data_message = {"title": "New Message",
+                                                        "body": "You have a new message",
+                                                        "type": "NewMessage",
+                                                        "sound": "notifications.mp3"}
+                                        respo = send_to_one(fcm_token, data_message)
+                                    else:
+                                        # data_message = json.dumps(data_message)
+                                        title = "New Message"
+                                        body = "You have a new message"
+                                        message_type = "NewMessage"
+                                        sound = 'notifications.mp3'
+                                        respo = send_another(
+                                            fcm_token, title, body, message_type, sound)
+                                        # respo = send_to_one(fcm_token, data_message)
+                                        print("FCM Response===============>0", respo)
                                     # title = "Profile Update"
                                     # body = "Your profile has been updated successfully"
                                     # respo = send_to_one(fcm_token, title, body)
@@ -652,28 +658,34 @@ class ReadingMessage(CreateAPIView):
                                 print('Race mode else case notification sent user list', notification.sent_to.all())
                             fcm_token = message_obj.sender.device_token
                             try:
-                                data_message = {"title": "Message Read",
-                                                "body": f'{app_user_obj.username} read your message',
-                                                "type": "messageRead", "sound": 'notifications.mp3'}
-                                # data_message = json.dumps(data_message)
-                                title = ""
-                                # body = f'{app_user_obj.username} read your message' + 'Message Sent:' + str(
-                                #     message_obj.created_at) + ', ' + str(message_obj.mode) + ':' + str(
-                                #     [x.username for x in message_obj.receiver.all()])
-                                body = f'{app_user_obj.username} read your message' + ' Message Sent: ' + str(
-                                    message_obj.created_at.strftime("%B %d, %Y.")) + ' ' + str(
-                                    message_obj.mode) + ':' + str(", ".join(
-                                    [x.username for x in message_obj.receiver.all()]))
-                                message_type = "messageRead"
-                                sound = 'notifications.mp3'
-                                respo = send_another(
-                                    fcm_token, title, body, message_type, sound)
-                                respo = send_to_one(fcm_token, data_message)
-                                print("FCM Response===============>0", respo)
-                                # title = "Profile Update"
-                                # body = "Your profile has been updated successfully"
-                                # respo = send_to_one(fcm_token, title, body)
-                                # print("FCM Response===============>0", respo)
+                                if message_obj.sender.device_type == 'android':
+                                    data_message = {"title": "",
+                                                    "body": f'{app_user_obj.username} read your message' + ' Message Sent: ' + str(
+                                                        message_obj.created_at.strftime("%B %d, %Y.")) + ' ' + str(
+                                                        message_obj.mode) + ':' + str(", ".join(
+                                                        [x.username for x in message_obj.receiver.all()])),
+                                                    "type": "messageRead", "sound": 'notifications.mp3'}
+                                    respo = send_to_one(fcm_token, data_message)
+                                    print(respo)
+                                else:
+                                    # data_message = json.dumps(data_message)
+                                    title = ""
+                                    # body = f'{app_user_obj.username} read your message' + 'Message Sent:' + str(
+                                    #     message_obj.created_at) + ', ' + str(message_obj.mode) + ':' + str(
+                                    #     [x.username for x in message_obj.receiver.all()])
+                                    body = f'{app_user_obj.username} read your message' + ' Message Sent: ' + str(
+                                        message_obj.created_at.strftime("%B %d, %Y.")) + ' ' + str(
+                                        message_obj.mode) + ':' + str(", ".join(
+                                        [x.username for x in message_obj.receiver.all()]))
+                                    message_type = "messageRead"
+                                    sound = 'notifications.mp3'
+                                    respo = send_another(
+                                        fcm_token, title, body, message_type, sound)
+                                    print("FCM Response===============>0", respo)
+                                    # title = "Profile Update"
+                                    # body = "Your profile has been updated successfully"
+                                    # respo = send_to_one(fcm_token, title, body)
+                                    # print("FCM Response===============>0", respo)
                             except:
                                 pass
                             if message_obj.attachment:
@@ -793,22 +805,27 @@ class ReadingMessage(CreateAPIView):
                             print('notification receivers------>>>', notification.sent_to.all())
                         fcm_token = message_obj.sender.device_token
                         try:
-                            data_message = {"title": "Message Read",
-                                                     "body": f'{app_user_obj.username} read your message',
-                                                     "type": "messageRead", "sound": 'notifications.mp3'}
-                            # data_message = json.dumps(data_message)
-                            title = ""
-                            # body = f'{app_user_obj.username} read your message'
-                            body = f'{app_user_obj.username} read your message' + ' Message Sent: ' + str(
-                                message_obj.created_at.strftime("%B %d, %Y.")) + ' ' + str(
-                                message_obj.mode) + ':' + str(", ".join(
-                                [x.username for x in message_obj.receiver.all()]))
-                            message_type = "messageRead"
-                            sound = 'notifications.mp3'
-                            respo = send_another(
-                                fcm_token, title, body, message_type, sound)
-                            # respo = send_to_one(fcm_token, data_message)
-                            print("FCM Response===============>0", respo)
+                            if message_obj.sender.device_type == 'android':
+                                data_message = {"title": "",
+                                                "body": f'{app_user_obj.username} read your message' + ' Message Sent: ' + str(
+                                                    message_obj.created_at.strftime("%B %d, %Y.")) + ' ' + str(
+                                                    message_obj.mode) + ':' + str(", ".join(
+                                                    [x.username for x in message_obj.receiver.all()])),
+                                                "type": "messageRead", "sound": 'notifications.mp3'}
+                                respo = send_to_one(fcm_token, data_message)
+                            else:
+                                # data_message = json.dumps(data_message)
+                                title = ""
+                                # body = f'{app_user_obj.username} read your message'
+                                body = f'{app_user_obj.username} read your message' + ' Message Sent: ' + str(
+                                    message_obj.created_at.strftime("%B %d, %Y.")) + ' ' + str(
+                                    message_obj.mode) + ':' + str(", ".join(
+                                    [x.username for x in message_obj.receiver.all()]))
+                                message_type = "messageRead"
+                                sound = 'notifications.mp3'
+                                respo = send_another(
+                                    fcm_token, title, body, message_type, sound)
+                                print("FCM Response===============>0", respo)
                             # title = "Profile Update"
                             # body = "Your profile has been updated successfully"
                             # respo = send_to_one(fcm_token, title, body)
@@ -976,6 +993,7 @@ class VerifyOtp(APIView):
             verification_code = serializer.validated_data['verification_code']
             password = serializer.validated_data['password']
             device_token = serializer.validated_data['device_token']
+            device_type = serializer.validated_data['device_type']
             # check = authy_api.phones.verification_check(phone_number, country_code, verification_code)
             # if check.ok():
             try:
@@ -988,6 +1006,7 @@ class VerifyOtp(APIView):
                         country_code=country_code,
                         phone_number=str(country_code) + str(phone_number),
                         device_token=device_token,
+                        device_type=device_type
                     )
                     us_obj = User.objects.create(country_code=country_code, phone_number=phone_number,
                                                  email=str(phone_number) + '@email.com')

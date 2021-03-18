@@ -18,6 +18,7 @@ class AppUser(models.Model):
     password = models.CharField(default='123456', max_length=100)
     profile_pic = models.ImageField(default='default_profile.png', null=True, blank=True)
     device_token = models.CharField(default='', max_length=2000)
+    device_type = models.CharField(default='', max_length=2000)
     created_at = models.DateTimeField(auto_now_add=True)
 
 

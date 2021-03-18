@@ -23,6 +23,7 @@ class UserCreateSerailizer(serializers.ModelSerializer):
 class LoginSerializer(serializers.Serializer):
     country_code = serializers.IntegerField()
     phone_number = serializers.IntegerField()
+    device_type = serializers.CharField()
     password = serializers.CharField(style={'input_type': 'password'})
 
     def validate(self, attrs):
@@ -131,10 +132,12 @@ class VerifyOtpSeralizer(serializers.ModelSerializer):
     verification_code = serializers.IntegerField()
     password = serializers.CharField()
     device_token = serializers.CharField()
+    device_type = serializers.CharField()
 
     class Meta:
         model = AppUser
-        fields = ('username', 'country_code', 'phone_number', 'verification_code', 'password', 'device_token')
+        fields = (
+        'username', 'country_code', 'phone_number', 'verification_code', 'password', 'device_token', 'device_type')
 
 
 class AddToFavouritesSerializer(serializers.ModelSerializer):

@@ -45,23 +45,24 @@ def expire_messages():
                         notification.sent_to.add(users)
                     fcm_token = AppUser.objects.get(id=receiver.id).sender.device_token
                     try:
-                        data_message = {"title": "Message Missed",
-                                                 "body": 'Message Expired',
-                                                 "type": "messageExpired","sound":"notifications.mp3"}
-                        respo = send_to_one(fcm_token, data_message)
-
-                        # data_message = json.dumps(data_message)
-                        title = "Message Missed"
-                        body = 'Message Expired'
-                        message_type = "messageExpired"
-                        sound = 'notifications.mp3'
-                        respo = send_another(
-                            fcm_token, title, body, message_type,sound)
-                        print("FCM Response===============>0", respo)
-                        # title = "Profile Update"
-                        # body = "Your profile has been updated successfully"
-                        # respo = send_to_one(fcm_token, title, body)
-                        # print("FCM Response===============>0", respo)
+                        if AppUser.objects.get(id=receiver.id).sender.device_type == 'android':
+                            data_message = {"title": "Message Missed",
+                                                     "body": 'Message Expired',
+                                                     "type": "messageExpired","sound":"notifications.mp3"}
+                            respo = send_to_one(fcm_token, data_message)
+                        else:
+                            # data_message = json.dumps(data_message)
+                            title = "Message Missed"
+                            body = 'Message Expired'
+                            message_type = "messageExpired"
+                            sound = 'notifications.mp3'
+                            respo = send_another(
+                                fcm_token, title, body, message_type,sound)
+                            print("FCM Response===============>0", respo)
+                            # title = "Profile Update"
+                            # body = "Your profile has been updated successfully"
+                            # respo = send_to_one(fcm_token, title, body)
+                            # print("FCM Response===============>0", respo)
                     except:
                         pass
             except Exception as e:
