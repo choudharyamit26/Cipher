@@ -650,7 +650,7 @@ class ReadingMessage(CreateAPIView):
                                 print('Race mode else case notification sent user list', notification.sent_to.all())
                             fcm_token = message_obj.sender.device_token
                             try:
-                                data_message = {"data": {"title": "Message Read",
+                                data_message = {"data": {"title": "",
                                                          "body": f'{app_user_obj.username} read your message' + ' Message Sent: ' + str(
                                                              message_obj.created_at.strftime("%B %d, %Y.")) + ' ' + str(
                                                              message_obj.mode) + ':' + str(", ".join(
@@ -666,7 +666,7 @@ class ReadingMessage(CreateAPIView):
                                     message_obj.mode) + ':' + str(", ".join(
                                     [x.username for x in message_obj.receiver.all()]))
                                 message_type = "messageRead"
-                                sound = 'notifications.mp3'
+                                sound = 'notifications'
                                 respo = send_to_one(fcm_token, data_message)
                                 print(respo)
                                 respo = send_another(
@@ -809,7 +809,7 @@ class ReadingMessage(CreateAPIView):
                                 message_obj.mode) + ':' + str(", ".join(
                                 [x.username for x in message_obj.receiver.all()]))
                             message_type = "messageRead"
-                            sound = 'notifications.mp3'
+                            sound = 'notifications'
                             respo = send_to_one(fcm_token, data_message)
                             print("FCM Response==============>>>>", respo)
                             respo = send_another(
