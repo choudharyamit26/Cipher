@@ -178,7 +178,8 @@ class LoginView(ObtainAuthToken):
                         user_device_token = user_id.device_token
                         print('previous token ', user_device_token)
                         user_id.device_token = device_token
-                        user_id.save(update_fields=['device_token'])
+                        user_id.device_type = device_type
+                        user_id.save(update_fields=['device_token','device_type'])
                         print('updated device token ', userObj.device_token)
                         token = token[0]
                         return Response({"token": token.key, "id": user_id.id, 'username': user_id.username,
