@@ -652,7 +652,7 @@ class ReadingMessage(CreateAPIView):
                             try:
                                 data_message = {"data": {"title": "Message Read",
                                                          "body": f'{app_user_obj.username} read your message',
-                                                         "type": "messageRead"}}
+                                                         "type": "messageRead","sound": 'notifications.mp3'}}
                                 # data_message = json.dumps(data_message)
                                 title = ""
                                 # body = f'{app_user_obj.username} read your message' + 'Message Sent:' + str(
@@ -666,7 +666,7 @@ class ReadingMessage(CreateAPIView):
                                 sound = 'notifications.mp3'
                                 respo = send_another(
                                     fcm_token, title, body, message_type,sound)
-                                # respo = send_to_one(fcm_token, data_message)
+                                respo = send_to_one(fcm_token, data_message)
                                 print("FCM Response===============>0", respo)
                                 # title = "Profile Update"
                                 # body = "Your profile has been updated successfully"
@@ -793,7 +793,7 @@ class ReadingMessage(CreateAPIView):
                         try:
                             data_message = {"data": {"title": "Message Read",
                                                      "body": f'{app_user_obj.username} read your message',
-                                                     "type": "messageRead"}}
+                                                     "type": "messageRead","sound":'notifications.mp3'}}
                             # data_message = json.dumps(data_message)
                             title = ""
                             # body = f'{app_user_obj.username} read your message'
