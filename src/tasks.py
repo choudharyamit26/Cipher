@@ -4,7 +4,7 @@ from celery import shared_task
 from django.utils import timezone
 
 from .fcm_notification import send_another, send_to_one
-from .models import Message, AppNotification, AppUser, UserCoins, HitInADay
+from .models import Message, AppNotification, AppUser, UserCoins, HitInADay, AppNotificationSetting
 import datetime
 import pytz
 
@@ -44,26 +44,29 @@ def expire_messages():
                     for users in receivers:
                         notification.sent_to.add(users)
                     fcm_token = AppUser.objects.get(id=receiver.id).sender.device_token
-                    try:
-                        if AppUser.objects.get(id=receiver.id).sender.device_type == 'android':
-                            data_message = {"title": "Message Missed",
-                                                     "body": 'Message Expired',
-                                                     "type": "messageExpired","sound":"notifications.mp3"}
-                            respo = send_to_one(fcm_token, data_message)
-                        else:
-                            # data_message = json.dumps(data_message)
-                            title = "Message Missed"
-                            body = 'Message Expired'
-                            message_type = "messageExpired"
-                            sound = 'notifications.mp3'
-                            respo = send_another(
-                                fcm_token, title, body, message_type,sound)
-                            print("FCM Response===============>0", respo)
-                            # title = "Profile Update"
-                            # body = "Your profile has been updated successfully"
-                            # respo = send_to_one(fcm_token, title, body)
-                            # print("FCM Response===============>0", respo)
-                    except:
+                    if AppNotificationSetting.objects.get(user=AppUser.objects.get(id=receiver.id)).on:
+                        try:
+                            if AppUser.objects.get(id=receiver.id).sender.device_type == 'android':
+                                data_message = {"title": "Message Missed",
+                                                         "body": 'Message Expired',
+                                                         "type": "messageExpired","sound":"notifications.mp3"}
+                                respo = send_to_one(fcm_token, data_message)
+                            else:
+                                # data_message = json.dumps(data_message)
+                                title = "Message Missed"
+                                body = 'Message Expired'
+                                message_type = "messageExpired"
+                                sound = 'notifications.mp3'
+                                respo = send_another(
+                                    fcm_token, title, body, message_type,sound)
+                                print("FCM Response===============>0", respo)
+                                # title = "Profile Update"
+                                # body = "Your profile has been updated successfully"
+                                # respo = send_to_one(fcm_token, title, body)
+                                # print("FCM Response===============>0", respo)
+                        except:
+                            pass
+                    else:
                         pass
             except Exception as e:
                 print('Exception from cron job ---->>> ', e)
