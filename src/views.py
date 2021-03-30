@@ -179,7 +179,7 @@ class LoginView(ObtainAuthToken):
                         print('previous token ', user_device_token)
                         user_id.device_token = device_token
                         user_id.device_type = device_type
-                        user_id.save(update_fields=['device_token','device_type'])
+                        user_id.save(update_fields=['device_token', 'device_type'])
                         print('updated device token ', userObj.device_token)
                         token = token[0]
                         return Response({"token": token.key, "id": user_id.id, 'username': user_id.username,
@@ -417,7 +417,8 @@ class ComposeMessage(CreateAPIView):
                             auth_token = '1fe5e97d3658f655c5ff73949213a801'
                             client = Client(account_sid, auth_token)
                             message = client.messages.create(
-                                body="You received a secret message from {}. Click here to read it.https://quizlock.page.link/mVFa".format(
+                                body="You received a secret message from {}. Click here to read "
+                                     "it.https://quizlock.page.link/mVFa".format(
                                     sender.username),
                                 from_='+19722993983',
                                 to='+' + str(obj)
@@ -735,6 +736,44 @@ class ReadingMessage(CreateAPIView):
                                                     'message': f'Incorrect answer. {left_attempts} attempts left out of 3 attempts',
                                                     'status': HTTP_400_BAD_REQUEST, 'attempts_left': left_attempts})
                                         else:
+                                            fcm_token = message_obj.sender.device_token
+                                            if AppNotificationSetting.objects.get(user=app_user_obj).on:
+                                                try:
+                                                    if message_obj.sender.device_type == 'android':
+                                                        data_message = {"title": "",
+                                                                        "body": f'{app_user_obj.username} failed to open your message because he got the password wrong 3 times' + ' Message Sent: ' + str(
+                                                                            message_obj.created_at.strftime(
+                                                                                "%B %d, %Y.")) + ' ' + str(
+                                                                            message_obj.mode) + ':' + str(", ".join(
+                                                                            [x.username for x in
+                                                                             message_obj.receiver.all()])),
+                                                                        "type": "messageRead",
+                                                                        "sound": 'notifications.mp3'}
+                                                        respo = send_to_one(fcm_token, data_message)
+                                                        print(respo)
+                                                    else:
+                                                        # data_message = json.dumps(data_message)
+                                                        title = "Secret Password"
+                                                        # body = f'{app_user_obj.username} read your message' + 'Message Sent:' + str(
+                                                        #     message_obj.created_at) + ', ' + str(message_obj.mode) + ':' + str(
+                                                        #     [x.username for x in message_obj.receiver.all()])
+                                                        body = f'{app_user_obj.username} failed to open your message because he got the password wrong 3 times' + ' Message Sent: ' + str(
+                                                            message_obj.created_at.strftime("%B %d, %Y.")) + ' ' + str(
+                                                            message_obj.mode) + ':' + str(", ".join(
+                                                            [x.username for x in message_obj.receiver.all()]))
+                                                        message_type = "messageRead"
+                                                        sound = 'notifications.mp3'
+                                                        respo = send_another(
+                                                            fcm_token, title, body, message_type, sound)
+                                                        print("FCM Response===============>0", respo)
+                                                        # title = "Profile Update"
+                                                        # body = "Your profile has been updated successfully"
+                                                        # respo = send_to_one(fcm_token, title, body)
+                                                        # print("FCM Response===============>0", respo)
+                                                except:
+                                                    pass
+                                            else:
+                                                pass
                                             return Response(
                                                 {
                                                     'message': 'Sorry you can not see the message.You have given incorrect answer 3 times',
@@ -872,6 +911,44 @@ class ReadingMessage(CreateAPIView):
                                                 'message': f'Incorrect answer. {left_attempts} attempts left out of 3 attempts',
                                                 'status': HTTP_400_BAD_REQUEST, 'attempts_left': left_attempts})
                                     else:
+                                        fcm_token = message_obj.sender.device_token
+                                        if AppNotificationSetting.objects.get(user=app_user_obj).on:
+                                            try:
+                                                if message_obj.sender.device_type == 'android':
+                                                    data_message = {"title": "",
+                                                                    "body": f'{app_user_obj.username} failed to open your message because he got the password wrong 3 times' + ' Message Sent: ' + str(
+                                                                        message_obj.created_at.strftime(
+                                                                            "%B %d, %Y.")) + ' ' + str(
+                                                                        message_obj.mode) + ':' + str(", ".join(
+                                                                        [x.username for x in
+                                                                         message_obj.receiver.all()])),
+                                                                    "type": "messageRead",
+                                                                    "sound": 'notifications.mp3'}
+                                                    respo = send_to_one(fcm_token, data_message)
+                                                    print(respo)
+                                                else:
+                                                    # data_message = json.dumps(data_message)
+                                                    title = "Secret Password"
+                                                    # body = f'{app_user_obj.username} read your message' + 'Message Sent:' + str(
+                                                    #     message_obj.created_at) + ', ' + str(message_obj.mode) + ':' + str(
+                                                    #     [x.username for x in message_obj.receiver.all()])
+                                                    body = f'{app_user_obj.username} failed to open your message because he got the password wrong 3 times' + ' Message Sent: ' + str(
+                                                        message_obj.created_at.strftime("%B %d, %Y.")) + ' ' + str(
+                                                        message_obj.mode) + ':' + str(", ".join(
+                                                        [x.username for x in message_obj.receiver.all()]))
+                                                    message_type = "messageRead"
+                                                    sound = 'notifications.mp3'
+                                                    respo = send_another(
+                                                        fcm_token, title, body, message_type, sound)
+                                                    print("FCM Response===============>0", respo)
+                                                    # title = "Profile Update"
+                                                    # body = "Your profile has been updated successfully"
+                                                    # respo = send_to_one(fcm_token, title, body)
+                                                    # print("FCM Response===============>0", respo)
+                                            except:
+                                                pass
+                                        else:
+                                            pass
                                         return Response(
                                             {
                                                 'message': 'Sorry you can not see the message.You have given incorrect answer 3 times',
