@@ -730,6 +730,45 @@ class ReadingMessage(CreateAPIView):
                                             msg_count = msg_obj.count
                                             left_attempts = 3 - msg_count
                                             if left_attempts == 0:
+                                                fcm_token = message_obj.sender.device_token
+                                                if AppNotificationSetting.objects.get(user=app_user_obj).on:
+                                                    try:
+                                                        if message_obj.sender.device_type == 'android':
+                                                            data_message = {"title": "",
+                                                                            "body": f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever' + ' Message Sent: ' + str(
+                                                                                message_obj.created_at.strftime(
+                                                                                    "%B %d, %Y.")) + ' ' + str(
+                                                                                message_obj.mode) + ':' + str(", ".join(
+                                                                                [x.username for x in
+                                                                                 message_obj.receiver.all()])),
+                                                                            "type": "messageRead",
+                                                                            "sound": 'notifications.mp3'}
+                                                            respo = send_to_one(fcm_token, data_message)
+                                                            print(respo)
+                                                        else:
+                                                            # data_message = json.dumps(data_message)
+                                                            title = "Secret Password"
+                                                            # body = f'{app_user_obj.username} read your message' + 'Message Sent:' + str(
+                                                            #     message_obj.created_at) + ', ' + str(message_obj.mode) + ':' + str(
+                                                            #     [x.username for x in message_obj.receiver.all()])
+                                                            body = f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever' + ' Message Sent: ' + str(
+                                                                message_obj.created_at.strftime(
+                                                                    "%B %d, %Y.")) + ' ' + str(
+                                                                message_obj.mode) + ':' + str(", ".join(
+                                                                [x.username for x in message_obj.receiver.all()]))
+                                                            message_type = "messageRead"
+                                                            sound = 'notifications.mp3'
+                                                            respo = send_another(
+                                                                fcm_token, title, body, message_type, sound)
+                                                            print("FCM Response===============>0", respo)
+                                                            # title = "Profile Update"
+                                                            # body = "Your profile has been updated successfully"
+                                                            # respo = send_to_one(fcm_token, title, body)
+                                                            # print("FCM Response===============>0", respo)
+                                                    except:
+                                                        pass
+                                                else:
+                                                    pass
                                                 message_obj.receiver.remove(app_user_obj)
                                             return Response(
                                                 {
@@ -905,6 +944,44 @@ class ReadingMessage(CreateAPIView):
                                         msg_count = msg_obj.count
                                         left_attempts = 3 - msg_count
                                         if left_attempts == 0:
+                                            fcm_token = message_obj.sender.device_token
+                                            if AppNotificationSetting.objects.get(user=app_user_obj).on:
+                                                try:
+                                                    if message_obj.sender.device_type == 'android':
+                                                        data_message = {"title": "",
+                                                                        "body": f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever' + ' Message Sent: ' + str(
+                                                                            message_obj.created_at.strftime(
+                                                                                "%B %d, %Y.")) + ' ' + str(
+                                                                            message_obj.mode) + ':' + str(", ".join(
+                                                                            [x.username for x in
+                                                                             message_obj.receiver.all()])),
+                                                                        "type": "messageRead",
+                                                                        "sound": 'notifications.mp3'}
+                                                        respo = send_to_one(fcm_token, data_message)
+                                                        print(respo)
+                                                    else:
+                                                        # data_message = json.dumps(data_message)
+                                                        title = "Secret Password"
+                                                        # body = f'{app_user_obj.username} read your message' + 'Message Sent:' + str(
+                                                        #     message_obj.created_at) + ', ' + str(message_obj.mode) + ':' + str(
+                                                        #     [x.username for x in message_obj.receiver.all()])
+                                                        body = f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever' + ' Message Sent: ' + str(
+                                                            message_obj.created_at.strftime("%B %d, %Y.")) + ' ' + str(
+                                                            message_obj.mode) + ':' + str(", ".join(
+                                                            [x.username for x in message_obj.receiver.all()]))
+                                                        message_type = "messageRead"
+                                                        sound = 'notifications.mp3'
+                                                        respo = send_another(
+                                                            fcm_token, title, body, message_type, sound)
+                                                        print("FCM Response===============>0", respo)
+                                                        # title = "Profile Update"
+                                                        # body = "Your profile has been updated successfully"
+                                                        # respo = send_to_one(fcm_token, title, body)
+                                                        # print("FCM Response===============>0", respo)
+                                                except:
+                                                    pass
+                                            else:
+                                                pass
                                             message_obj.receiver.remove(app_user_obj)
                                         return Response(
                                             {
@@ -1744,7 +1821,7 @@ class SendingNotification(APIView):
             message_validity = message.created_at.replace(tzinfo=None) + datetime.timedelta(hours=message.validity)
             print('>>>>>>',type(message_validity))
             receivers = message.receiver.all()
-            print(message_validity - now_time < datetime.timedelta(minutes=57))
+            print(message_validity - now_time < datetime.timedelta(minutes=11))
             print(message_validity - now_time)
             if (message_validity - now_time) < datetime.timedelta(minutes=11):
                 for receiver in receivers:
