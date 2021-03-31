@@ -741,7 +741,7 @@ class ReadingMessage(CreateAPIView):
                                                 try:
                                                     if message_obj.sender.device_type == 'android':
                                                         data_message = {"title": "",
-                                                                        "body": f'{app_user_obj.username} failed to open your message because he got the password wrong 3 times' + ' Message Sent: ' + str(
+                                                                        "body": f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever' + ' Message Sent: ' + str(
                                                                             message_obj.created_at.strftime(
                                                                                 "%B %d, %Y.")) + ' ' + str(
                                                                             message_obj.mode) + ':' + str(", ".join(
@@ -757,7 +757,7 @@ class ReadingMessage(CreateAPIView):
                                                         # body = f'{app_user_obj.username} read your message' + 'Message Sent:' + str(
                                                         #     message_obj.created_at) + ', ' + str(message_obj.mode) + ':' + str(
                                                         #     [x.username for x in message_obj.receiver.all()])
-                                                        body = f'{app_user_obj.username} failed to open your message because he got the password wrong 3 times' + ' Message Sent: ' + str(
+                                                        body = f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever' + ' Message Sent: ' + str(
                                                             message_obj.created_at.strftime("%B %d, %Y.")) + ' ' + str(
                                                             message_obj.mode) + ':' + str(", ".join(
                                                             [x.username for x in message_obj.receiver.all()]))
@@ -916,7 +916,7 @@ class ReadingMessage(CreateAPIView):
                                             try:
                                                 if message_obj.sender.device_type == 'android':
                                                     data_message = {"title": "",
-                                                                    "body": f'{app_user_obj.username} failed to open your message because he got the password wrong 3 times' + ' Message Sent: ' + str(
+                                                                    "body": f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever' + ' Message Sent: ' + str(
                                                                         message_obj.created_at.strftime(
                                                                             "%B %d, %Y.")) + ' ' + str(
                                                                         message_obj.mode) + ':' + str(", ".join(
@@ -932,7 +932,7 @@ class ReadingMessage(CreateAPIView):
                                                     # body = f'{app_user_obj.username} read your message' + 'Message Sent:' + str(
                                                     #     message_obj.created_at) + ', ' + str(message_obj.mode) + ':' + str(
                                                     #     [x.username for x in message_obj.receiver.all()])
-                                                    body = f'{app_user_obj.username} failed to open your message because he got the password wrong 3 times' + ' Message Sent: ' + str(
+                                                    body = f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever' + ' Message Sent: ' + str(
                                                         message_obj.created_at.strftime("%B %d, %Y.")) + ' ' + str(
                                                         message_obj.mode) + ':' + str(", ".join(
                                                         [x.username for x in message_obj.receiver.all()]))
@@ -1730,3 +1730,45 @@ class IncreaseUserCoins(APIView):
                 user_coins.number_of_coins += 1
                 user_coins.save()
         return Response("running increase coins function")
+
+
+class SendingNotification(APIView):
+
+    def get(self, request, *args, **kwargs):
+        import datetime
+        messages = Message.objects.filter(is_missed=False)
+        print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>',messages)
+        for message in messages:
+            now_time = datetime.datetime.now()
+            print('-------',type(now_time))
+            message_validity = message.created_at.replace(tzinfo=None) + datetime.timedelta(hours=message.validity)
+            print('>>>>>>',type(message_validity))
+            receivers = message.receiver.all()
+            print(message_validity - now_time < datetime.timedelta(minutes=57))
+            print(message_validity - now_time)
+            if (message_validity - now_time) < datetime.timedelta(minutes=11):
+                for receiver in receivers:
+                    fcm_token = AppUser.objects.get(id=receiver.id).device_token
+                    if AppNotificationSetting.objects.get(user=AppUser.objects.get(id=receiver.id)).on:
+                        try:
+                            if AppUser.objects.get(id=receiver.id).device_type == 'android':
+                                data_message = {"title": "Message Missed",
+                                                "body": f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!',
+                                                "type": "messageExpired", "sound": "notifications.mp3"}
+                                respo = send_to_one(fcm_token, data_message)
+                            else:
+                                # data_message = json.dumps(data_message)
+                                title = "Message Missed"
+                                body = f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!',
+                                message_type = "messageExpired"
+                                sound = 'notifications.mp3'
+                                respo = send_another(
+                                    fcm_token, title, body, message_type, sound)
+                                print("FCM Response===============>0", respo)
+                                # title = "Profile Update"
+                                # body = "Your profile has been updated successfully"
+                                # respo = send_to_one(fcm_token, title, body)
+                                # print("FCM Response===============>0", respo)
+                        except:
+                            pass
+        return Response("sending notification")

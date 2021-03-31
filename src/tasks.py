@@ -43,22 +43,28 @@ def expire_messages():
                     )
                     for users in receivers:
                         notification.sent_to.add(users)
-                    fcm_token = AppUser.objects.get(id=receiver.id).sender.device_token
+                    fcm_token = AppUser.objects.get(id=receiver.id).device_token
                     if AppNotificationSetting.objects.get(user=AppUser.objects.get(id=receiver.id)).on:
                         try:
-                            if AppUser.objects.get(id=receiver.id).sender.device_type == 'android':
+                            if AppUser.objects.get(id=receiver.id).device_type == 'android':
                                 data_message = {"title": "Message Missed",
-                                                         "body": 'Message Expired',
-                                                         "type": "messageExpired","sound":"notifications.mp3"}
+                                                "body": 'Message Expired' + ' Message Sent: ' + str(
+                                                    message.created_at.strftime("%B %d, %Y.")) + ' ' + str(
+                                                    message.mode) + ':' + str(", ".join(
+                                                    [x.username for x in message.receiver.all()])),
+                                                "type": "messageExpired", "sound": "notifications.mp3"}
                                 respo = send_to_one(fcm_token, data_message)
                             else:
                                 # data_message = json.dumps(data_message)
                                 title = "Message Missed"
-                                body = 'Message Expired'
+                                body = 'Message Expired' + ' Message Sent: ' + str(
+                                    message.created_at.strftime("%B %d, %Y.")) + ' ' + str(
+                                    message.mode) + ':' + str(", ".join(
+                                    [x.username for x in message.receiver.all()]))
                                 message_type = "messageExpired"
                                 sound = 'notifications.mp3'
                                 respo = send_another(
-                                    fcm_token, title, body, message_type,sound)
+                                    fcm_token, title, body, message_type, sound)
                                 print("FCM Response===============>0", respo)
                                 # title = "Profile Update"
                                 # body = "Your profile has been updated successfully"
@@ -67,6 +73,39 @@ def expire_messages():
                         except:
                             pass
                     else:
+                        pass
+                sender_fcm_token = AppUser.objects.get(id=message.sender.id).device_token
+                if AppNotificationSetting.objects.get(user=AppUser.objects.get(id=message.sender.id)).on:
+                    try:
+                        if AppUser.objects.get(id=message.sender.id).device_type == 'android':
+                            data_message = {"title": "Message Missed",
+                                            "body": 'Your message expired and only ' + str(", ".join(
+                                                [x.username for x in
+                                                 message.read_by.all()])) + ' read it in time ' + ' Message Sent: ' + str(
+                                                message.created_at.strftime("%B %d, %Y.")) + ' ' + str(
+                                                message.mode) + ':' + str(", ".join(
+                                                [x.username for x in message.receiver.all()])),
+                                            "type": "messageExpired", "sound": "notifications.mp3"}
+                            respo = send_to_one(sender_fcm_token, data_message)
+                        else:
+                            # data_message = json.dumps(data_message)
+                            title = "Message Missed"
+                            body = 'Your message expired and only ' + str(", ".join(
+                                [x.username for x in
+                                 message.read_by.all()])) + ' read it in time ' + ' Message Sent: ' + str(
+                                message.created_at.strftime("%B %d, %Y.")) + ' ' + str(
+                                message.mode) + ':' + str(", ".join(
+                                [x.username for x in message.receiver.all()]))
+                            message_type = "messageExpired"
+                            sound = 'notifications.mp3'
+                            respo = send_another(
+                                sender_fcm_token, title, body, message_type, sound)
+                            print("FCM Response===============>0", respo)
+                            # title = "Profile Update"
+                            # body = "Your profile has been updated successfully"
+                            # respo = send_to_one(fcm_token, title, body)
+                            # print("FCM Response===============>0", respo)
+                    except:
                         pass
             except Exception as e:
                 print('Exception from cron job ---->>> ', e)
@@ -86,6 +125,43 @@ def increase_coins():
             user_coins.number_of_coins += 1
             user_coins.save()
     return "running increase coins function"
+
+
+@shared_task
+def send_hurry_notification():
+    messages = Message.objects.filter(is_missed=False)
+    for message in messages:
+        now_time = datetime.datetime.now()
+        print(type(now_time))
+        message_validity = message.created_at.replace(tzinfo=None) + datetime.timedelta(hours=message.validity)
+        print(type(message_validity))
+        receivers = message.receiver.all()
+        if (message_validity - now_time) < datetime.timedelta(minutes=11):
+            for receiver in receivers:
+                fcm_token = AppUser.objects.get(id=receiver.id).device_token
+                if AppNotificationSetting.objects.get(user=AppUser.objects.get(id=receiver.id)).on:
+                    try:
+                        if AppUser.objects.get(id=receiver.id).device_type == 'android':
+                            data_message = {"title": "Message Missed",
+                                            "body": f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!',
+                                            "type": "messageExpired", "sound": "notifications.mp3"}
+                            respo = send_to_one(fcm_token, data_message)
+                        else:
+                            # data_message = json.dumps(data_message)
+                            title = "Message Missed"
+                            body = f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!',
+                            message_type = "messageExpired"
+                            sound = 'notifications.mp3'
+                            respo = send_another(
+                                fcm_token, title, body, message_type, sound)
+                            print("FCM Response===============>0", respo)
+                            # title = "Profile Update"
+                            # body = "Your profile has been updated successfully"
+                            # respo = send_to_one(fcm_token, title, body)
+                            # print("FCM Response===============>0", respo)
+                    except:
+                        pass
+    return "sending notification"
 
 
 @shared_task

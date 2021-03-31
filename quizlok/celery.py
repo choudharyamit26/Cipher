@@ -28,6 +28,10 @@ app.conf.beat_schedule = {
         # 'schedule': 10,
         # 'args': (3, 4)
     },
+    'send_hurry_notification': {
+        'task': 'src.tasks.send_hurry_notification',
+        'schedule': 10
+    },
     'delete-message-from-database': {
         'task': 'src.task.delete_message_from_database',
         'schedule': crontab(hour=6, minute=0),
