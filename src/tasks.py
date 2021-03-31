@@ -33,16 +33,16 @@ def expire_messages():
                 for receiver in receivers:
                     print('From Celery Missed Messages', receiver)
                     print('-----------From missed messages', AppUser.objects.get(id=receiver.id))
-                    notification = AppNotification.objects.create(
-                        user=AppUser.objects.get(id=receiver.id),
-                        text='Message Expired',
-                        date_sent=message.created_at,
-                        mode=message.mode,
-                        date_expired=datetime.datetime.now(),
-                        # sent_to=[x.username for x in receivers]
-                    )
-                    for users in receivers:
-                        notification.sent_to.add(users)
+                    # notification = AppNotification.objects.create(
+                    #     user=AppUser.objects.get(id=receiver.id),
+                    #     text='Message Expired',
+                    #     date_sent=message.created_at,
+                    #     mode=message.mode,
+                    #     date_expired=datetime.datetime.now(),
+                    #     # sent_to=[x.username for x in receivers]
+                    # )
+                    # for users in receivers:
+                    #     notification.sent_to.add(users)
                     fcm_token = AppUser.objects.get(id=receiver.id).device_token
                     if AppNotificationSetting.objects.get(user=AppUser.objects.get(id=receiver.id)).on:
                         try:
