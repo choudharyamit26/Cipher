@@ -664,7 +664,9 @@ class ReadingMessage(CreateAPIView):
                                     if message_obj.sender.device_type == 'android':
                                         data_message = {"title": "",
                                                         "body": f'{app_user_obj.username} read your message' + ' Message Sent: ' + str(
-                                                            message_obj.created_at.strftime("%B %d, %Y.")) + ' ' + str(
+                                                            message_obj.created_at.strftime(
+                                                                "%B %d, %Y.")) + ' @ ' + str(
+                                                            message_obj.created_at.strftime("%I:%-M%p")) + ' ' + str(
                                                             message_obj.mode) + ':' + str(", ".join(
                                                             [x.username for x in message_obj.receiver.all()])),
                                                         "type": "messageRead", "sound": 'notifications.mp3'}
@@ -735,13 +737,14 @@ class ReadingMessage(CreateAPIView):
                                                     try:
                                                         if message_obj.sender.device_type == 'android':
                                                             data_message = {"title": "",
-                                                                            "body": f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever' + ' Message Sent: ' + str(
+                                                                            "body": f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.' + ' Message Sent: ' + str(
                                                                                 message_obj.created_at.strftime(
                                                                                     "%B %d, %Y.")) + ' ' + str(
-                                                                                message_obj.mode) + ':' + str(", ".join(
-                                                                                [x.username for x in
-                                                                                 message_obj.receiver.all()])),
-                                                                            "type": "messageRead",
+                                                                                message_obj.mode) + ': ' + str(
+                                                                                ", ".join(
+                                                                                    [x.username for x in
+                                                                                     message_obj.receiver.all()])),
+                                                                            "type": "inCorrectAttempt",
                                                                             "sound": 'notifications.mp3'}
                                                             respo = send_to_one(fcm_token, data_message)
                                                             print(respo)
@@ -753,7 +756,9 @@ class ReadingMessage(CreateAPIView):
                                                             #     [x.username for x in message_obj.receiver.all()])
                                                             body = f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever' + ' Message Sent: ' + str(
                                                                 message_obj.created_at.strftime(
-                                                                    "%B %d, %Y.")) + ' ' + str(
+                                                                    "%B %d, %Y.")) + ' @ ' + str(
+                                                                message_obj.created_at.strftime(
+                                                                    "%I:%-M%p")) + ' ' + str(
                                                                 message_obj.mode) + ':' + str(", ".join(
                                                                 [x.username for x in message_obj.receiver.all()]))
                                                             message_type = "messageRead"
@@ -993,13 +998,13 @@ class ReadingMessage(CreateAPIView):
                                             try:
                                                 if message_obj.sender.device_type == 'android':
                                                     data_message = {"title": "",
-                                                                    "body": f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever' + ' Message Sent: ' + str(
+                                                                    "body": f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.' + ' Message Sent: ' + str(
                                                                         message_obj.created_at.strftime(
                                                                             "%B %d, %Y.")) + ' ' + str(
-                                                                        message_obj.mode) + ':' + str(", ".join(
+                                                                        message_obj.mode) + ': ' + str(", ".join(
                                                                         [x.username for x in
                                                                          message_obj.receiver.all()])),
-                                                                    "type": "messageRead",
+                                                                    "type": "inCorrectAttempt",
                                                                     "sound": 'notifications.mp3'}
                                                     respo = send_to_one(fcm_token, data_message)
                                                     print(respo)
@@ -1814,12 +1819,13 @@ class SendingNotification(APIView):
     def get(self, request, *args, **kwargs):
         import datetime
         messages = Message.objects.filter(is_missed=False)
-        print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>',messages)
+        print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>', messages)
         for message in messages:
             now_time = datetime.datetime.now()
-            print('-------',type(now_time))
+            print('-------', type(now_time))
             message_validity = message.created_at.replace(tzinfo=None) + datetime.timedelta(hours=message.validity)
-            print('>>>>>>',type(message_validity))
+            print('>>>>>>', type(message_validity))
+            print('>>>>>><<<<<<', message.created_at.strftime("%B %d, %Y %I:%-M%p"))
             receivers = message.receiver.all()
             print(message_validity - now_time < datetime.timedelta(minutes=11))
             print(message_validity - now_time)

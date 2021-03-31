@@ -49,7 +49,8 @@ def expire_messages():
                             if AppUser.objects.get(id=receiver.id).device_type == 'android':
                                 data_message = {"title": "Message Missed",
                                                 "body": 'Message Expired' + ' Message Sent: ' + str(
-                                                    message.created_at.strftime("%B %d, %Y.")) + ' ' + str(
+                                                    message.created_at.strftime("%B %d, %Y.")) + ' @ ' + str(
+                                                    message.created_at.strftime("%I:%-M%p")) + ' ' + str(
                                                     message.mode) + ':' + str(", ".join(
                                                     [x.username for x in message.receiver.all()])),
                                                 "type": "messageExpired", "sound": "notifications.mp3"}
@@ -58,7 +59,8 @@ def expire_messages():
                                 # data_message = json.dumps(data_message)
                                 title = "Message Missed"
                                 body = 'Message Expired' + ' Message Sent: ' + str(
-                                    message.created_at.strftime("%B %d, %Y.")) + ' ' + str(
+                                    message.created_at.strftime("%B %d, %Y.")) + ' @ ' + str(
+                                    message.created_at.strftime("%I:%-M%p")) + ' ' + str(
                                     message.mode) + ':' + str(", ".join(
                                     [x.username for x in message.receiver.all()]))
                                 message_type = "messageExpired"
@@ -82,7 +84,8 @@ def expire_messages():
                                             "body": 'Your message expired and only ' + str(", ".join(
                                                 [x.username for x in
                                                  message.read_by.all()])) + ' read it in time ' + ' Message Sent: ' + str(
-                                                message.created_at.strftime("%B %d, %Y.")) + ' ' + str(
+                                                message.created_at.strftime("%B %d, %Y.")) + ' @ ' + str(
+                                                message.created_at.strftime("%I:%-M%p")) + ' ' + str(
                                                 message.mode) + ':' + str(", ".join(
                                                 [x.username for x in message.receiver.all()])),
                                             "type": "messageExpired", "sound": "notifications.mp3"}
@@ -93,7 +96,8 @@ def expire_messages():
                             body = 'Your message expired and only ' + str(", ".join(
                                 [x.username for x in
                                  message.read_by.all()])) + ' read it in time ' + ' Message Sent: ' + str(
-                                message.created_at.strftime("%B %d, %Y.")) + ' ' + str(
+                                message.created_at.strftime("%B %d, %Y.")) + ' @ ' + str(
+                                message.created_at.strftime("%I:%-M%p")) + ' ' + str(
                                 message.mode) + ':' + str(", ".join(
                                 [x.username for x in message.receiver.all()]))
                             message_type = "messageExpired"
