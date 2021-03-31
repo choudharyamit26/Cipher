@@ -80,7 +80,7 @@ def expire_messages():
                 if AppNotificationSetting.objects.get(user=AppUser.objects.get(id=message.sender.id)).on:
                     try:
                         if AppUser.objects.get(id=message.sender.id).device_type == 'android':
-                            if message.read_by.all() > 0:
+                            if len(message.read_by.all()) > 0:
                                 data_message = {"title": "Message Missed",
                                                 "body": 'Your message expired and only ' + str(", ".join(
                                                     [x.username for x in
@@ -101,7 +101,7 @@ def expire_messages():
                                                 "type": "messageExpired", "sound": "notifications.mp3"}
                                 respo = send_to_one(sender_fcm_token, data_message)
                         else:
-                            if message.read_by.all() > 0:
+                            if len(message.read_by.all()) > 0:
                                 # data_message = json.dumps(data_message)
                                 title = "Message Missed"
                                 body = 'Your message expired and only ' + str(", ".join(
