@@ -128,6 +128,7 @@ class Transactions(models.Model):
 class HurryNotification(models.Model):
     user = models.ForeignKey(AppUser, models.CASCADE)
     sent = models.BooleanField(default=False)
+    message = models.ForeignKey(Message, on_delete=models.CASCADE)
 
 
 @receiver(post_save, sender=AppUser)

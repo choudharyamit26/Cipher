@@ -167,7 +167,7 @@ def send_hurry_notification():
             for receiver in receivers:
                 fcm_token = AppUser.objects.get(id=receiver.id).device_token
                 try:
-                    if not HurryNotification.objects.get(user=AppUser.objects.get(id=receiver.id)).sent:
+                    if not HurryNotification.objects.get(user=AppUser.objects.get(id=receiver.id),message=Message.objects.get(id=message.id)).sent:
                         if AppNotificationSetting.objects.get(user=AppUser.objects.get(id=receiver.id)).on:
                             try:
                                 if AppUser.objects.get(id=receiver.id).device_type == 'android':
@@ -193,7 +193,8 @@ def send_hurry_notification():
                     else:
                         pass
                 except Exception as e:
-                    HurryNotification.objects.create(user=AppUser.objects.get(id=receiver.id), sent=True)
+                    HurryNotification.objects.create(user=AppUser.objects.get(id=receiver.id),
+                                                     message=Message.objects.get(id=message.id), sent=True)
                     if AppNotificationSetting.objects.get(user=AppUser.objects.get(id=receiver.id)).on:
                         try:
                             if AppUser.objects.get(id=receiver.id).device_type == 'android':
