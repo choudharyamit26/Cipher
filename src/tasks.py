@@ -4,7 +4,7 @@ from celery import shared_task
 from django.utils import timezone
 
 from .fcm_notification import send_another, send_to_one
-from .models import Message, AppNotification, AppUser, UserCoins, HitInADay, AppNotificationSetting
+from .models import Message, AppNotification, AppUser, UserCoins, HitInADay, AppNotificationSetting, HurryNotification
 import datetime
 import pytz
 
@@ -166,28 +166,56 @@ def send_hurry_notification():
         if (message_validity - now_time) < datetime.timedelta(minutes=11):
             for receiver in receivers:
                 fcm_token = AppUser.objects.get(id=receiver.id).device_token
-                if AppNotificationSetting.objects.get(user=AppUser.objects.get(id=receiver.id)).on:
-                    try:
-                        if AppUser.objects.get(id=receiver.id).device_type == 'android':
-                            data_message = {"title": "Message Missed",
-                                            "body": f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!',
-                                            "type": "messageExpired", "sound": "notifications.mp3"}
-                            respo = send_to_one(fcm_token, data_message)
-                        else:
-                            # data_message = json.dumps(data_message)
-                            title = "Message Missed"
-                            body = f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!',
-                            message_type = "messageExpired"
-                            sound = 'notifications.mp3'
-                            respo = send_another(
-                                fcm_token, title, body, message_type, sound)
-                            print("FCM Response===============>0", respo)
-                            # title = "Profile Update"
-                            # body = "Your profile has been updated successfully"
-                            # respo = send_to_one(fcm_token, title, body)
-                            # print("FCM Response===============>0", respo)
-                    except:
+                try:
+                    if not HurryNotification.objects.get(user=AppUser.objects.get(id=receiver.id)).sent:
+                        if AppNotificationSetting.objects.get(user=AppUser.objects.get(id=receiver.id)).on:
+                            try:
+                                if AppUser.objects.get(id=receiver.id).device_type == 'android':
+                                    data_message = {"title": "Message Missed",
+                                                    "body": f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!',
+                                                    "type": "messageExpired", "sound": "notifications.mp3"}
+                                    respo = send_to_one(fcm_token, data_message)
+                                else:
+                                    # data_message = json.dumps(data_message)
+                                    title = "Message Missed"
+                                    body = f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!',
+                                    message_type = "messageExpired"
+                                    sound = 'notifications.mp3'
+                                    respo = send_another(
+                                        fcm_token, title, body, message_type, sound)
+                                    print("FCM Response===============>0", respo)
+                                    # title = "Profile Update"
+                                    # body = "Your profile has been updated successfully"
+                                    # respo = send_to_one(fcm_token, title, body)
+                                    # print("FCM Response===============>0", respo)
+                            except:
+                                pass
+                    else:
                         pass
+                except Exception as e:
+                    HurryNotification.objects.create(user=AppUser.objects.get(id=receiver.id), sent=True)
+                    if AppNotificationSetting.objects.get(user=AppUser.objects.get(id=receiver.id)).on:
+                        try:
+                            if AppUser.objects.get(id=receiver.id).device_type == 'android':
+                                data_message = {"title": "Message Missed",
+                                                "body": f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!',
+                                                "type": "messageExpired", "sound": "notifications.mp3"}
+                                respo = send_to_one(fcm_token, data_message)
+                            else:
+                                # data_message = json.dumps(data_message)
+                                title = "Message Missed"
+                                body = f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!',
+                                message_type = "messageExpired"
+                                sound = 'notifications.mp3'
+                                respo = send_another(
+                                    fcm_token, title, body, message_type, sound)
+                                print("FCM Response===============>0", respo)
+                                # title = "Profile Update"
+                                # body = "Your profile has been updated successfully"
+                                # respo = send_to_one(fcm_token, title, body)
+                                # print("FCM Response===============>0", respo)
+                        except:
+                            pass
     return "sending notification"
 
 

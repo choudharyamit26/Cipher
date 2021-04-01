@@ -125,6 +125,11 @@ class Transactions(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 
+class HurryNotification(models.Model):
+    user = models.ForeignKey(AppUser, models.CASCADE)
+    sent = models.BooleanField(default=False)
+
+
 @receiver(post_save, sender=AppUser)
 def user_coins(sender, instance, created, **kwargs):
     if created:
