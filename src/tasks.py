@@ -84,7 +84,7 @@ def expire_messages():
                                 data_message = {"title": "Message Missed",
                                                 "body": 'Your message expired and only ' + str(", ".join(
                                                     [x.username for x in
-                                                     message.read_by.all()])) + ' read it in time ' + ' Message Sent: ' + str(
+                                                     message.read_by.all()])) + ' read it in time.' + ' Message Sent: ' + str(
                                                     message.created_at.strftime("%B %d, %Y.")) + ' @ ' + str(
                                                     message.created_at.strftime("%I:%-M%p")) + ' ' + str(
                                                     message.mode) + ':' + str(", ".join(
@@ -93,7 +93,7 @@ def expire_messages():
                                 respo = send_to_one(sender_fcm_token, data_message)
                             else:
                                 data_message = {"title": "Message Missed",
-                                                "body": 'Your message expired and no one' + ' read it in time ' + ' Message Sent: ' + str(
+                                                "body": 'Your message expired and no one' + ' read it in time.' + ' Message Sent: ' + str(
                                                     message.created_at.strftime("%B %d, %Y.")) + ' @ ' + str(
                                                     message.created_at.strftime("%I:%-M%p")) + ' ' + str(
                                                     message.mode) + ':' + str(", ".join(
@@ -106,7 +106,7 @@ def expire_messages():
                                 title = "Message Missed"
                                 body = 'Your message expired and only ' + str(", ".join(
                                     [x.username for x in
-                                     message.read_by.all()])) + ' read it in time ' + ' Message Sent: ' + str(
+                                     message.read_by.all()])) + ' read it in time.' + ' Message Sent: ' + str(
                                     message.created_at.strftime("%B %d, %Y.")) + ' @ ' + str(
                                     message.created_at.strftime("%I:%-M%p")) + ' ' + str(
                                     message.mode) + ':' + str(", ".join(
@@ -118,7 +118,7 @@ def expire_messages():
                                 print("FCM Response===============>0", respo)
                             else:
                                 title = "Message Missed"
-                                body = 'Your message expired and no one ' + ' read it in time ' + ' Message Sent: ' + str(
+                                body = 'Your message expired and no one ' + ' read it in time.' + ' Message Sent: ' + str(
                                     message.created_at.strftime("%B %d, %Y.")) + ' @ ' + str(
                                     message.created_at.strftime("%I:%-M%p")) + ' ' + str(
                                     message.mode) + ':' + str(", ".join(
