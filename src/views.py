@@ -26,8 +26,8 @@ from adminpanel.models import User, TermsandCondition, UserNotification
 from authy.api import AuthyApiClient
 from twilio.rest import Client
 from .fcm_notification import send_to_one, send_another
-from inapppy import AppStoreValidator, InAppPyValidationError
-from inapppy import GooglePlayValidator, InAppPyValidationError
+# from inapppy import AppStoreValidator, InAppPyValidationError
+# from inapppy import GooglePlayValidator, InAppPyValidationError
 
 # Production key from authy app in twilio
 
