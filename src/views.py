@@ -1735,69 +1735,6 @@ class TransactionManagement(APIView):
         return Response({'message': 'Transaction completed successfully', 'status': HTTP_200_OK})
 
 
-# class VerifyAppStorePurchase(APIView):
-#     permission_classes = (IsAuthenticated,)
-#     authentication_classes = (TokenAuthentication,)
-#
-#     def post(self, request, *args, **kwargs):
-#         receipt = self.request.POST['receipt']
-#         APPLE_PRODUCT_VERIFY_URL = 'https://buy.itunes.apple.com/verifyReceipt'
-#         APPLE_SANDBOX_VERIFY_URL = 'https://sandbox.itunes.apple.com/verifyReceipt'
-#         receipt_json = json.dumps({"receipt-data": receipt, "password": '099eddbf89bf4c53b2ec8d9bce1df11d'})
-#         verifyUrl = APPLE_PRODUCT_VERIFY_URL if not DEBUG else APPLE_SANDBOX_VERIFY_URL
-#         response = requests.request(
-#             method='POST',
-#             url=verifyUrl,
-#             headers={'Content-Type': 'application/x-www-form-urlencoded'},
-#             data=receipt_json
-#         )
-#         if response.status_code == 200:
-#             resJson = response.json()
-#             if resJson['status'] == 0:
-#                 # verify success
-#                 return True
-#             return Response({'message': resJson, 'status': resJson['status']})
-#         else:
-#             return Response({'message': response.json, 'status': response.status_code})
-#         # secret_key = '099eddbf89bf4c53b2ec8d9bce1df11d'
-#         # bundle_id = 'com.Quizlok.app'
-#         # auto_retry_wrong_env_request = False  # if True, automatically query sandbox endpoint if
-#         # # validation fails on production endpoint
-#         # validator = AppStoreValidator(bundle_id, auto_retry_wrong_env_request=auto_retry_wrong_env_request)
-#         # print('Validator---', validator)
-#         # try:
-#         #     exclude_old_transactions = False  # if True, include only the latest renewal transaction
-#         #     validation_result = validator.validate(receipt)
-#         #     print('-------->>>>', validation_result)
-#         #     return Response({'message': 'Success', 'status': HTTP_200_OK})
-#         # except InAppPyValidationError as ex:
-#         #     # handle validation error
-#         #     error = {"e": str(ex)}
-#         #     print('Exception====', ex)
-#         #     response_from_apple = ex.raw_response
-#         #     print('>>>>>>>>>>>>>>>>>>>>>', response_from_apple)
-#         #     return Response({'message': error['e'], 'status': HTTP_400_BAD_REQUEST})
-#
-#
-# class VerifyPlayStorePurchase(APIView):
-#     permission_classes = (IsAuthenticated,)
-#     authentication_classes = (TokenAuthentication,)
-#
-#     def post(self, request, *args, **kwargs):
-#
-#         bundle_id = 'com.yourcompany.yourapp'
-#         api_key = 'API key from the developer console'
-#         validator = GooglePlayValidator(bundle_id, api_key)
-#
-#         try:
-#             # receipt means `androidData` in result of purchase
-#             # signature means `signatureAndroid` in result of purchase
-#             validation_result = validator.validate('receipt', 'signature')
-#         except InAppPyValidationError as e:
-#             # handle validation error
-#             return Response({'message': str(e), 'status': HTTP_400_BAD_REQUEST})
-
-
 class IncreaseUserCoins(APIView):
 
     def get(self, request, *args, **kwargs):
