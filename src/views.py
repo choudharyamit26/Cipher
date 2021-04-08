@@ -662,7 +662,7 @@ class ReadingMessage(CreateAPIView):
                             if AppNotificationSetting.objects.get(user=app_user_obj).on:
                                 try:
                                     if message_obj.sender.device_type == 'android':
-                                        data_message = {"title": "",
+                                        data_message = {"title": "YOUR MESSAGE WAS RECEIVED",
                                                         "body": f'{app_user_obj.username} read your message' + ' Message Sent: ' + str(
                                                             message_obj.created_at.strftime(
                                                                 "%B %d, %Y.")) + ' @ ' + str(
@@ -674,7 +674,7 @@ class ReadingMessage(CreateAPIView):
                                         print(respo)
                                     else:
                                         # data_message = json.dumps(data_message)
-                                        title = ""
+                                        title = "YOUR MESSAGE WAS RECEIVED"
                                         # body = f'{app_user_obj.username} read your message' + 'Message Sent:' + str(
                                         #     message_obj.created_at) + ', ' + str(message_obj.mode) + ':' + str(
                                         #     [x.username for x in message_obj.receiver.all()])
@@ -736,7 +736,7 @@ class ReadingMessage(CreateAPIView):
                                                 if AppNotificationSetting.objects.get(user=app_user_obj).on:
                                                     try:
                                                         if message_obj.sender.device_type == 'android':
-                                                            data_message = {"title": "",
+                                                            data_message = {"title": "Secret Password",
                                                                             "body": f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.' + ' Message Sent: ' + str(
                                                                                 message_obj.created_at.strftime(
                                                                                     "%B %d, %Y.")) + ' ' + str(
@@ -784,7 +784,7 @@ class ReadingMessage(CreateAPIView):
                                             if AppNotificationSetting.objects.get(user=app_user_obj).on:
                                                 try:
                                                     if message_obj.sender.device_type == 'android':
-                                                        data_message = {"title": "",
+                                                        data_message = {"title": "Secret Password",
                                                                         "body": f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.' + ' Message Sent: ' + str(
                                                                             message_obj.created_at.strftime(
                                                                                 "%B %d, %Y.")) + ' ' + str(
@@ -894,7 +894,7 @@ class ReadingMessage(CreateAPIView):
                         if AppNotificationSetting.objects.get(user=app_user_obj).on:
                             try:
                                 if message_obj.sender.device_type == 'android':
-                                    data_message = {"title": "",
+                                    data_message = {"title": "YOUR MESSAGE WAS RECEIVED",
                                                     "body": f'{app_user_obj.username} read your message' + ' Message Sent: ' + str(
                                                         message_obj.created_at.strftime("%B %d, %Y.")) + ' ' + str(
                                                         message_obj.mode) + ':' + str(", ".join(
@@ -903,7 +903,7 @@ class ReadingMessage(CreateAPIView):
                                     respo = send_to_one(fcm_token, data_message)
                                 else:
                                     # data_message = json.dumps(data_message)
-                                    title = ""
+                                    title = "YOUR MESSAGE WAS RECEIVED"
                                     # body = f'{app_user_obj.username} read your message'
                                     body = f'{app_user_obj.username} read your message' + ' Message Sent: ' + str(
                                         message_obj.created_at.strftime("%B %d, %Y.")) + ' ' + str(
@@ -953,7 +953,7 @@ class ReadingMessage(CreateAPIView):
                                             if AppNotificationSetting.objects.get(user=app_user_obj).on:
                                                 try:
                                                     if message_obj.sender.device_type == 'android':
-                                                        data_message = {"title": "",
+                                                        data_message = {"title": "Secret Password",
                                                                         "body": f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.' + ' Message Sent: ' + str(
                                                                             message_obj.created_at.strftime(
                                                                                 "%B %d, %Y.")) + ' ' + str(
@@ -997,7 +997,7 @@ class ReadingMessage(CreateAPIView):
                                         if AppNotificationSetting.objects.get(user=app_user_obj).on:
                                             try:
                                                 if message_obj.sender.device_type == 'android':
-                                                    data_message = {"title": "",
+                                                    data_message = {"title": "Secret Password",
                                                                     "body": f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.' + ' Message Sent: ' + str(
                                                                         message_obj.created_at.strftime(
                                                                             "%B %d, %Y.")) + ' ' + str(

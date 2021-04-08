@@ -81,7 +81,7 @@ def expire_messages():
                     try:
                         if AppUser.objects.get(id=message.sender.id).device_type == 'android':
                             if len(message.read_by.all()) > 0:
-                                data_message = {"title": "Message Missed",
+                                data_message = {"title": "YOUR MESSAGE EXPIRED",
                                                 "body": 'Your message expired and only ' + str(", ".join(
                                                     [x.username for x in
                                                      message.read_by.all()])) + ' read it in time.' + ' Message Sent: ' + str(
@@ -92,7 +92,7 @@ def expire_messages():
                                                 "type": "messageExpired", "sound": "notifications.mp3"}
                                 respo = send_to_one(sender_fcm_token, data_message)
                             else:
-                                data_message = {"title": "Message Missed",
+                                data_message = {"title": "YOUR MESSAGE EXPIRED",
                                                 "body": 'Your message expired and no one' + ' read it in time.' + ' Message Sent: ' + str(
                                                     message.created_at.strftime("%B %d, %Y.")) + ' @ ' + str(
                                                     message.created_at.strftime("%I:%-M%p")) + ' ' + str(
@@ -103,7 +103,7 @@ def expire_messages():
                         else:
                             if len(message.read_by.all()) > 0:
                                 # data_message = json.dumps(data_message)
-                                title = "Message Missed"
+                                title = "YOUR MESSAGE EXPIRED"
                                 body = 'Your message expired and only ' + str(", ".join(
                                     [x.username for x in
                                      message.read_by.all()])) + ' read it in time.' + ' Message Sent: ' + str(
@@ -117,7 +117,7 @@ def expire_messages():
                                     sender_fcm_token, title, body, message_type, sound)
                                 print("FCM Response===============>0", respo)
                             else:
-                                title = "Message Missed"
+                                title = "YOUR MESSAGE EXPIRED"
                                 body = 'Your message expired and no one ' + ' read it in time.' + ' Message Sent: ' + str(
                                     message.created_at.strftime("%B %d, %Y.")) + ' @ ' + str(
                                     message.created_at.strftime("%I:%-M%p")) + ' ' + str(
@@ -167,17 +167,18 @@ def send_hurry_notification():
             for receiver in receivers:
                 fcm_token = AppUser.objects.get(id=receiver.id).device_token
                 try:
-                    if not HurryNotification.objects.get(user=AppUser.objects.get(id=receiver.id),message=Message.objects.get(id=message.id)).sent:
+                    if not HurryNotification.objects.get(user=AppUser.objects.get(id=receiver.id),
+                                                         message=Message.objects.get(id=message.id)).sent:
                         if AppNotificationSetting.objects.get(user=AppUser.objects.get(id=receiver.id)).on:
                             try:
                                 if AppUser.objects.get(id=receiver.id).device_type == 'android':
-                                    data_message = {"title": "Message Missed",
+                                    data_message = {"title": "HURRY MESSAGE",
                                                     "body": f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!',
                                                     "type": "messageExpired", "sound": "notifications.mp3"}
                                     respo = send_to_one(fcm_token, data_message)
                                 else:
                                     # data_message = json.dumps(data_message)
-                                    title = "Message Missed"
+                                    title = "HURRY MESSAGE"
                                     body = f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!',
                                     message_type = "messageExpired"
                                     sound = 'notifications.mp3'
@@ -198,13 +199,13 @@ def send_hurry_notification():
                     if AppNotificationSetting.objects.get(user=AppUser.objects.get(id=receiver.id)).on:
                         try:
                             if AppUser.objects.get(id=receiver.id).device_type == 'android':
-                                data_message = {"title": "Message Missed",
+                                data_message = {"title": "HURRY MESSAGE",
                                                 "body": f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!',
                                                 "type": "messageExpired", "sound": "notifications.mp3"}
                                 respo = send_to_one(fcm_token, data_message)
                             else:
                                 # data_message = json.dumps(data_message)
-                                title = "Message Missed"
+                                title = "HURRY MESSAGE"
                                 body = f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!',
                                 message_type = "messageExpired"
                                 sound = 'notifications.mp3'
