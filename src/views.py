@@ -26,7 +26,6 @@ from adminpanel.models import User, TermsandCondition, UserNotification
 from authy.api import AuthyApiClient
 from twilio.rest import Client
 from .fcm_notification import send_to_one, send_another
-
 # from inapppy import AppStoreValidator, InAppPyValidationError
 # from inapppy import GooglePlayValidator, InAppPyValidationError
 
@@ -656,13 +655,9 @@ class ReadingMessage(CreateAPIView):
                             )
                             # print('before sent_to.set')
                             # notification.sent_to.set([x.username for x in message_obj.receiver.all()])
-                            [notification.sent_to.add(x) for x in message_obj.receiver.all()]
-                            print('>>>>>>>>>>>>>>>',
-                                  [notification.sent_to.add(x) for x in message_obj.receiver.all()]
-                                  )
-                            # for receiver in message_obj.receiver.all():
-                            #     notification.sent_to.add(receiver)
-                            #     print('Race mode else case notification sent user list', notification.sent_to.all())
+                            for receiver in message_obj.receiver.all():
+                                notification.sent_to.add(receiver)
+                                print('Race mode else case notification sent user list', notification.sent_to.all())
                             fcm_token = message_obj.sender.device_token
                             if AppNotificationSetting.objects.get(user=app_user_obj).on:
                                 try:
@@ -892,13 +887,9 @@ class ReadingMessage(CreateAPIView):
                         )
                         # print('before second sent_to')
                         # notification.sent_to.set([x.username for x in message_obj.receiver.all()])
-                        [notification.sent_to.add(x) for x in message_obj.receiver.all()]
-                        print('>>>>>>>>>>>>>>>>>>>>',
-                              [notification.sent_to.add(x) for x in message_obj.receiver.all()]
-                              )
-                        # for receiver in message_obj.receiver.all():
-                        #     notification.sent_to.add(receiver)
-                        #     print('notification receivers------>>>', notification.sent_to.all())
+                        for receiver in message_obj.receiver.all():
+                            notification.sent_to.add(receiver)
+                            print('notification receivers------>>>', notification.sent_to.all())
                         fcm_token = message_obj.sender.device_token
                         if AppNotificationSetting.objects.get(user=app_user_obj).on:
                             try:
@@ -1788,7 +1779,7 @@ class SendingNotification(APIView):
                             else:
                                 # data_message = json.dumps(data_message)
                                 title = "Message Missed"
-                                body = f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!'
+                                body = f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!',
                                 message_type = "messageExpired"
                                 sound = 'notifications.mp3'
                                 respo = send_another(
