@@ -1766,20 +1766,20 @@ class SendingNotification(APIView):
             receivers = message.receiver.all()
             print(message_validity - now_time < datetime.timedelta(minutes=11))
             print(message_validity - now_time)
-            if (message_validity - now_time) < datetime.timedelta(minutes=11):
+            if (message_validity - now_time) < datetime.timedelta(minutes=59):
                 for receiver in receivers:
                     fcm_token = AppUser.objects.get(id=receiver.id).device_token
                     if AppNotificationSetting.objects.get(user=AppUser.objects.get(id=receiver.id)).on:
                         try:
                             if AppUser.objects.get(id=receiver.id).device_type == 'android':
-                                data_message = {"title": "Message Missed",
+                                data_message = {"title": "MESSAGE EXPIRED",
                                                 "body": f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!',
                                                 "type": "messageExpired", "sound": "notifications.mp3"}
                                 respo = send_to_one(fcm_token, data_message)
                             else:
                                 # data_message = json.dumps(data_message)
-                                title = "Message Missed"
-                                body = f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!',
+                                title = "MESSAGE EXPIRED"
+                                body = f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!'
                                 message_type = "messageExpired"
                                 sound = 'notifications.mp3'
                                 respo = send_another(
