@@ -179,7 +179,7 @@ def send_hurry_notification():
                                 else:
                                     # data_message = json.dumps(data_message)
                                     title = "HURRY MESSAGE"
-                                    body = f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!',
+                                    body = f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!'
                                     message_type = "messageExpired"
                                     sound = 'notifications.mp3'
                                     respo = send_another(
@@ -206,7 +206,7 @@ def send_hurry_notification():
                             else:
                                 # data_message = json.dumps(data_message)
                                 title = "HURRY MESSAGE"
-                                body = f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!',
+                                body = f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!'
                                 message_type = "messageExpired"
                                 sound = 'notifications.mp3'
                                 respo = send_another(
