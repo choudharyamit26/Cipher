@@ -81,7 +81,7 @@ def expire_messages():
                     try:
                         if AppUser.objects.get(id=message.sender.id).device_type == 'android':
                             if len(message.read_by.all()) > 0:
-                                data_message = {"title": "YOUR MESSAGE EXPIRED",
+                                data_message = {"title": "MESSAGE EXPIRED",
                                                 "body": 'Your message expired and only ' + str(", ".join(
                                                     [x.username for x in
                                                      message.read_by.all()])) + ' read it in time.' + ' Message Sent: ' + str(
@@ -92,7 +92,7 @@ def expire_messages():
                                                 "type": "messageExpired", "sound": "notifications.mp3"}
                                 respo = send_to_one(sender_fcm_token, data_message)
                             else:
-                                data_message = {"title": "YOUR MESSAGE EXPIRED",
+                                data_message = {"title": "MESSAGE EXPIRED",
                                                 "body": 'Your message expired and no one' + ' read it in time.' + ' Message Sent: ' + str(
                                                     message.created_at.strftime("%B %d, %Y.")) + ' @ ' + str(
                                                     message.created_at.strftime("%I:%-M%p")) + ' ' + str(
@@ -103,7 +103,7 @@ def expire_messages():
                         else:
                             if len(message.read_by.all()) > 0:
                                 # data_message = json.dumps(data_message)
-                                title = "YOUR MESSAGE EXPIRED"
+                                title = "MESSAGE EXPIRED"
                                 body = 'Your message expired and only ' + str(", ".join(
                                     [x.username for x in
                                      message.read_by.all()])) + ' read it in time.' + ' Message Sent: ' + str(
@@ -117,7 +117,7 @@ def expire_messages():
                                     sender_fcm_token, title, body, message_type, sound)
                                 print("FCM Response===============>0", respo)
                             else:
-                                title = "YOUR MESSAGE EXPIRED"
+                                title = "MESSAGE EXPIRED"
                                 body = 'Your message expired and no one ' + ' read it in time.' + ' Message Sent: ' + str(
                                     message.created_at.strftime("%B %d, %Y.")) + ' @ ' + str(
                                     message.created_at.strftime("%I:%-M%p")) + ' ' + str(
