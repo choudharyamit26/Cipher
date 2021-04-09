@@ -47,7 +47,7 @@ def expire_messages():
                     if AppNotificationSetting.objects.get(user=AppUser.objects.get(id=receiver.id)).on:
                         try:
                             if AppUser.objects.get(id=receiver.id).device_type == 'android':
-                                data_message = {"title": "Message Missed",
+                                data_message = {"title": "MESSAGE EXPIRED",
                                                 "body": 'Message Expired' + ' Message Sent: ' + str(
                                                     message.created_at.strftime("%B %d, %Y.")) + ' @ ' + str(
                                                     message.created_at.strftime("%I:%-M%p")) + ' ' + str(
@@ -57,7 +57,7 @@ def expire_messages():
                                 respo = send_to_one(fcm_token, data_message)
                             else:
                                 # data_message = json.dumps(data_message)
-                                title = "Message Missed"
+                                title = "MESSAGE EXPIRED"
                                 body = 'Message Expired' + ' Message Sent: ' + str(
                                     message.created_at.strftime("%B %d, %Y.")) + ' @ ' + str(
                                     message.created_at.strftime("%I:%-M%p")) + ' ' + str(
