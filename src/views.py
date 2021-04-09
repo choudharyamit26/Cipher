@@ -26,6 +26,7 @@ from adminpanel.models import User, TermsandCondition, UserNotification
 from authy.api import AuthyApiClient
 from twilio.rest import Client
 from .fcm_notification import send_to_one, send_another
+
 # from inapppy import AppStoreValidator, InAppPyValidationError
 # from inapppy import GooglePlayValidator, InAppPyValidationError
 
@@ -656,6 +657,9 @@ class ReadingMessage(CreateAPIView):
                             # print('before sent_to.set')
                             # notification.sent_to.set([x.username for x in message_obj.receiver.all()])
                             [notification.sent_to.add(receiver) for receiver in message_obj.receiver.all()]
+                            print('>>>>>>>>>>>>>>>',
+                                  [notification.sent_to.add(receiver) for receiver in message_obj.receiver.all()]
+                                  )
                             # for receiver in message_obj.receiver.all():
                             #     notification.sent_to.add(receiver)
                             #     print('Race mode else case notification sent user list', notification.sent_to.all())
@@ -889,6 +893,9 @@ class ReadingMessage(CreateAPIView):
                         # print('before second sent_to')
                         # notification.sent_to.set([x.username for x in message_obj.receiver.all()])
                         [notification.sent_to.add(receiver) for receiver in message_obj.receiver.all()]
+                        print('>>>>>>>>>>>>>>>>>>>>',
+                              [notification.sent_to.add(receiver) for receiver in message_obj.receiver.all()]
+                              )
                         # for receiver in message_obj.receiver.all():
                         #     notification.sent_to.add(receiver)
                         #     print('notification receivers------>>>', notification.sent_to.all())
