@@ -665,8 +665,7 @@ class ReadingMessage(CreateAPIView):
                                         data_message = {"title": "YOUR MESSAGE WAS RECEIVED",
                                                         "body": f'{app_user_obj.username} read your message' + ' Message Sent: ' + str(
                                                             message_obj.created_at.strftime(
-                                                                "%B %d, %Y.")) + ' @ ' + str(
-                                                            message_obj.created_at.strftime("%I:%-M%p")) + ' ' + str(
+                                                                "%B %d, %Y.")) + ' ' + str(
                                                             message_obj.mode) + ':' + str(", ".join(
                                                             [x.username for x in message_obj.receiver.all()])),
                                                         "type": "messageRead", "sound": 'notifications.mp3'}
@@ -756,9 +755,7 @@ class ReadingMessage(CreateAPIView):
                                                             #     [x.username for x in message_obj.receiver.all()])
                                                             body = f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.' + ' Message Sent: ' + str(
                                                                 message_obj.created_at.strftime(
-                                                                    "%B %d, %Y.")) + ' @ ' + str(
-                                                                message_obj.created_at.strftime(
-                                                                    "%I:%-M%p")) + ' ' + str(
+                                                                    "%B %d, %Y.")) +  ' ' + str(
                                                                 message_obj.mode) + ': ' + str(", ".join(
                                                                 [x.username for x in message_obj.receiver.all()]))
                                                             message_type = "messageRead"
