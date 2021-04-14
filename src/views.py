@@ -379,6 +379,7 @@ class ComposeMessage(CreateAPIView):
                         print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', obj)
                         try:
                             msg_obj.receiver.add(AppUser.objects.get(phone_number=obj))
+                            msg_obj.correct_attempts_by.add(AppUser.objects.get(phone_number=obj))
                             fcm_token = AppUser.objects.get(phone_number=obj).device_token
                             # AppNotification.objects.create(
                             #     user=AppUser.objects.get(phone_number=obj),
@@ -453,6 +454,7 @@ class ComposeMessage(CreateAPIView):
                             u = AppUser.objects.get(phone_number=obj)
                             print(u)
                             msg_obj.receiver.add(u)
+                            msg_obj.correct_attempts_by.add(u)
                             fcm_token = AppUser.objects.get(phone_number=obj).device_token
                             # AppNotification.objects.create(
                             #     user=AppUser.objects.get(phone_number=obj),
@@ -667,7 +669,7 @@ class ReadingMessage(CreateAPIView):
                                                             message_obj.created_at.strftime(
                                                                 "%B %d, %Y.")) + ' ' + str(
                                                             message_obj.mode) + ':' + str(", ".join(
-                                                            [x.username for x in message_obj.receiver.all()])),
+                                                            [x.username for x in message_obj.correct_attempts_by.all()])),
                                                         "type": "messageRead", "sound": 'notifications.mp3'}
                                         respo = send_to_one(fcm_token, data_message)
                                         print(respo)
@@ -680,7 +682,7 @@ class ReadingMessage(CreateAPIView):
                                         body = f'{app_user_obj.username} read your message' + ' Message Sent: ' + str(
                                             message_obj.created_at.strftime("%B %d, %Y.")) + ' ' + str(
                                             message_obj.mode) + ':' + str(", ".join(
-                                            [x.username for x in message_obj.receiver.all()]))
+                                            [x.username for x in message_obj.correct_attempts_by.all()]))
                                         message_type = "messageRead"
                                         sound = 'notifications.mp3'
                                         respo = send_another(
@@ -742,7 +744,7 @@ class ReadingMessage(CreateAPIView):
                                                                                 message_obj.mode) + ': ' + str(
                                                                                 ", ".join(
                                                                                     [x.username for x in
-                                                                                     message_obj.receiver.all()])),
+                                                                                     message_obj.correct_attempts_by.all()])),
                                                                             "type": "inCorrectAttempt",
                                                                             "sound": 'notifications.mp3'}
                                                             respo = send_to_one(fcm_token, data_message)
@@ -757,7 +759,7 @@ class ReadingMessage(CreateAPIView):
                                                                 message_obj.created_at.strftime(
                                                                     "%B %d, %Y.")) +  ' ' + str(
                                                                 message_obj.mode) + ': ' + str(", ".join(
-                                                                [x.username for x in message_obj.receiver.all()]))
+                                                                [x.username for x in message_obj.correct_attempts_by.all()]))
                                                             message_type = "messageRead"
                                                             sound = 'notifications.mp3'
                                                             respo = send_another(
@@ -787,7 +789,7 @@ class ReadingMessage(CreateAPIView):
                                                                                 "%B %d, %Y.")) + ' ' + str(
                                                                             message_obj.mode) + ':' + str(", ".join(
                                                                             [x.username for x in
-                                                                             message_obj.receiver.all()])),
+                                                                             message_obj.correct_attempts_by.all()])),
                                                                         "type": "messageRead",
                                                                         "sound": 'notifications.mp3'}
                                                         respo = send_to_one(fcm_token, data_message)
@@ -801,7 +803,7 @@ class ReadingMessage(CreateAPIView):
                                                         body = f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.' + ' Message Sent: ' + str(
                                                             message_obj.created_at.strftime("%B %d, %Y.")) + ' ' + str(
                                                             message_obj.mode) + ':' + str(", ".join(
-                                                            [x.username for x in message_obj.receiver.all()]))
+                                                            [x.username for x in message_obj.correct_attempts_by.all()]))
                                                         message_type = "messageRead"
                                                         sound = 'notifications.mp3'
                                                         respo = send_another(
@@ -895,7 +897,7 @@ class ReadingMessage(CreateAPIView):
                                                     "body": f'{app_user_obj.username} read your message' + ' Message Sent: ' + str(
                                                         message_obj.created_at.strftime("%B %d, %Y.")) + ' ' + str(
                                                         message_obj.mode) + ':' + str(", ".join(
-                                                        [x.username for x in message_obj.receiver.all()])),
+                                                        [x.username for x in message_obj.correct_attempts_by.all()])),
                                                     "type": "messageRead", "sound": 'notifications.mp3'}
                                     respo = send_to_one(fcm_token, data_message)
                                 else:
@@ -905,7 +907,7 @@ class ReadingMessage(CreateAPIView):
                                     body = f'{app_user_obj.username} read your message' + ' Message Sent: ' + str(
                                         message_obj.created_at.strftime("%B %d, %Y.")) + ' ' + str(
                                         message_obj.mode) + ':' + str(", ".join(
-                                        [x.username for x in message_obj.receiver.all()]))
+                                        [x.username for x in message_obj.correct_attempts_by.all()]))
                                     message_type = "messageRead"
                                     sound = 'notifications.mp3'
                                     respo = send_another(
@@ -956,7 +958,7 @@ class ReadingMessage(CreateAPIView):
                                                                                 "%B %d, %Y.")) + ' ' + str(
                                                                             message_obj.mode) + ':' + str(", ".join(
                                                                             [x.username for x in
-                                                                             message_obj.receiver.all()])),
+                                                                             message_obj.correct_attempts_by.all()])),
                                                                         "type": "messageRead",
                                                                         "sound": 'notifications.mp3'}
                                                         respo = send_to_one(fcm_token, data_message)
@@ -970,7 +972,7 @@ class ReadingMessage(CreateAPIView):
                                                         body = f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.' + ' Message Sent: ' + str(
                                                             message_obj.created_at.strftime("%B %d, %Y.")) + ' ' + str(
                                                             message_obj.mode) + ':' + str(", ".join(
-                                                            [x.username for x in message_obj.receiver.all()]))
+                                                            [x.username for x in message_obj.correct_attempts_by.all()]))
                                                         message_type = "messageRead"
                                                         sound = 'notifications.mp3'
                                                         respo = send_another(
@@ -1000,7 +1002,7 @@ class ReadingMessage(CreateAPIView):
                                                                             "%B %d, %Y.")) + ' ' + str(
                                                                         message_obj.mode) + ': ' + str(", ".join(
                                                                         [x.username for x in
-                                                                         message_obj.receiver.all()])),
+                                                                         message_obj.correct_attempts_by.all()])),
                                                                     "type": "inCorrectAttempt",
                                                                     "sound": 'notifications.mp3'}
                                                     respo = send_to_one(fcm_token, data_message)
@@ -1014,7 +1016,7 @@ class ReadingMessage(CreateAPIView):
                                                     body = f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.' + ' Message Sent: ' + str(
                                                         message_obj.created_at.strftime("%B %d, %Y.")) + ' ' + str(
                                                         message_obj.mode) + ':' + str(", ".join(
-                                                        [x.username for x in message_obj.receiver.all()]))
+                                                        [x.username for x in message_obj.correct_attempts_by.all()]))
                                                     message_type = "messageRead"
                                                     sound = 'notifications.mp3'
                                                     respo = send_another(

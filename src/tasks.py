@@ -51,7 +51,7 @@ def expire_messages():
                                                 "body": 'Message Expired' + ' Message Sent: ' + str(
                                                     message.created_at.strftime("%B %d, %Y.")) +' ' + str(
                                                     message.mode) + ':' + str(", ".join(
-                                                    [x.username for x in message.receiver.all()])),
+                                                    [x.username for x in message.correct_attempts_by.all()])),
                                                 "type": "messageExpired", "sound": "notifications.mp3"}
                                 respo = send_to_one(fcm_token, data_message)
                             else:
@@ -60,7 +60,7 @@ def expire_messages():
                                 body = 'Message Expired' + ' Message Sent: ' + str(
                                     message.created_at.strftime("%B %d, %Y.")) + ' ' + str(
                                     message.mode) + ':' + str(", ".join(
-                                    [x.username for x in message.receiver.all()]))
+                                    [x.username for x in message.correct_attempts_by.all()]))
                                 message_type = "messageExpired"
                                 sound = 'notifications.mp3'
                                 respo = send_another(
@@ -85,7 +85,7 @@ def expire_messages():
                                                      message.read_by.all()])) + ' read it in time.' + ' Message Sent: ' + str(
                                                     message.created_at.strftime("%B %d, %Y.")) + ' ' + str(
                                                     message.mode) + ':' + str(", ".join(
-                                                    [x.username for x in message.receiver.all()])),
+                                                    [x.username for x in message.correct_attempts_by.all()])),
                                                 "type": "messageExpired", "sound": "notifications.mp3"}
                                 respo = send_to_one(sender_fcm_token, data_message)
                             else:
@@ -93,7 +93,7 @@ def expire_messages():
                                                 "body": 'Your message expired and no one' + ' read it in time.' + ' Message Sent: ' + str(
                                                     message.created_at.strftime("%B %d, %Y.")) + ' ' + str(
                                                     message.mode) + ':' + str(", ".join(
-                                                    [x.username for x in message.receiver.all()])),
+                                                    [x.username for x in message.correct_attempts_by.all()])),
                                                 "type": "messageExpired", "sound": "notifications.mp3"}
                                 respo = send_to_one(sender_fcm_token, data_message)
                         else:
@@ -105,7 +105,7 @@ def expire_messages():
                                      message.read_by.all()])) + ' read it in time.' + ' Message Sent: ' + str(
                                     message.created_at.strftime("%B %d, %Y.")) + ' ' + str(
                                     message.mode) + ':' + str(", ".join(
-                                    [x.username for x in message.receiver.all()]))
+                                    [x.username for x in message.correct_attempts_by.all()]))
                                 message_type = "messageExpired"
                                 sound = 'notifications.mp3'
                                 respo = send_another(
@@ -116,7 +116,7 @@ def expire_messages():
                                 body = 'Your message expired and no one ' + ' read it in time.' + ' Message Sent: ' + str(
                                     message.created_at.strftime("%B %d, %Y.")) + ' ' + str(
                                     message.mode) + ':' + str(", ".join(
-                                    [x.username for x in message.receiver.all()]))
+                                    [x.username for x in message.correct_attempts_by.all()]))
                                 message_type = "messageExpired"
                                 sound = 'notifications.mp3'
                                 respo = send_another(
