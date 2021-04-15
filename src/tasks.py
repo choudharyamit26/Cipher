@@ -28,7 +28,7 @@ def expire_messages():
             print(message.id)
             message.is_missed = True
             message.save()
-            receivers = message.receiver.all()
+            receivers = message.correct_attempts_by.all()
             try:
                 for receiver in receivers:
                     print('From Celery Missed Messages', receiver)
@@ -47,6 +47,16 @@ def expire_messages():
                     if AppNotificationSetting.objects.get(user=AppUser.objects.get(id=receiver.id)).on:
                         try:
                             if AppUser.objects.get(id=receiver.id).device_type == 'android':
+                                notification = AppNotification.objects.create(
+                                    user=AppUser.objects.get(id=receiver.id),
+                                    text='Message Expired',
+                                    date_sent=message.created_at,
+                                    mode=message.mode,
+                                    date_expired=datetime.datetime.now(),
+                                    # sent_to=[x.username for x in receivers]
+                                )
+                                for users in receivers:
+                                    notification.sent_to.add(users)
                                 data_message = {"title": "MESSAGE EXPIRED",
                                                 "body": 'Message Expired' + ' Message Sent: ' + str(
                                                     message.created_at.strftime("%B %d, %Y.")) +' ' + str(
@@ -56,6 +66,16 @@ def expire_messages():
                                 respo = send_to_one(fcm_token, data_message)
                             else:
                                 # data_message = json.dumps(data_message)
+                                notification = AppNotification.objects.create(
+                                    user=AppUser.objects.get(id=receiver.id),
+                                    text='Message Expired',
+                                    date_sent=message.created_at,
+                                    mode=message.mode,
+                                    date_expired=datetime.datetime.now(),
+                                    # sent_to=[x.username for x in receivers]
+                                )
+                                for users in receivers:
+                                    notification.sent_to.add(users)
                                 title = "MESSAGE EXPIRED"
                                 body = 'Message Expired' + ' Message Sent: ' + str(
                                     message.created_at.strftime("%B %d, %Y.")) + ' ' + str(
@@ -79,6 +99,16 @@ def expire_messages():
                     try:
                         if AppUser.objects.get(id=message.sender.id).device_type == 'android':
                             if len(message.read_by.all()) > 0:
+                                notification = AppNotification.objects.create(
+                                    user=AppUser.objects.get(id=message.sender.id),
+                                    text='Message Expired',
+                                    date_sent=message.created_at,
+                                    mode=message.mode,
+                                    date_expired=datetime.datetime.now(),
+                                    # sent_to=[x.username for x in receivers]
+                                )
+                                for users in receivers:
+                                    notification.sent_to.add(users)
                                 data_message = {"title": "MESSAGE EXPIRED",
                                                 "body": 'Your message expired and only ' + str(", ".join(
                                                     [x.username for x in
@@ -89,6 +119,16 @@ def expire_messages():
                                                 "type": "messageExpired", "sound": "notifications.mp3"}
                                 respo = send_to_one(sender_fcm_token, data_message)
                             else:
+                                notification = AppNotification.objects.create(
+                                    user=AppUser.objects.get(id=message.sender.id),
+                                    text='Message Expired',
+                                    date_sent=message.created_at,
+                                    mode=message.mode,
+                                    date_expired=datetime.datetime.now(),
+                                    # sent_to=[x.username for x in receivers]
+                                )
+                                for users in receivers:
+                                    notification.sent_to.add(users)
                                 data_message = {"title": "MESSAGE EXPIRED",
                                                 "body": 'Your message expired and no one' + ' read it in time.' + ' Message Sent: ' + str(
                                                     message.created_at.strftime("%B %d, %Y.")) + ' ' + str(
@@ -99,6 +139,16 @@ def expire_messages():
                         else:
                             if len(message.read_by.all()) > 0:
                                 # data_message = json.dumps(data_message)
+                                notification = AppNotification.objects.create(
+                                    user=AppUser.objects.get(id=message.sender.id),
+                                    text='Message Expired',
+                                    date_sent=message.created_at,
+                                    mode=message.mode,
+                                    date_expired=datetime.datetime.now(),
+                                    # sent_to=[x.username for x in receivers]
+                                )
+                                for users in receivers:
+                                    notification.sent_to.add(users)
                                 title = "MESSAGE EXPIRED"
                                 body = 'Your message expired and only ' + str(", ".join(
                                     [x.username for x in
@@ -112,6 +162,16 @@ def expire_messages():
                                     sender_fcm_token, title, body, message_type, sound)
                                 print("FCM Response===============>0", respo)
                             else:
+                                notification = AppNotification.objects.create(
+                                    user=AppUser.objects.get(id=message.sender.id),
+                                    text='Message Expired',
+                                    date_sent=message.created_at,
+                                    mode=message.mode,
+                                    date_expired=datetime.datetime.now(),
+                                    # sent_to=[x.username for x in receivers]
+                                )
+                                for users in receivers:
+                                    notification.sent_to.add(users)
                                 title = "MESSAGE EXPIRED"
                                 body = 'Your message expired and no one ' + ' read it in time.' + ' Message Sent: ' + str(
                                     message.created_at.strftime("%B %d, %Y.")) + ' ' + str(
