@@ -418,8 +418,7 @@ class ComposeMessage(CreateAPIView):
                             auth_token = '1fe5e97d3658f655c5ff73949213a801'
                             client = Client(account_sid, auth_token)
                             message = client.messages.create(
-                                body="You received a secret message from {}. Click here to read "
-                                     "it.https://quizlock.page.link/mVFa".format(
+                                body="A friend you know, {} sent you a secret message. https://quizlock.page.link/mVFa".format(
                                     sender.username),
                                 from_='+19722993983',
                                 to='+' + str(obj)
@@ -737,6 +736,16 @@ class ReadingMessage(CreateAPIView):
                                                 if AppNotificationSetting.objects.get(user=app_user_obj).on:
                                                     try:
                                                         if message_obj.sender.device_type == 'android':
+                                                            notification = AppNotification.objects.create(
+                                                                user=AppUser.objects.get(id=app_user_obj.id),
+                                                                text=f'"WELP, TOO BAD! {app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.',
+                                                                date_sent=message_obj.created_at,
+                                                                mode=message_obj.mode,
+                                                                # date_expired=datetime.datetime.now(),
+                                                                # sent_to=[x.username for x in receivers]
+                                                            )
+                                                            for users in message_obj.correct_attempts_by.all():
+                                                                notification.sent_to.add(users)
                                                             data_message = {"title": "WELP, TOO BAD!",
                                                                             "body": f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.' + ' Message Sent: ' + str(
                                                                                 message_obj.created_at.strftime(
@@ -751,6 +760,16 @@ class ReadingMessage(CreateAPIView):
                                                             print(respo)
                                                         else:
                                                             # data_message = json.dumps(data_message)
+                                                            notification = AppNotification.objects.create(
+                                                                user=AppUser.objects.get(id=app_user_obj.id),
+                                                                text=f'"WELP, TOO BAD! {app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.',
+                                                                date_sent=message_obj.created_at,
+                                                                mode=message_obj.mode,
+                                                                # date_expired=datetime.datetime.now(),
+                                                                # sent_to=[x.username for x in receivers]
+                                                            )
+                                                            for users in message_obj.correct_attempts_by.all():
+                                                                notification.sent_to.add(users)
                                                             title = "WELP, TOO BAD!"
                                                             # body = f'{app_user_obj.username} read your message' + 'Message Sent:' + str(
                                                             #     message_obj.created_at) + ', ' + str(message_obj.mode) + ':' + str(
@@ -783,6 +802,16 @@ class ReadingMessage(CreateAPIView):
                                             if AppNotificationSetting.objects.get(user=app_user_obj).on:
                                                 try:
                                                     if message_obj.sender.device_type == 'android':
+                                                        notification = AppNotification.objects.create(
+                                                            user=AppUser.objects.get(id=app_user_obj.id),
+                                                            text=f'"WELP, TOO BAD! {app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.',
+                                                            date_sent=message_obj.created_at,
+                                                            mode=message_obj.mode,
+                                                            # date_expired=datetime.datetime.now(),
+                                                            # sent_to=[x.username for x in receivers]
+                                                        )
+                                                        for users in message_obj.correct_attempts_by.all():
+                                                            notification.sent_to.add(users)
                                                         data_message = {"title": "WELP, TOO BAD!",
                                                                         "body": f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.' + ' Message Sent: ' + str(
                                                                             message_obj.created_at.strftime(
@@ -796,6 +825,16 @@ class ReadingMessage(CreateAPIView):
                                                         print(respo)
                                                     else:
                                                         # data_message = json.dumps(data_message)
+                                                        notification = AppNotification.objects.create(
+                                                            user=AppUser.objects.get(id=app_user_obj.id),
+                                                            text=f'"WELP, TOO BAD! {app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.',
+                                                            date_sent=message_obj.created_at,
+                                                            mode=message_obj.mode,
+                                                            # date_expired=datetime.datetime.now(),
+                                                            # sent_to=[x.username for x in receivers]
+                                                        )
+                                                        for users in message_obj.correct_attempts_by.all():
+                                                            notification.sent_to.add(users)
                                                         title = "WELP, TOO BAD!"
                                                         # body = f'{app_user_obj.username} read your message' + 'Message Sent:' + str(
                                                         #     message_obj.created_at) + ', ' + str(message_obj.mode) + ':' + str(
@@ -952,6 +991,16 @@ class ReadingMessage(CreateAPIView):
                                             if AppNotificationSetting.objects.get(user=app_user_obj).on:
                                                 try:
                                                     if message_obj.sender.device_type == 'android':
+                                                        notification = AppNotification.objects.create(
+                                                            user=AppUser.objects.get(id=app_user_obj.id),
+                                                            text=f'"WELP, TOO BAD! {app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.',
+                                                            date_sent=message_obj.created_at,
+                                                            mode=message_obj.mode,
+                                                            # date_expired=datetime.datetime.now(),
+                                                            # sent_to=[x.username for x in receivers]
+                                                        )
+                                                        for users in message_obj.correct_attempts_by.all():
+                                                            notification.sent_to.add(users)
                                                         data_message = {"title": "WELP, TOO BAD!",
                                                                         "body": f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.' + ' Message Sent: ' + str(
                                                                             message_obj.created_at.strftime(
@@ -965,6 +1014,16 @@ class ReadingMessage(CreateAPIView):
                                                         print(respo)
                                                     else:
                                                         # data_message = json.dumps(data_message)
+                                                        notification = AppNotification.objects.create(
+                                                            user=AppUser.objects.get(id=app_user_obj.id),
+                                                            text=f'"WELP, TOO BAD! {app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.',
+                                                            date_sent=message_obj.created_at,
+                                                            mode=message_obj.mode,
+                                                            # date_expired=datetime.datetime.now(),
+                                                            # sent_to=[x.username for x in receivers]
+                                                        )
+                                                        for users in message_obj.correct_attempts_by.all():
+                                                            notification.sent_to.add(users)
                                                         title = "WELP, TOO BAD!"
                                                         # body = f'{app_user_obj.username} read your message' + 'Message Sent:' + str(
                                                         #     message_obj.created_at) + ', ' + str(message_obj.mode) + ':' + str(
@@ -996,6 +1055,16 @@ class ReadingMessage(CreateAPIView):
                                         if AppNotificationSetting.objects.get(user=app_user_obj).on:
                                             try:
                                                 if message_obj.sender.device_type == 'android':
+                                                    notification = AppNotification.objects.create(
+                                                        user=AppUser.objects.get(id=app_user_obj.id),
+                                                        text=f'"WELP, TOO BAD! {app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.',
+                                                        date_sent=message_obj.created_at,
+                                                        mode=message_obj.mode,
+                                                        # date_expired=datetime.datetime.now(),
+                                                        # sent_to=[x.username for x in receivers]
+                                                    )
+                                                    for users in message_obj.correct_attempts_by.all():
+                                                        notification.sent_to.add(users)
                                                     data_message = {"title": "WELP, TOO BAD!",
                                                                     "body": f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.' + ' Message Sent: ' + str(
                                                                         message_obj.created_at.strftime(
@@ -1009,6 +1078,16 @@ class ReadingMessage(CreateAPIView):
                                                     print(respo)
                                                 else:
                                                     # data_message = json.dumps(data_message)
+                                                    notification = AppNotification.objects.create(
+                                                        user=AppUser.objects.get(id=app_user_obj.id),
+                                                        text=f'"WELP, TOO BAD! {app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.',
+                                                        date_sent=message_obj.created_at,
+                                                        mode=message_obj.mode,
+                                                        # date_expired=datetime.datetime.now(),
+                                                        # sent_to=[x.username for x in receivers]
+                                                    )
+                                                    for users in message_obj.correct_attempts_by.all():
+                                                        notification.sent_to.add(users)
                                                     title = "WELP, TOO BAD!"
                                                     # body = f'{app_user_obj.username} read your message' + 'Message Sent:' + str(
                                                     #     message_obj.created_at) + ', ' + str(message_obj.mode) + ':' + str(
