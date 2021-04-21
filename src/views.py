@@ -1541,7 +1541,7 @@ class UpdateUserNameView(APIView):
             school = serializer.validated_data['school']
             app_user = AppUser.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
             app_user.username = username
-            app_user.school = school
+            app_user.school_name = school
             app_user.save()
             return Response({'message': 'Username updated successfully', 'status': HTTP_200_OK})
         else:
