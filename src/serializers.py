@@ -130,6 +130,8 @@ class OtpSeralizer(serializers.ModelSerializer):
 
 class VerifyOtpSeralizer(serializers.ModelSerializer):
     username = serializers.CharField()
+    school = serializers.CharField()
+    user_timezone = serializers.CharField()
     phone_number = serializers.IntegerField()
     country_code = serializers.IntegerField()
     verification_code = serializers.IntegerField()
@@ -140,7 +142,8 @@ class VerifyOtpSeralizer(serializers.ModelSerializer):
     class Meta:
         model = AppUser
         fields = (
-            'username', 'country_code', 'phone_number', 'verification_code', 'password', 'device_token', 'device_type')
+            'username', 'country_code', 'phone_number', 'verification_code', 'password', 'device_token', 'device_type',
+            'school', 'user_timezone')
 
 
 class AddToFavouritesSerializer(serializers.ModelSerializer):
