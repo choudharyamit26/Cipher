@@ -10,6 +10,8 @@ from django.contrib.auth import get_user_model, authenticate
 
 class UserCreateSerailizer(serializers.ModelSerializer):
     username = serializers.CharField()
+    school = serializers.CharField()
+    user_timezone = serializers.CharField()
     country_code = serializers.IntegerField()
     phone_number = serializers.IntegerField()
     password = serializers.CharField(style={'input_type': 'password'})
@@ -17,13 +19,14 @@ class UserCreateSerailizer(serializers.ModelSerializer):
 
     class Meta:
         model = AppUser
-        fields = ('username', 'country_code', 'phone_number', 'password', 'confirm_password')
+        fields = ('username', 'country_code', 'phone_number', 'school', 'user_timezone', 'password', 'confirm_password')
 
 
 class LoginSerializer(serializers.Serializer):
     country_code = serializers.IntegerField()
     phone_number = serializers.IntegerField()
     device_type = serializers.CharField()
+    user_timezone = serializers.CharField()
     password = serializers.CharField(style={'input_type': 'password'})
 
     def validate(self, attrs):
@@ -137,7 +140,7 @@ class VerifyOtpSeralizer(serializers.ModelSerializer):
     class Meta:
         model = AppUser
         fields = (
-        'username', 'country_code', 'phone_number', 'verification_code', 'password', 'device_token', 'device_type')
+            'username', 'country_code', 'phone_number', 'verification_code', 'password', 'device_token', 'device_type')
 
 
 class AddToFavouritesSerializer(serializers.ModelSerializer):
@@ -152,10 +155,11 @@ class AddToFavouritesSerializer(serializers.ModelSerializer):
 
 class UpdateUserNameSerializer(serializers.ModelSerializer):
     username = serializers.CharField()
+    school = serializers.CharField()
 
     class Meta:
         model = AppUser
-        fields = ('username',)
+        fields = ('username', 'school')
 
 
 class UpdateNotificationSettingsSerializer(serializers.ModelSerializer):

@@ -1,4 +1,5 @@
 import json
+import pytz
 from random import randint
 import requests
 from django.conf.global_settings import DEBUG
@@ -26,6 +27,7 @@ from adminpanel.models import User, TermsandCondition, UserNotification
 from authy.api import AuthyApiClient
 from twilio.rest import Client
 from .fcm_notification import send_to_one, send_another
+
 # from inapppy import AppStoreValidator, InAppPyValidationError
 # from inapppy import GooglePlayValidator, InAppPyValidationError
 
@@ -49,6 +51,8 @@ class CreateUser(APIView):
         serializer = UserCreateSerailizer(data=self.request.data)
         if serializer.is_valid():
             username = serializer.validated_data['username']
+            school = serializer.validated_data['school']
+            user_timezone = serializer.validated_data['user_timezone']
             country_code = serializer.validated_data['country_code']
             phone_number = serializer.validated_data['phone_number']
             password = serializer.validated_data['password']
@@ -155,6 +159,7 @@ class LoginView(ObtainAuthToken):
         phone_number = self.request.data['phone_number']
         password = self.request.data['password']
         device_token = self.request.data['device_token']
+        user_timezone = self.request.data['user_timezone']
         device_type = self.request.data['device_type']
         x = {}
         try:
@@ -179,7 +184,8 @@ class LoginView(ObtainAuthToken):
                         print('previous token ', user_device_token)
                         user_id.device_token = device_token
                         user_id.device_type = device_type
-                        user_id.save(update_fields=['device_token', 'device_type'])
+                        user_id.user_timezone = user_timezone
+                        user_id.save(update_fields=['device_token', 'device_type', 'user_timezone'])
                         print('updated device token ', userObj.device_token)
                         token = token[0]
                         return Response({"token": token.key, "id": user_id.id, 'username': user_id.username,
@@ -190,7 +196,9 @@ class LoginView(ObtainAuthToken):
                         user_device_token = user_id.device_token
                         print('previous token ', user_device_token)
                         user_id.device_token = device_token
-                        user_id.save(update_fields=['device_token'])
+                        user_id.device_type = device_type
+                        user_id.user_timezone = user_timezone
+                        user_id.save(update_fields=['device_token', 'user_timezone', 'device_type'])
                         print('updated device token ', userObj.device_token)
                         token = token[0]
                         return Response({"token": token.key, "id": user_id.id, 'username': user_id.username,
@@ -418,8 +426,8 @@ class ComposeMessage(CreateAPIView):
                             auth_token = '1fe5e97d3658f655c5ff73949213a801'
                             client = Client(account_sid, auth_token)
                             message = client.messages.create(
-                                body="A friend you know, {} sent you a secret message. https://quizlock.page.link/mVFa".format(
-                                    sender.username),
+                                body="Your friend, {} from {} sent you a secret message, click here to read it. https://quizlock.page.link/mVFa".format(
+                                    sender.username, sender.school),
                                 from_='+19722993983',
                                 to='+' + str(obj)
                             )
@@ -492,8 +500,8 @@ class ComposeMessage(CreateAPIView):
                             auth_token = '1fe5e97d3658f655c5ff73949213a801'
                             client = Client(account_sid, auth_token)
                             message = client.messages.create(
-                                body="You received a secret message from {}. Click here to read it.https://quizlock.page.link/mVFa".format(
-                                    sender.username),
+                                body="Your friend, {} from {} sent you a secret message, click here to read it. https://quizlock.page.link/mVFa".format(
+                                    sender.username, sender.school),
                                 from_='+19722993983',
                                 to='+' + str(obj)
                             )
@@ -668,7 +676,8 @@ class ReadingMessage(CreateAPIView):
                                                             message_obj.created_at.strftime(
                                                                 "%B %d, %Y.")) + ' ' + str(
                                                             message_obj.mode) + ':' + str(", ".join(
-                                                            [x.username for x in message_obj.correct_attempts_by.all()])),
+                                                            [x.username for x in
+                                                             message_obj.correct_attempts_by.all()])),
                                                         "type": "messageRead", "sound": 'notifications.mp3'}
                                         respo = send_to_one(fcm_token, data_message)
                                         print(respo)
@@ -776,9 +785,10 @@ class ReadingMessage(CreateAPIView):
                                                             #     [x.username for x in message_obj.receiver.all()])
                                                             body = f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.' + ' Message Sent: ' + str(
                                                                 message_obj.created_at.strftime(
-                                                                    "%B %d, %Y.")) +  ' ' + str(
+                                                                    "%B %d, %Y.")) + ' ' + str(
                                                                 message_obj.mode) + ': ' + str(", ".join(
-                                                                [x.username for x in message_obj.correct_attempts_by.all()]))
+                                                                [x.username for x in
+                                                                 message_obj.correct_attempts_by.all()]))
                                                             message_type = "messageRead"
                                                             sound = 'notifications.mp3'
                                                             respo = send_another(
@@ -842,7 +852,8 @@ class ReadingMessage(CreateAPIView):
                                                         body = f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.' + ' Message Sent: ' + str(
                                                             message_obj.created_at.strftime("%B %d, %Y.")) + ' ' + str(
                                                             message_obj.mode) + ':' + str(", ".join(
-                                                            [x.username for x in message_obj.correct_attempts_by.all()]))
+                                                            [x.username for x in
+                                                             message_obj.correct_attempts_by.all()]))
                                                         message_type = "messageRead"
                                                         sound = 'notifications.mp3'
                                                         respo = send_another(
@@ -1031,7 +1042,8 @@ class ReadingMessage(CreateAPIView):
                                                         body = f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.' + ' Message Sent: ' + str(
                                                             message_obj.created_at.strftime("%B %d, %Y.")) + ' ' + str(
                                                             message_obj.mode) + ':' + str(", ".join(
-                                                            [x.username for x in message_obj.correct_attempts_by.all()]))
+                                                            [x.username for x in
+                                                             message_obj.correct_attempts_by.all()]))
                                                         message_type = "messageRead"
                                                         sound = 'notifications.mp3'
                                                         respo = send_another(
@@ -1232,6 +1244,8 @@ class VerifyOtp(APIView):
         serializer = VerifyOtpSeralizer(data=self.request.data)
         if serializer.is_valid():
             username = serializer.validated_data['username']
+            school = serializer.validated_data['school']
+            user_timezone = serializer.validated_data['user_timezone']
             country_code = serializer.validated_data['country_code']
             phone_number = serializer.validated_data['phone_number']
             verification_code = serializer.validated_data['verification_code']
@@ -1247,6 +1261,8 @@ class VerifyOtp(APIView):
                 if int(otp.otp) == int(verification_code):
                     user = AppUser.objects.create(
                         username=username,
+                        school=school,
+                        user_timezone=user_timezone,
                         country_code=country_code,
                         phone_number=str(country_code) + str(phone_number),
                         device_token=device_token,
@@ -1522,10 +1538,12 @@ class UpdateUserNameView(APIView):
         serializer = UpdateUserNameSerializer(data=self.request.data)
         if serializer.is_valid():
             username = serializer.validated_data['username']
+            school = serializer.validated_data['school']
             app_user = AppUser.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
             app_user.username = username
+            app_user.school = school
             app_user.save()
-            return Response({'message': 'Username updates successfully', 'status': HTTP_200_OK})
+            return Response({'message': 'Username updated successfully', 'status': HTTP_200_OK})
         else:
             return Response({'error': serializer.errors, 'status': HTTP_400_BAD_REQUEST})
 

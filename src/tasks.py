@@ -47,19 +47,21 @@ def expire_messages():
                     if AppNotificationSetting.objects.get(user=AppUser.objects.get(id=receiver.id)).on:
                         try:
                             if AppUser.objects.get(id=receiver.id).device_type == 'android':
+                                timezone.activate(pytz.timezone(receiver.user_timezone))
+                                ct = timezone.localtime(timezone.now())
                                 notification = AppNotification.objects.create(
                                     user=AppUser.objects.get(id=receiver.id),
                                     text='Message Expired',
                                     date_sent=message.created_at,
                                     mode=message.mode,
-                                    date_expired=datetime.datetime.now(),
+                                    date_expired=ct,
                                     # sent_to=[x.username for x in receivers]
                                 )
                                 for users in receivers:
                                     notification.sent_to.add(users)
                                 data_message = {"title": "MESSAGE EXPIRED",
                                                 "body": 'Message Expired' + ' Message Sent: ' + str(
-                                                    message.created_at.strftime("%B %d, %Y.")) +' ' + str(
+                                                    ct.strftime("%B %d, %Y.")) +' ' + str(
                                                     message.mode) + ':' + str(", ".join(
                                                     [x.username for x in message.correct_attempts_by.all()])),
                                                 "type": "messageExpired", "sound": "notifications.mp3"}
@@ -71,14 +73,15 @@ def expire_messages():
                                     text='Message Expired',
                                     date_sent=message.created_at,
                                     mode=message.mode,
-                                    date_expired=datetime.datetime.now(),
+                                    # date_expired=datetime.datetime.now(),
+                                    date_expired=ct,
                                     # sent_to=[x.username for x in receivers]
                                 )
                                 for users in receivers:
                                     notification.sent_to.add(users)
                                 title = "MESSAGE EXPIRED"
                                 body = 'Message Expired' + ' Message Sent: ' + str(
-                                    message.created_at.strftime("%B %d, %Y.")) + ' ' + str(
+                                    ct.strftime("%B %d, %Y.")) + ' ' + str(
                                     message.mode) + ':' + str(", ".join(
                                     [x.username for x in message.correct_attempts_by.all()]))
                                 message_type = "messageExpired"
@@ -98,13 +101,16 @@ def expire_messages():
                 if AppNotificationSetting.objects.get(user=AppUser.objects.get(id=message.sender.id)).on:
                     try:
                         if AppUser.objects.get(id=message.sender.id).device_type == 'android':
+                            timezone.activate(pytz.timezone(message.sender.user_timezone))
+                            ct = timezone.localtime(timezone.now())
                             if len(message.read_by.all()) > 0:
                                 notification = AppNotification.objects.create(
                                     user=AppUser.objects.get(id=message.sender.id),
                                     text='Message Expired',
                                     date_sent=message.created_at,
                                     mode=message.mode,
-                                    date_expired=datetime.datetime.now(),
+                                    # date_expired=datetime.datetime.now(),
+                                    date_expired=ct,
                                     # sent_to=[x.username for x in receivers]
                                 )
                                 for users in receivers:
@@ -124,7 +130,8 @@ def expire_messages():
                                     text='Message Expired',
                                     date_sent=message.created_at,
                                     mode=message.mode,
-                                    date_expired=datetime.datetime.now(),
+                                    # date_expired=datetime.datetime.now(),
+                                    date_expired=ct,
                                     # sent_to=[x.username for x in receivers]
                                 )
                                 for users in receivers:
@@ -138,13 +145,16 @@ def expire_messages():
                                 respo = send_to_one(sender_fcm_token, data_message)
                         else:
                             if len(message.read_by.all()) > 0:
+                                timezone.activate(pytz.timezone(message.sender.user_timezone))
+                                ct = timezone.localtime(timezone.now())
                                 # data_message = json.dumps(data_message)
                                 notification = AppNotification.objects.create(
                                     user=AppUser.objects.get(id=message.sender.id),
                                     text='Message Expired',
                                     date_sent=message.created_at,
                                     mode=message.mode,
-                                    date_expired=datetime.datetime.now(),
+                                    # date_expired=datetime.datetime.now(),
+                                    date_expired=ct,
                                     # sent_to=[x.username for x in receivers]
                                 )
                                 for users in receivers:
@@ -167,7 +177,8 @@ def expire_messages():
                                     text='Message Expired',
                                     date_sent=message.created_at,
                                     mode=message.mode,
-                                    date_expired=datetime.datetime.now(),
+                                    # date_expired=datetime.datetime.now(),
+                                    date_expired=ct,
                                     # sent_to=[x.username for x in receivers]
                                 )
                                 for users in receivers:

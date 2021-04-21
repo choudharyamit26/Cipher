@@ -15,6 +15,8 @@ class AppUser(models.Model):
     username = models.CharField(default='first name', max_length=100)
     country_code = models.CharField(default='+91', max_length=10)
     phone_number = models.CharField(default='', max_length=13)
+    school_name = models.CharField(default='', max_length=1300)
+    user_timezone = models.CharField(default='', max_length=1300)
     password = models.CharField(default='123456', max_length=100)
     profile_pic = models.ImageField(default='default_profile.png', null=True, blank=True)
     device_token = models.CharField(default='', max_length=2000)
