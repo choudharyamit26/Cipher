@@ -1261,7 +1261,7 @@ class VerifyOtp(APIView):
                 if int(otp.otp) == int(verification_code):
                     user = AppUser.objects.create(
                         username=username,
-                        school=school,
+                        school_name=school,
                         user_timezone=user_timezone,
                         country_code=country_code,
                         phone_number=str(country_code) + str(phone_number),
