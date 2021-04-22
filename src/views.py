@@ -426,7 +426,7 @@ class ComposeMessage(CreateAPIView):
                             auth_token = '1fe5e97d3658f655c5ff73949213a801'
                             client = Client(account_sid, auth_token)
                             message = client.messages.create(
-                                body="Your friend, {} [from {}] sent you a secret message, click here to read it. https://quizlock.page.link/mVFa".format(
+                                body="Your friend, {} (from {}) sent you a secret message, click here to read it. https://quizlock.page.link/mVFa".format(
                                     sender.username, sender.school_name),
                                 from_='+19722993983',
                                 to='+' + str(obj)
@@ -500,7 +500,7 @@ class ComposeMessage(CreateAPIView):
                             auth_token = '1fe5e97d3658f655c5ff73949213a801'
                             client = Client(account_sid, auth_token)
                             message = client.messages.create(
-                                body="Your friend, {} [from {}] sent you a secret message, click here to read it. https://quizlock.page.link/mVFa".format(
+                                body="Your friend, {} (from {}) sent you a secret message, click here to read it. https://quizlock.page.link/mVFa".format(
                                     sender.username, sender.school_name),
                                 from_='+19722993983',
                                 to='+' + str(obj)
