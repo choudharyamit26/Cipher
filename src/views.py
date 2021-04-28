@@ -372,11 +372,11 @@ class ComposeMessage(CreateAPIView):
                 #     for x in serializer.validated_data['receiver']:
                 #     print('>>>>>>>>>>>>>>>>>>>>>>>>>>>-----', x)
                 if attachment:
-                    # timezone.activate(pytz.timezone(sender.user_timezone))
-                    # ct = timezone.localtime(timezone.now())
+                    timezone.activate(pytz.timezone(sender.user_timezone))
+                    ct = timezone.localtime(timezone.now())
 
-                    t = pytz.timezone(sender.user_timezone)
-                    ct = t.localize(timezone.now())
+                    # t = pytz.timezone(sender.user_timezone)
+                    # ct = t.localize(timezone.now())
                     print(sender.user_timezone, ct)
                     msg_obj = Message.objects.create(
                         sender=sender,
@@ -449,11 +449,11 @@ class ComposeMessage(CreateAPIView):
                     user_coins.save()
                     return Response({"message": "Message sent successfully", "status": HTTP_200_OK})
                 else:
-                    # timezone.activate(pytz.timezone(sender.user_timezone))
-                    # ct = timezone.localtime(timezone.now())
+                    timezone.activate(pytz.timezone(sender.user_timezone))
+                    ct = timezone.localtime(timezone.now())
 
-                    t = pytz.timezone(sender.user_timezone)
-                    ct = t.localize(timezone.now())
+                    # t = pytz.timezone(sender.user_timezone)
+                    # ct = t.localize(timezone.now())
                     print(sender.user_timezone,ct)
                     msg_obj = Message.objects.create(
                         sender=sender,
