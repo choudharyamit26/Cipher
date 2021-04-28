@@ -661,11 +661,15 @@ class ReadingMessage(CreateAPIView):
                                 user=message_obj.sender,
                                 message=Message.objects.get(id=message_obj.id),
                                 text=f'{app_user_obj.username} read your message',
-                                date_read=current_time,
+                                # date_read=current_time,
+                                date_read=timezone.localtime(timezone.now()),
                                 date_sent=message_obj.created_at,
                                 mode=message_obj.mode,
                                 # sent_to=sent_to.set([x.username for x in message_obj.receiver.all()])
                             )
+                            print("SENDER TIME ZONE:  ", message_obj.sender.user_timezone)
+                            print("CURRENT TIME:  ", current_time)
+                            print("DATE TIME READ:  ", notification.date_read)
                             # print('before sent_to.set')
                             # notification.sent_to.set([x.username for x in message_obj.receiver.all()])
                             for receiver in message_obj.correct_attempts_by.all():
@@ -951,11 +955,14 @@ class ReadingMessage(CreateAPIView):
                             user=message_obj.sender,
                             message=Message.objects.get(id=message_obj.id),
                             text=f'{app_user_obj.username} read your message',
-                            date_read=current_time,
+                            date_read=timezone.localtime(timezone.now()),
                             date_sent=message_obj.created_at,
                             mode=message_obj.mode,
                             # sent_to=[x.username for x in message_obj.receiver.all()]
                         )
+                        print("SENDER TIME ZONE:  ", message_obj.sender.user_timezone)
+                        print("CURRENT TIME:  ", current_time)
+                        print("DATE TIME READ:  ", notification.date_read)
                         # print('before second sent_to')
                         # notification.sent_to.set([x.username for x in message_obj.receiver.all()])
                         for receiver in message_obj.correct_attempts_by.all():
