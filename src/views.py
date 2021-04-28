@@ -375,7 +375,7 @@ class ComposeMessage(CreateAPIView):
                     # timezone.activate(pytz.timezone(sender.user_timezone))
                     # ct = timezone.localtime(timezone.now())
 
-                    t = timezone.activate(pytz.timezone(sender.user_timezone))
+                    t = pytz.timezone(sender.user_timezone)
                     ct = t.localize(timezone.now())
                     print(sender.user_timezone, ct)
                     msg_obj = Message.objects.create(
@@ -452,7 +452,7 @@ class ComposeMessage(CreateAPIView):
                     # timezone.activate(pytz.timezone(sender.user_timezone))
                     # ct = timezone.localtime(timezone.now())
 
-                    t = timezone.activate(pytz.timezone(sender.user_timezone))
+                    t = pytz.timezone(sender.user_timezone)
                     ct = t.localize(timezone.now())
                     print(sender.user_timezone,ct)
                     msg_obj = Message.objects.create(
