@@ -2,6 +2,7 @@ import json
 import pytz
 from random import randint
 import requests
+from django.conf import settings
 from django.conf.global_settings import DEBUG
 from django.shortcuts import render
 from django.utils import timezone
@@ -394,7 +395,7 @@ class ComposeMessage(CreateAPIView):
                     # msg_obj.created_at = msg_obj.created_at.astimezone(sender.user_timezone)
                     # # msg_obj.created_at = ct
                     # msg_obj.save()
-                    old_timezone = pytz.timezone("US/Chicago")
+                    old_timezone = pytz.timezone(settings.TIME_ZONE)
                     new_timezone = pytz.timezone(sender.user_timezone)
                     localized_timestamp = old_timezone.localize(msg_obj.created_at)
                     msg_obj.created_at = new_timezone_timestamp = localized_timestamp.astimezone(new_timezone)
@@ -480,7 +481,7 @@ class ComposeMessage(CreateAPIView):
                     # msg_obj.created_at = msg_obj.created_at.astimezone(sender.user_timezone)
                     # # msg_obj.created_at = ct
                     # msg_obj.save()
-                    old_timezone = pytz.timezone("US/Chicago")
+                    old_timezone = pytz.timezone(settings.TIME_ZONE)
                     new_timezone = pytz.timezone(sender.user_timezone)
                     localized_timestamp = old_timezone.localize(msg_obj.created_at)
                     msg_obj.created_at = new_timezone_timestamp = localized_timestamp.astimezone(new_timezone)
