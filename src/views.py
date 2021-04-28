@@ -386,7 +386,7 @@ class ComposeMessage(CreateAPIView):
                     t = timezone.now()
                     print(t)
                     est = pytz.timezone(sender.user_timezone)
-                    x=t.astimezone(est)
+                    x = t.astimezone(est)
                     print(x)
                     msg_obj = Message.objects.create(
                         sender=sender,
@@ -470,7 +470,7 @@ class ComposeMessage(CreateAPIView):
                     t = timezone.now()
                     print(t)
                     est = pytz.timezone(sender.user_timezone)
-                    x=t.astimezone(est)
+                    x = t.astimezone(est)
                     print(x)
                     # print(timezone.localtime(sender.user_timezone.now()))
                     # print(timezone.localtime(timezone.activate(pytz.timezone(sender.user_timezone))))
@@ -688,26 +688,31 @@ class ReadingMessage(CreateAPIView):
                         if ans == message_obj.ans:
                             message_obj.read_by.add(app_user_obj.id)
                             ###### Add notification to be sent to the sender
-                            timezone.activate(pytz.timezone(message_obj.sender.user_timezone))
-                            # timezone.activate(message_obj.sender.user_timezone)
-                            current_time = timezone.localtime(timezone.now())
-                            print("SENDER TIME ZONE:  ", message_obj.sender.user_timezone)
-                            print("CURRENT TIME:  ", current_time)
+                            # timezone.activate(pytz.timezone(message_obj.sender.user_timezone))
+                            # # timezone.activate(message_obj.sender.user_timezone)
+                            # current_time = timezone.localtime(timezone.now())
+                            # print("SENDER TIME ZONE:  ", message_obj.sender.user_timezone)
+                            # print("CURRENT TIME:  ", current_time)
+                            t = timezone.now()
+                            print(t)
+                            est = pytz.timezone(message_obj.sender.user_timezone)
+                            x = t.astimezone(est)
+                            print(x)
                             notification = AppNotification.objects.create(
                                 user=message_obj.sender,
                                 message=Message.objects.get(id=message_obj.id),
                                 text=f'{app_user_obj.username} read your message',
-                                # date_read=current_time,
+                                date_read=x,
                                 # date_read=timezone.localtime(timezone.now()),
                                 date_sent=message_obj.created_at,
                                 mode=message_obj.mode,
                                 # sent_to=sent_to.set([x.username for x in message_obj.receiver.all()])
                             )
                             print('FIRST NOTIFICATION CASE')
-                            notification.date_read = current_time
-                            notification.save()
-                            print("SENDER TIME ZONE:  ", message_obj.sender.user_timezone)
-                            print("CURRENT TIME:  ", current_time)
+                            # notification.date_read = current_time
+                            # notification.save()
+                            # print("SENDER TIME ZONE:  ", message_obj.sender.user_timezone)
+                            # print("CURRENT TIME:  ", current_time)
                             print("DATE TIME READ:  ", notification.date_read)
                             # print('before sent_to.set')
                             # notification.sent_to.set([x.username for x in message_obj.receiver.all()])
@@ -717,8 +722,13 @@ class ReadingMessage(CreateAPIView):
                             fcm_token = message_obj.sender.device_token
                             if AppNotificationSetting.objects.get(user=app_user_obj).on:
                                 try:
-                                    timezone.activate(pytz.timezone(message_obj.sender.user_timezone))
-                                    ct = timezone.localtime(timezone.now())
+                                    # timezone.activate(pytz.timezone(message_obj.sender.user_timezone))
+                                    # ct = timezone.localtime(timezone.now())
+                                    t = timezone.now()
+                                    print(t)
+                                    est = pytz.timezone(message_obj.sender.user_timezone)
+                                    ct = t.astimezone(est)
+                                    print(ct)
                                     if message_obj.sender.device_type == 'android':
                                         data_message = {"title": "YOUR MESSAGE WAS RECEIVED",
                                                         "body": f'{app_user_obj.username} read your message' + ' Message Sent: ' + str(
@@ -795,9 +805,14 @@ class ReadingMessage(CreateAPIView):
                                                 fcm_token = message_obj.sender.device_token
                                                 if AppNotificationSetting.objects.get(user=app_user_obj).on:
                                                     try:
-                                                        timezone.activate(
-                                                            pytz.timezone(message_obj.sender.user_timezone))
-                                                        ct = timezone.localtime(timezone.now())
+                                                        # timezone.activate(
+                                                        #     pytz.timezone(message_obj.sender.user_timezone))
+                                                        # ct = timezone.localtime(timezone.now())
+                                                        t = timezone.now()
+                                                        print(t)
+                                                        est = pytz.timezone(message_obj.sender.user_timezone)
+                                                        ct = t.astimezone(est)
+                                                        print(ct)
                                                         if message_obj.sender.device_type == 'android':
                                                             notification = AppNotification.objects.create(
                                                                 user=AppUser.objects.get(id=app_user_obj.id),
@@ -867,8 +882,13 @@ class ReadingMessage(CreateAPIView):
                                             fcm_token = message_obj.sender.device_token
                                             if AppNotificationSetting.objects.get(user=app_user_obj).on:
                                                 try:
-                                                    timezone.activate(pytz.timezone(message_obj.sender.user_timezone))
-                                                    ct = timezone.localtime(timezone.now())
+                                                    # timezone.activate(pytz.timezone(message_obj.sender.user_timezone))
+                                                    # ct = timezone.localtime(timezone.now())
+                                                    t = timezone.now()
+                                                    print(t)
+                                                    est = pytz.timezone(message_obj.sender.user_timezone)
+                                                    ct = t.astimezone(est)
+                                                    print(ct)
                                                     if message_obj.sender.device_type == 'android':
                                                         notification = AppNotification.objects.create(
                                                             user=AppUser.objects.get(id=app_user_obj.id),
@@ -986,27 +1006,32 @@ class ReadingMessage(CreateAPIView):
                     if ans == message_obj.ans:
                         message_obj.read_by.add(app_user_obj.id)
                         ###### Add notification to be sent to the sender
-                        timezone.activate(pytz.timezone(message_obj.sender.user_timezone))
-                        # timezone.activate(message_obj.sender.user_timezone)
-                        current_time = timezone.localtime(timezone.now())
-                        print("SENDER TIME ZONE:  ", message_obj.sender.user_timezone)
-                        print("CURRENT TIME:  ", current_time)
+                        # timezone.activate(pytz.timezone(message_obj.sender.user_timezone))
+                        # # timezone.activate(message_obj.sender.user_timezone)
+                        # current_time = timezone.localtime(timezone.now())
+                        # print("SENDER TIME ZONE:  ", message_obj.sender.user_timezone)
+                        # print("CURRENT TIME:  ", current_time)
+                        t = timezone.now()
+                        print(t)
+                        est = pytz.timezone(message_obj.sender.user_timezone)
+                        ct = t.astimezone(est)
+                        print(ct)
                         notification = AppNotification.objects.create(
                             user=message_obj.sender,
                             message=Message.objects.get(id=message_obj.id),
                             text=f'{app_user_obj.username} read your message',
-                            # date_read=current_time,
+                            date_read=ct,
                             # date_read=timezone.localtime(timezone.now()),
                             date_sent=message_obj.created_at,
                             mode=message_obj.mode,
                             # sent_to=[x.username for x in message_obj.receiver.all()]
                         )
-                        print('LAST NOTIFICATION CASE')
-                        notification.date_read = current_time
-                        notification.save()
-                        print("SENDER TIME ZONE:  ", message_obj.sender.user_timezone)
-                        print("CURRENT TIME:  ", current_time)
-                        print("DATE TIME READ:  ", notification.date_read)
+                        # print('LAST NOTIFICATION CASE')
+                        # notification.date_read = current_time
+                        # notification.save()
+                        # print("SENDER TIME ZONE:  ", message_obj.sender.user_timezone)
+                        # print("CURRENT TIME:  ", current_time)
+                        # print("DATE TIME READ:  ", notification.date_read)
                         # print('before second sent_to')
                         # notification.sent_to.set([x.username for x in message_obj.receiver.all()])
                         for receiver in message_obj.correct_attempts_by.all():
@@ -1015,8 +1040,13 @@ class ReadingMessage(CreateAPIView):
                         fcm_token = message_obj.sender.device_token
                         if AppNotificationSetting.objects.get(user=app_user_obj).on:
                             try:
-                                timezone.activate(pytz.timezone(message_obj.sender.user_timezone))
-                                ct = timezone.localtime(timezone.now())
+                                # timezone.activate(pytz.timezone(message_obj.sender.user_timezone))
+                                # ct = timezone.localtime(timezone.now())
+                                t = timezone.now()
+                                print(t)
+                                est = pytz.timezone(message_obj.sender.user_timezone)
+                                ct = t.astimezone(est)
+                                print(ct)
                                 if message_obj.sender.device_type == 'android':
                                     data_message = {"title": "YOUR MESSAGE WAS RECEIVED",
                                                     "body": f'{app_user_obj.username} read your message' + ' Message Sent: ' + str(
@@ -1078,8 +1108,13 @@ class ReadingMessage(CreateAPIView):
                                             fcm_token = message_obj.sender.device_token
                                             if AppNotificationSetting.objects.get(user=app_user_obj).on:
                                                 try:
-                                                    timezone.activate(pytz.timezone(message_obj.sender.user_timezone))
-                                                    ct = timezone.localtime(timezone.now())
+                                                    # timezone.activate(pytz.timezone(message_obj.sender.user_timezone))
+                                                    # ct = timezone.localtime(timezone.now())
+                                                    t = timezone.now()
+                                                    print(t)
+                                                    est = pytz.timezone(message_obj.sender.user_timezone)
+                                                    ct = t.astimezone(est)
+                                                    print(ct)
                                                     if message_obj.sender.device_type == 'android':
                                                         notification = AppNotification.objects.create(
                                                             user=AppUser.objects.get(id=app_user_obj.id),
@@ -1148,8 +1183,13 @@ class ReadingMessage(CreateAPIView):
                                         fcm_token = message_obj.sender.device_token
                                         if AppNotificationSetting.objects.get(user=app_user_obj).on:
                                             try:
-                                                timezone.activate(pytz.timezone(message_obj.sender.user_timezone))
-                                                ct = timezone.localtime(timezone.now())
+                                                # timezone.activate(pytz.timezone(message_obj.sender.user_timezone))
+                                                # ct = timezone.localtime(timezone.now())
+                                                t = timezone.now()
+                                                print(t)
+                                                est = pytz.timezone(message_obj.sender.user_timezone)
+                                                ct = t.astimezone(est)
+                                                print(ct)
                                                 if message_obj.sender.device_type == 'android':
                                                     notification = AppNotification.objects.create(
                                                         user=AppUser.objects.get(id=app_user_obj.id),
