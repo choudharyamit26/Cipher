@@ -375,14 +375,19 @@ class ComposeMessage(CreateAPIView):
                 #     for x in serializer.validated_data['receiver']:
                 #     print('>>>>>>>>>>>>>>>>>>>>>>>>>>>-----', x)
                 if attachment:
-                    timezone.activate(pytz.timezone(sender.user_timezone))
-                    ct = timezone.localtime(timezone.now())
-
-                    # t = pytz.timezone(sender.user_timezone)
-                    # ct = t.localize(timezone.now())
-                    print(sender.user_timezone, ct)
-                    print(timezone.localtime(pytz.timezone(sender.user_timezone)))
-                    print(timezone.localtime(pytz.timezone(sender.user_timezone).now()))
+                    # timezone.activate(pytz.timezone(sender.user_timezone))
+                    # ct = timezone.localtime(timezone.now())
+                    #
+                    # # t = pytz.timezone(sender.user_timezone)
+                    # # ct = t.localize(timezone.now())
+                    # print(sender.user_timezone, ct)
+                    # print(timezone.localtime(pytz.timezone(sender.user_timezone)))
+                    # print(timezone.localtime(pytz.timezone(sender.user_timezone).now()))
+                    t = timezone.now()
+                    print(t)
+                    est = pytz.timezone(sender.user_timezone)
+                    x=t.astimezone(est)
+                    print(x)
                     msg_obj = Message.objects.create(
                         sender=sender,
                         text=text,
@@ -391,7 +396,7 @@ class ComposeMessage(CreateAPIView):
                         mode=mode,
                         ques=ques,
                         ans=ans,
-                        created_at=timezone.localtime(sender.user_timezone.now())
+                        created_at=x
                         # ques_attachment=ques_attachment
                     )
                     for obj in json.loads(serializer.validated_data['receiver']):
