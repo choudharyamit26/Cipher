@@ -386,7 +386,7 @@ class ComposeMessage(CreateAPIView):
                         mode=mode,
                         ques=ques,
                         ans=ans,
-                        # created_at=ct
+                        created_at=ct
                         # ques_attachment=ques_attachment
                     )
                     msg_obj.created_at = ct
@@ -465,7 +465,7 @@ class ComposeMessage(CreateAPIView):
                         mode=mode,
                         ques=ques,
                         ans=ans,
-                        # created_at=ct
+                        created_at=ct
                         # ques_attachment=ques_attachment
                     )
                     msg_obj.created_at = ct
