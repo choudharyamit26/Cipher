@@ -659,7 +659,8 @@ class ReadingMessage(CreateAPIView):
                         if ans == message_obj.ans:
                             message_obj.read_by.add(app_user_obj.id)
                             ###### Add notification to be sent to the sender
-                            timezone.activate(pytz.timezone(message_obj.sender.user_timezone))
+                            # timezone.activate(pytz.timezone(message_obj.sender.user_timezone))
+                            timezone.activate(message_obj.sender.user_timezone)
                             current_time = timezone.localtime(timezone.now())
                             print("SENDER TIME ZONE:  ", message_obj.sender.user_timezone)
                             print("CURRENT TIME:  ", current_time)
@@ -956,7 +957,8 @@ class ReadingMessage(CreateAPIView):
                     if ans == message_obj.ans:
                         message_obj.read_by.add(app_user_obj.id)
                         ###### Add notification to be sent to the sender
-                        timezone.activate(pytz.timezone(message_obj.sender.user_timezone))
+                        # timezone.activate(pytz.timezone(message_obj.sender.user_timezone))
+                        timezone.activate(message_obj.sender.user_timezone)
                         current_time = timezone.localtime(timezone.now())
                         print("SENDER TIME ZONE:  ", message_obj.sender.user_timezone)
                         print("CURRENT TIME:  ", current_time)
