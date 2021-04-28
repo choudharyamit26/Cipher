@@ -374,6 +374,7 @@ class ComposeMessage(CreateAPIView):
                 if attachment:
                     timezone.activate(pytz.timezone(sender.user_timezone))
                     ct = timezone.localtime(timezone.now())
+                    print(sender.user_timezone, ct)
                     msg_obj = Message.objects.create(
                         sender=sender,
                         text=text,
@@ -447,6 +448,7 @@ class ComposeMessage(CreateAPIView):
                 else:
                     timezone.activate(pytz.timezone(sender.user_timezone))
                     ct = timezone.localtime(timezone.now())
+                    print(sender.user_timezone,ct)
                     msg_obj = Message.objects.create(
                         sender=sender,
                         text=text,
