@@ -389,6 +389,7 @@ class ComposeMessage(CreateAPIView):
                         created_at=ct
                         # ques_attachment=ques_attachment
                     )
+                    timezone.deactivate()
                     print(msg_obj.id)
                     for obj in json.loads(serializer.validated_data['receiver']):
                         print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', obj)
@@ -466,6 +467,7 @@ class ComposeMessage(CreateAPIView):
                         created_at=ct
                         # ques_attachment=ques_attachment
                     )
+                    timezone.deactivate()
                     for obj in json.loads(serializer.validated_data['receiver']):
                         # for obj in serializer.validated_data['receiver']:
                         print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', obj)
