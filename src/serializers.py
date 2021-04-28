@@ -92,7 +92,7 @@ class ComposeMessageSerializer(serializers.ModelSerializer):
         model = Message
         # fields = ('sender', 'receiver', 'text', 'attachment', 'validity', 'mode')
         # fields = '__all__'
-        exclude = ('sender',)
+        exclude = ('sender','created_at')
 
 
 class SecretKeySerializer(serializers.ModelSerializer):
