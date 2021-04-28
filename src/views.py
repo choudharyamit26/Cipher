@@ -676,6 +676,7 @@ class ReadingMessage(CreateAPIView):
                             current_time = timezone.localtime(timezone.now())
                             print("SENDER TIME ZONE:  ", message_obj.sender.user_timezone)
                             print("CURRENT TIME:  ", current_time)
+                            current_timezone = pytz.timezone(message_obj.sender.user_timezone)
                             notification = AppNotification.objects.create(
                                 user=message_obj.sender,
                                 message=Message.objects.get(id=message_obj.id),
@@ -683,8 +684,7 @@ class ReadingMessage(CreateAPIView):
                                 # date_read=current_time,
                                 # date_read=timezone.localtime(timezone.now()),
                                 # date_sent=timezone.localtime(message_obj.created_at),
-                                date_sent=timezone.localtime(message_obj.created_at,
-                                                             timezone=pytz.timezone(message_obj.sender.user_timezone)),
+                                date_sent=current_timezone.localize(message_obj.created_at),
                                 mode=message_obj.mode,
                                 # sent_to=sent_to.set([x.username for x in message_obj.receiver.all()])
                             )
@@ -976,14 +976,14 @@ class ReadingMessage(CreateAPIView):
                         current_time = timezone.localtime(timezone.now())
                         print("SENDER TIME ZONE:  ", message_obj.sender.user_timezone)
                         print("CURRENT TIME:  ", current_time)
+                        current_timezone = pytz.timezone(message_obj.sender.user_timezone)
                         notification = AppNotification.objects.create(
                             user=message_obj.sender,
                             message=Message.objects.get(id=message_obj.id),
                             text=f'{app_user_obj.username} read your message',
                             # date_read=current_time,
                             # date_read=timezone.localtime(timezone.now()),
-                            date_sent=timezone.localtime(message_obj.created_at,
-                                                         timezone=pytz.timezone(message_obj.sender.user_timezone)),
+                            date_sent=current_timezone.localize(message_obj.created_at),
                             mode=message_obj.mode,
                             # sent_to=[x.username for x in message_obj.receiver.all()]
                         )
