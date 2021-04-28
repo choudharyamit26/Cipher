@@ -392,22 +392,6 @@ class ComposeMessage(CreateAPIView):
                         created_at=ct
                         # ques_attachment=ques_attachment
                     )
-                    # current_timezone = pytz.timezone(sender.user_timezone)
-                    # localized_timestamp = current_timezone.localize(msg_obj.created_at)
-                    # msg_obj.created_at = msg_obj.created_at.astimezone(sender.user_timezone)
-                    # # msg_obj.created_at = ct
-                    # msg_obj.save()
-                    # old_timezone = pytz.timezone(settings.TIME_ZONE)
-                    # new_timezone = pytz.timezone(sender.user_timezone)
-                    # localized_timestamp = old_timezone.localize(timezone.now())
-                    # msg_obj.created_at = localized_timestamp.astimezone(new_timezone)
-                    # msg_obj.save()
-                    old_timezone = pytz.timezone(settings.TIME_ZONE)
-                    new_timezone = pytz.timezone(sender.user_timezone)
-                    d = datetime.now()
-                    msg_obj.created_at = old_timezone.localize(d).astimezone(new_timezone)
-                    msg_obj.save()
-                    print(msg_obj.id)
                     for obj in json.loads(serializer.validated_data['receiver']):
                         print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', obj)
                         try:
@@ -484,15 +468,6 @@ class ComposeMessage(CreateAPIView):
                         created_at=ct
                         # ques_attachment=ques_attachment
                     )
-                    # msg_obj.created_at = ct
-                    # msg_obj.created_at = msg_obj.created_at.astimezone(sender.user_timezone)
-                    # # msg_obj.created_at = ct
-                    # msg_obj.save()
-                    old_timezone = pytz.timezone(settings.TIME_ZONE)
-                    new_timezone = pytz.timezone(sender.user_timezone)
-                    d = datetime.now()
-                    msg_obj.created_at = old_timezone.localize(d).astimezone(new_timezone)
-                    msg_obj.save()
                     for obj in json.loads(serializer.validated_data['receiver']):
                         # for obj in serializer.validated_data['receiver']:
                         print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', obj)
