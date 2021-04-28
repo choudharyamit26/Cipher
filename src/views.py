@@ -1487,6 +1487,7 @@ class GetNotificationList(ListAPIView):
         final_data = []
         notification_list = []
         for notification in notifications:
+            print(notification.date_read)
             notification_list.append(
                 {'id': notification.id, 'user_id': notification.user.id, 'message_id': notification.message.id,
                  'text': notification.text, 'title': notification.title, 'date_read': notification.date_read,
