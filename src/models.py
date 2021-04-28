@@ -49,7 +49,8 @@ class Message(models.Model):
     # ques_attachment = models.FileField(null=True, blank=True)
     incorrect_attempts_by = models.ManyToManyField(AppUser, related_name='incorrect_attempts', blank=True)
     correct_attempts_by = models.ManyToManyField(AppUser, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    # created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField()
     is_missed = models.BooleanField(default=False)
 
 
