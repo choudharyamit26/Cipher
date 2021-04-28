@@ -651,13 +651,15 @@ class ReadingMessage(CreateAPIView):
                             {'message': 'You cannot read this message as it was in race mode and it was already read'})
                     else:
                         if ans == message_obj.ans:
+                            timezone.activate(pytz.timezone(message_obj.sender.user_timezone))
+                            ct = timezone.localtime(timezone.now())
                             message_obj.read_by.add(app_user_obj.id)
                             ###### Add notification to be sent to the sender
                             notification = AppNotification.objects.create(
                                 user=message_obj.sender,
                                 message=Message.objects.get(id=message_obj.id),
                                 text=f'{app_user_obj.username} read your message',
-                                # date_read=,
+                                date_read=ct,
                                 date_sent=message_obj.created_at,
                                 mode=message_obj.mode,
                                 # sent_to=sent_to.set([x.username for x in message_obj.receiver.all()])
@@ -936,13 +938,15 @@ class ReadingMessage(CreateAPIView):
                                              'status': HTTP_400_BAD_REQUEST, 'attempts_left': 2})
                 else:
                     if ans == message_obj.ans:
+                        timezone.activate(pytz.timezone(message_obj.sender.user_timezone))
+                        ct = timezone.localtime(timezone.now())
                         message_obj.read_by.add(app_user_obj.id)
                         ###### Add notification to be sent to the sender
                         notification = AppNotification.objects.create(
                             user=message_obj.sender,
                             message=Message.objects.get(id=message_obj.id),
                             text=f'{app_user_obj.username} read your message',
-                            # date_read=,
+                            date_read=ct,
                             date_sent=message_obj.created_at,
                             mode=message_obj.mode,
                             # sent_to=[x.username for x in message_obj.receiver.all()]
