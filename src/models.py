@@ -91,7 +91,7 @@ class AppNotification(models.Model):
     title = models.CharField(default='', max_length=1000, null=True, blank=True)
     date_read = models.DateTimeField(auto_now_add=True)
     date_sent = models.DateField(null=True, blank=True)
-    date_expired = models.DateField(null=True, blank=True)
+    date_expired = models.DateTimeField(null=True, blank=True)
     mode = models.CharField(default='', max_length=100)
     # on = models.BooleanField(default=True)
     read = models.BooleanField(default=False)
