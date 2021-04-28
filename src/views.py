@@ -456,7 +456,7 @@ class ComposeMessage(CreateAPIView):
 
                     # t = pytz.timezone(sender.user_timezone)
                     # ct = t.localize(timezone.now())
-                    print(sender.user_timezone,ct)
+                    print(sender.user_timezone, ct)
                     msg_obj = Message.objects.create(
                         sender=sender,
                         text=text,
@@ -682,7 +682,9 @@ class ReadingMessage(CreateAPIView):
                                 text=f'{app_user_obj.username} read your message',
                                 # date_read=current_time,
                                 # date_read=timezone.localtime(timezone.now()),
-                                date_sent=timezone.localtime(message_obj.created_at),
+                                # date_sent=timezone.localtime(message_obj.created_at),
+                                date_sent=timezone.localtime(message_obj.created_at,
+                                                             timezone=message_obj.sender.user_timezone),
                                 mode=message_obj.mode,
                                 # sent_to=sent_to.set([x.username for x in message_obj.receiver.all()])
                             )
@@ -980,7 +982,8 @@ class ReadingMessage(CreateAPIView):
                             text=f'{app_user_obj.username} read your message',
                             # date_read=current_time,
                             # date_read=timezone.localtime(timezone.now()),
-                            date_sent=timezone.localtime(message_obj.created_at),
+                            date_sent=timezone.localtime(message_obj.created_at,
+                                                         timezone=message_obj.sender.user_timezone),
                             mode=message_obj.mode,
                             # sent_to=[x.username for x in message_obj.receiver.all()]
                         )
