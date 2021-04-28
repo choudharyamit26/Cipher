@@ -1485,7 +1485,14 @@ class GetNotificationList(ListAPIView):
         # return Response({'data': notifications.values(), 'status': HTTP_200_OK})
         # print('>>>>>>>>>>>>', [x for x in zip(notifications.values(), receivers)])
         final_data = []
-        for x in zip(notifications.values(), receivers):
+        notification_list = []
+        for notification in notifications:
+            notification_list.append(
+                {'id': notification.id, 'user_id': notification.user.id, 'message_id': notification.message.id,
+                 'text': notification.text, 'title': notification.title, 'date_read': notification.date_read,
+                 'date_sent': notification.date_sent, 'date_expired': notification.date_expired,
+                 'mode': notification.mode, 'read': notification.read})
+        for x in zip(notification_list, receivers):
             final_data.append({'notifications': {**x[0], **x[1]}})
         return Response({'data': final_data, 'status': HTTP_200_OK})
 
