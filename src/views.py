@@ -386,10 +386,11 @@ class ComposeMessage(CreateAPIView):
                         mode=mode,
                         ques=ques,
                         ans=ans,
-                        created_at=ct
+                        # created_at=ct
                         # ques_attachment=ques_attachment
                     )
-                    timezone.deactivate()
+                    msg_obj.created_at = ct
+                    msg_obj.save()
                     print(msg_obj.id)
                     for obj in json.loads(serializer.validated_data['receiver']):
                         print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', obj)
@@ -464,10 +465,11 @@ class ComposeMessage(CreateAPIView):
                         mode=mode,
                         ques=ques,
                         ans=ans,
-                        created_at=ct
+                        # created_at=ct
                         # ques_attachment=ques_attachment
                     )
-                    timezone.deactivate()
+                    msg_obj.created_at = ct
+                    msg_obj.save()
                     for obj in json.loads(serializer.validated_data['receiver']):
                         # for obj in serializer.validated_data['receiver']:
                         print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', obj)
