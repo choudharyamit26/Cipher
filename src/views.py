@@ -655,6 +655,8 @@ class ReadingMessage(CreateAPIView):
                             ###### Add notification to be sent to the sender
                             timezone.activate(pytz.timezone(message_obj.sender.user_timezone))
                             current_time = timezone.localtime(timezone.now())
+                            print("SENDER TIME ZONE:  ", message_obj.sender.user_timezone)
+                            print("CURRENT TIME:  ", current_time)
                             notification = AppNotification.objects.create(
                                 user=message_obj.sender,
                                 message=Message.objects.get(id=message_obj.id),
@@ -750,7 +752,8 @@ class ReadingMessage(CreateAPIView):
                                                 fcm_token = message_obj.sender.device_token
                                                 if AppNotificationSetting.objects.get(user=app_user_obj).on:
                                                     try:
-                                                        timezone.activate(pytz.timezone(message_obj.sender.user_timezone))
+                                                        timezone.activate(
+                                                            pytz.timezone(message_obj.sender.user_timezone))
                                                         ct = timezone.localtime(timezone.now())
                                                         if message_obj.sender.device_type == 'android':
                                                             notification = AppNotification.objects.create(
@@ -942,6 +945,8 @@ class ReadingMessage(CreateAPIView):
                         ###### Add notification to be sent to the sender
                         timezone.activate(pytz.timezone(message_obj.sender.user_timezone))
                         current_time = timezone.localtime(timezone.now())
+                        print("SENDER TIME ZONE:  ", message_obj.sender.user_timezone)
+                        print("CURRENT TIME:  ", current_time)
                         notification = AppNotification.objects.create(
                             user=message_obj.sender,
                             message=Message.objects.get(id=message_obj.id),
