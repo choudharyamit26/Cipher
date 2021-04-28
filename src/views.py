@@ -474,7 +474,7 @@ class ComposeMessage(CreateAPIView):
                         mode=mode,
                         ques=ques,
                         ans=ans,
-                        created_at=timezone.localtime(sender.user_timezone.now())
+                        created_at=ct
                         # ques_attachment=ques_attachment
                     )
                     for obj in json.loads(serializer.validated_data['receiver']):
