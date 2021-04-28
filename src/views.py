@@ -684,7 +684,7 @@ class ReadingMessage(CreateAPIView):
                                 # date_read=timezone.localtime(timezone.now()),
                                 # date_sent=timezone.localtime(message_obj.created_at),
                                 date_sent=timezone.localtime(message_obj.created_at,
-                                                             timezone=message_obj.sender.user_timezone),
+                                                             timezone=pytz.timezone(message_obj.sender.user_timezone)),
                                 mode=message_obj.mode,
                                 # sent_to=sent_to.set([x.username for x in message_obj.receiver.all()])
                             )
@@ -983,7 +983,7 @@ class ReadingMessage(CreateAPIView):
                             # date_read=current_time,
                             # date_read=timezone.localtime(timezone.now()),
                             date_sent=timezone.localtime(message_obj.created_at,
-                                                         timezone=message_obj.sender.user_timezone),
+                                                         timezone=pytz.timezone(message_obj.sender.user_timezone)),
                             mode=message_obj.mode,
                             # sent_to=[x.username for x in message_obj.receiver.all()]
                         )
