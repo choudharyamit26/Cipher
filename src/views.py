@@ -670,11 +670,14 @@ class ReadingMessage(CreateAPIView):
                             fcm_token = message_obj.sender.device_token
                             if AppNotificationSetting.objects.get(user=app_user_obj).on:
                                 try:
+                                    timezone.activate(pytz.timezone(message_obj.sender.user_timezone))
+                                    ct = timezone.localtime(timezone.now())
                                     if message_obj.sender.device_type == 'android':
                                         data_message = {"title": "YOUR MESSAGE WAS RECEIVED",
                                                         "body": f'{app_user_obj.username} read your message' + ' Message Sent: ' + str(
                                                             message_obj.created_at.strftime(
-                                                                "%B %d, %Y.")) + ' ' + str(
+                                                                "%B %d, %Y.")) + ' @ ' + str(
+                                                            ct.strftime("%I:%-M%p")) + ' ' + str(
                                                             message_obj.mode) + ':' + str(", ".join(
                                                             [x.username for x in
                                                              message_obj.correct_attempts_by.all()])),
@@ -688,7 +691,8 @@ class ReadingMessage(CreateAPIView):
                                         #     message_obj.created_at) + ', ' + str(message_obj.mode) + ':' + str(
                                         #     [x.username for x in message_obj.receiver.all()])
                                         body = f'{app_user_obj.username} read your message' + ' Message Sent: ' + str(
-                                            message_obj.created_at.strftime("%B %d, %Y.")) + ' ' + str(
+                                            message_obj.created_at.strftime("%B %d, %Y.")) + ' @ ' + str(
+                                            ct.strftime("%I:%-M%p")) + ' ' + str(
                                             message_obj.mode) + ':' + str(", ".join(
                                             [x.username for x in message_obj.correct_attempts_by.all()]))
                                         message_type = "messageRead"
@@ -744,6 +748,8 @@ class ReadingMessage(CreateAPIView):
                                                 fcm_token = message_obj.sender.device_token
                                                 if AppNotificationSetting.objects.get(user=app_user_obj).on:
                                                     try:
+                                                        timezone.activate(pytz.timezone(message_obj.sender.user_timezone))
+                                                        ct = timezone.localtime(timezone.now())
                                                         if message_obj.sender.device_type == 'android':
                                                             notification = AppNotification.objects.create(
                                                                 user=AppUser.objects.get(id=app_user_obj.id),
@@ -758,7 +764,8 @@ class ReadingMessage(CreateAPIView):
                                                             data_message = {"title": "WELP, TOO BAD!",
                                                                             "body": f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.' + ' Message Sent: ' + str(
                                                                                 message_obj.created_at.strftime(
-                                                                                    "%B %d, %Y.")) + ' ' + str(
+                                                                                    "%B %d, %Y.")) + ' @ ' + str(
+                                                                                ct.strftime("%I:%-M%p")) + ' ' + str(
                                                                                 message_obj.mode) + ': ' + str(
                                                                                 ", ".join(
                                                                                     [x.username for x in
@@ -785,7 +792,8 @@ class ReadingMessage(CreateAPIView):
                                                             #     [x.username for x in message_obj.receiver.all()])
                                                             body = f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.' + ' Message Sent: ' + str(
                                                                 message_obj.created_at.strftime(
-                                                                    "%B %d, %Y.")) + ' ' + str(
+                                                                    "%B %d, %Y.")) + ' @ ' + str(
+                                                                ct.strftime("%I:%-M%p")) + ' ' + str(
                                                                 message_obj.mode) + ': ' + str(", ".join(
                                                                 [x.username for x in
                                                                  message_obj.correct_attempts_by.all()]))
@@ -811,6 +819,8 @@ class ReadingMessage(CreateAPIView):
                                             fcm_token = message_obj.sender.device_token
                                             if AppNotificationSetting.objects.get(user=app_user_obj).on:
                                                 try:
+                                                    timezone.activate(pytz.timezone(message_obj.sender.user_timezone))
+                                                    ct = timezone.localtime(timezone.now())
                                                     if message_obj.sender.device_type == 'android':
                                                         notification = AppNotification.objects.create(
                                                             user=AppUser.objects.get(id=app_user_obj.id),
@@ -825,7 +835,8 @@ class ReadingMessage(CreateAPIView):
                                                         data_message = {"title": "WELP, TOO BAD!",
                                                                         "body": f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.' + ' Message Sent: ' + str(
                                                                             message_obj.created_at.strftime(
-                                                                                "%B %d, %Y.")) + ' ' + str(
+                                                                                "%B %d, %Y.")) + ' @ ' + str(
+                                                                            ct.strftime("%I:%-M%p")) + ' ' + str(
                                                                             message_obj.mode) + ':' + str(", ".join(
                                                                             [x.username for x in
                                                                              message_obj.correct_attempts_by.all()])),
@@ -850,7 +861,9 @@ class ReadingMessage(CreateAPIView):
                                                         #     message_obj.created_at) + ', ' + str(message_obj.mode) + ':' + str(
                                                         #     [x.username for x in message_obj.receiver.all()])
                                                         body = f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.' + ' Message Sent: ' + str(
-                                                            message_obj.created_at.strftime("%B %d, %Y.")) + ' ' + str(
+                                                            message_obj.created_at.strftime(
+                                                                "%B %d, %Y.")) + ' @ ' + str(
+                                                            ct.strftime("%I:%-M%p")) + ' ' + str(
                                                             message_obj.mode) + ':' + str(", ".join(
                                                             [x.username for x in
                                                              message_obj.correct_attempts_by.all()]))
@@ -942,10 +955,13 @@ class ReadingMessage(CreateAPIView):
                         fcm_token = message_obj.sender.device_token
                         if AppNotificationSetting.objects.get(user=app_user_obj).on:
                             try:
+                                timezone.activate(pytz.timezone(message_obj.sender.user_timezone))
+                                ct = timezone.localtime(timezone.now())
                                 if message_obj.sender.device_type == 'android':
                                     data_message = {"title": "YOUR MESSAGE WAS RECEIVED",
                                                     "body": f'{app_user_obj.username} read your message' + ' Message Sent: ' + str(
-                                                        message_obj.created_at.strftime("%B %d, %Y.")) + ' ' + str(
+                                                        message_obj.created_at.strftime("%B %d, %Y.")) + ' @ ' + str(
+                                                        ct.strftime("%I:%-M%p")) + ' ' + str(
                                                         message_obj.mode) + ':' + str(", ".join(
                                                         [x.username for x in message_obj.correct_attempts_by.all()])),
                                                     "type": "messageRead", "sound": 'notifications.mp3'}
@@ -955,7 +971,8 @@ class ReadingMessage(CreateAPIView):
                                     title = "YOUR MESSAGE WAS RECEIVED"
                                     # body = f'{app_user_obj.username} read your message'
                                     body = f'{app_user_obj.username} read your message' + ' Message Sent: ' + str(
-                                        message_obj.created_at.strftime("%B %d, %Y.")) + ' ' + str(
+                                        message_obj.created_at.strftime("%B %d, %Y.")) + ' @ ' + str(
+                                        ct.strftime("%I:%-M%p")) + ' ' + str(
                                         message_obj.mode) + ':' + str(", ".join(
                                         [x.username for x in message_obj.correct_attempts_by.all()]))
                                     message_type = "messageRead"
@@ -1001,6 +1018,8 @@ class ReadingMessage(CreateAPIView):
                                             fcm_token = message_obj.sender.device_token
                                             if AppNotificationSetting.objects.get(user=app_user_obj).on:
                                                 try:
+                                                    timezone.activate(pytz.timezone(message_obj.sender.user_timezone))
+                                                    ct = timezone.localtime(timezone.now())
                                                     if message_obj.sender.device_type == 'android':
                                                         notification = AppNotification.objects.create(
                                                             user=AppUser.objects.get(id=app_user_obj.id),
@@ -1015,7 +1034,8 @@ class ReadingMessage(CreateAPIView):
                                                         data_message = {"title": "WELP, TOO BAD!",
                                                                         "body": f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.' + ' Message Sent: ' + str(
                                                                             message_obj.created_at.strftime(
-                                                                                "%B %d, %Y.")) + ' ' + str(
+                                                                                "%B %d, %Y.")) + ' @ ' + str(
+                                                                            ct.strftime("%I:%-M%p")) + ' ' + str(
                                                                             message_obj.mode) + ':' + str(", ".join(
                                                                             [x.username for x in
                                                                              message_obj.correct_attempts_by.all()])),
@@ -1040,7 +1060,9 @@ class ReadingMessage(CreateAPIView):
                                                         #     message_obj.created_at) + ', ' + str(message_obj.mode) + ':' + str(
                                                         #     [x.username for x in message_obj.receiver.all()])
                                                         body = f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.' + ' Message Sent: ' + str(
-                                                            message_obj.created_at.strftime("%B %d, %Y.")) + ' ' + str(
+                                                            message_obj.created_at.strftime(
+                                                                "%B %d, %Y.")) + ' @ ' + str(
+                                                            ct.strftime("%I:%-M%p")) + ' ' + str(
                                                             message_obj.mode) + ':' + str(", ".join(
                                                             [x.username for x in
                                                              message_obj.correct_attempts_by.all()]))
@@ -1066,6 +1088,8 @@ class ReadingMessage(CreateAPIView):
                                         fcm_token = message_obj.sender.device_token
                                         if AppNotificationSetting.objects.get(user=app_user_obj).on:
                                             try:
+                                                timezone.activate(pytz.timezone(message_obj.sender.user_timezone))
+                                                ct = timezone.localtime(timezone.now())
                                                 if message_obj.sender.device_type == 'android':
                                                     notification = AppNotification.objects.create(
                                                         user=AppUser.objects.get(id=app_user_obj.id),
@@ -1080,7 +1104,8 @@ class ReadingMessage(CreateAPIView):
                                                     data_message = {"title": "WELP, TOO BAD!",
                                                                     "body": f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.' + ' Message Sent: ' + str(
                                                                         message_obj.created_at.strftime(
-                                                                            "%B %d, %Y.")) + ' ' + str(
+                                                                            "%B %d, %Y.")) + ' @ ' + str(
+                                                                        ct.strftime("%I:%-M%p")) + ' ' + str(
                                                                         message_obj.mode) + ': ' + str(", ".join(
                                                                         [x.username for x in
                                                                          message_obj.correct_attempts_by.all()])),
@@ -1105,7 +1130,8 @@ class ReadingMessage(CreateAPIView):
                                                     #     message_obj.created_at) + ', ' + str(message_obj.mode) + ':' + str(
                                                     #     [x.username for x in message_obj.receiver.all()])
                                                     body = f'{app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.' + ' Message Sent: ' + str(
-                                                        message_obj.created_at.strftime("%B %d, %Y.")) + ' ' + str(
+                                                        message_obj.created_at.strftime("%B %d, %Y.")) + ' @ ' + str(
+                                                        ct.strftime("%I:%-M%p")) + ' ' + str(
                                                         message_obj.mode) + ':' + str(", ".join(
                                                         [x.username for x in message_obj.correct_attempts_by.all()]))
                                                     message_type = "messageRead"

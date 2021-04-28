@@ -61,7 +61,8 @@ def expire_messages():
                                     notification.sent_to.add(users)
                                 data_message = {"title": "MESSAGE EXPIRED",
                                                 "body": 'Message Expired' + ' Message Sent: ' + str(
-                                                    ct.strftime("%B %d, %Y.")) +' ' + str(
+                                                    ct.strftime("%B %d, %Y.")) + ' @ ' + str(
+                                                    ct.strftime("%I:%-M%p")) + ' ' + str(
                                                     message.mode) + ':' + str(", ".join(
                                                     [x.username for x in message.correct_attempts_by.all()])),
                                                 "type": "messageExpired", "sound": "notifications.mp3"}
@@ -81,7 +82,8 @@ def expire_messages():
                                     notification.sent_to.add(users)
                                 title = "MESSAGE EXPIRED"
                                 body = 'Message Expired' + ' Message Sent: ' + str(
-                                    ct.strftime("%B %d, %Y.")) + ' ' + str(
+                                    ct.strftime("%B %d, %Y.")) + ' @ ' + str(
+                                    ct.strftime("%I:%-M%p")) + ' ' + str(
                                     message.mode) + ':' + str(", ".join(
                                     [x.username for x in message.correct_attempts_by.all()]))
                                 message_type = "messageExpired"
@@ -119,7 +121,8 @@ def expire_messages():
                                                 "body": 'Your message expired and only ' + str(", ".join(
                                                     [x.username for x in
                                                      message.read_by.all()])) + ' read it in time.' + ' Message Sent: ' + str(
-                                                    message.created_at.strftime("%B %d, %Y.")) + ' ' + str(
+                                                    message.created_at.strftime("%B %d, %Y.")) + ' @ ' + str(
+                                                    ct.strftime("%I:%-M%p")) + ' ' + str(
                                                     message.mode) + ':' + str(", ".join(
                                                     [x.username for x in message.correct_attempts_by.all()])),
                                                 "type": "messageExpired", "sound": "notifications.mp3"}
@@ -138,7 +141,8 @@ def expire_messages():
                                     notification.sent_to.add(users)
                                 data_message = {"title": "MESSAGE EXPIRED",
                                                 "body": 'Your message expired and no one' + ' read it in time.' + ' Message Sent: ' + str(
-                                                    message.created_at.strftime("%B %d, %Y.")) + ' ' + str(
+                                                    message.created_at.strftime("%B %d, %Y.")) + ' @ ' + str(
+                                                    ct.strftime("%I:%-M%p")) + ' ' + str(
                                                     message.mode) + ':' + str(", ".join(
                                                     [x.username for x in message.correct_attempts_by.all()])),
                                                 "type": "messageExpired", "sound": "notifications.mp3"}
@@ -163,7 +167,8 @@ def expire_messages():
                                 body = 'Your message expired and only ' + str(", ".join(
                                     [x.username for x in
                                      message.read_by.all()])) + ' read it in time.' + ' Message Sent: ' + str(
-                                    message.created_at.strftime("%B %d, %Y.")) + ' ' + str(
+                                    message.created_at.strftime("%B %d, %Y.")) + ' @ ' + str(
+                                    ct.strftime("%I:%-M%p")) + ' ' + str(
                                     message.mode) + ':' + str(", ".join(
                                     [x.username for x in message.correct_attempts_by.all()]))
                                 message_type = "messageExpired"
@@ -185,7 +190,8 @@ def expire_messages():
                                     notification.sent_to.add(users)
                                 title = "MESSAGE EXPIRED"
                                 body = 'Your message expired and no one ' + ' read it in time.' + ' Message Sent: ' + str(
-                                    message.created_at.strftime("%B %d, %Y.")) + ' ' + str(
+                                    message.created_at.strftime("%B %d, %Y.")) + ' @ ' + str(
+                                    ct.strftime("%I:%-M%p")) + ' ' + str(
                                     message.mode) + ':' + str(", ".join(
                                     [x.username for x in message.correct_attempts_by.all()]))
                                 message_type = "messageExpired"
