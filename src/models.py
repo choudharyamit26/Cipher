@@ -89,7 +89,7 @@ class AppNotification(models.Model):
     message = models.ForeignKey(Message, on_delete=models.CASCADE, null=True, blank=True)
     text = models.TextField()
     title = models.CharField(default='', max_length=1000, null=True, blank=True)
-    date_read = models.DateTimeField(auto_now_add=True)
+    date_read = models.DateTimeField(null=True, blank=True)
     date_sent = models.DateField(null=True, blank=True)
     date_expired = models.DateTimeField(null=True, blank=True)
     mode = models.CharField(default='', max_length=100)
