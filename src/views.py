@@ -1,6 +1,4 @@
 import json
-from datetime import datetime
-
 import pytz
 from random import randint
 import requests
@@ -374,10 +372,8 @@ class ComposeMessage(CreateAPIView):
                 #     for x in serializer.validated_data['receiver']:
                 #     print('>>>>>>>>>>>>>>>>>>>>>>>>>>>-----', x)
                 if attachment:
-                    # timezone.activate(pytz.timezone(sender.user_timezone))
-                    # ct = timezone.localtime(timezone.now())
-                    tz = pytz.timezone(sender.user_timezone)
-                    ct = tz.localize(datetime.now())
+                    timezone.activate(pytz.timezone(sender.user_timezone))
+                    ct = timezone.localtime(timezone.now())
                     msg_obj = Message.objects.create(
                         sender=sender,
                         text=text,
@@ -449,10 +445,8 @@ class ComposeMessage(CreateAPIView):
                     user_coins.save()
                     return Response({"message": "Message sent successfully", "status": HTTP_200_OK})
                 else:
-                    # timezone.activate(pytz.timezone(sender.user_timezone))
-                    # ct = timezone.localtime(timezone.now())
-                    tz = pytz.timezone(sender.user_timezone)
-                    ct = tz.localize(datetime.now())
+                    timezone.activate(pytz.timezone(sender.user_timezone))
+                    ct = timezone.localtime(timezone.now())
                     msg_obj = Message.objects.create(
                         sender=sender,
                         text=text,
