@@ -381,6 +381,7 @@ class ComposeMessage(CreateAPIView):
                     # t = pytz.timezone(sender.user_timezone)
                     # ct = t.localize(timezone.now())
                     print(sender.user_timezone, ct)
+                    print(timezone.localtime(sender.user_timezone.now()))
                     msg_obj = Message.objects.create(
                         sender=sender,
                         text=text,
@@ -389,7 +390,7 @@ class ComposeMessage(CreateAPIView):
                         mode=mode,
                         ques=ques,
                         ans=ans,
-                        created_at=timezone.localtime(timezone.now())
+                        created_at=timezone.localtime(sender.user_timezone.now())
                         # ques_attachment=ques_attachment
                     )
                     for obj in json.loads(serializer.validated_data['receiver']):
@@ -457,6 +458,7 @@ class ComposeMessage(CreateAPIView):
                     # t = pytz.timezone(sender.user_timezone)
                     # ct = t.localize(timezone.now())
                     print(sender.user_timezone, ct)
+                    print(timezone.localtime(sender.user_timezone.now()))
                     msg_obj = Message.objects.create(
                         sender=sender,
                         text=text,
@@ -465,7 +467,7 @@ class ComposeMessage(CreateAPIView):
                         mode=mode,
                         ques=ques,
                         ans=ans,
-                        created_at=timezone.localtime(timezone.now())
+                        created_at=timezone.localtime(sender.user_timezone.now())
                         # ques_attachment=ques_attachment
                     )
                     for obj in json.loads(serializer.validated_data['receiver']):
