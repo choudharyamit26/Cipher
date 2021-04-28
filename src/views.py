@@ -389,7 +389,10 @@ class ComposeMessage(CreateAPIView):
                         created_at=ct
                         # ques_attachment=ques_attachment
                     )
-                    msg_obj.created_at = ct
+                    # current_timezone = pytz.timezone(sender.user_timezone)
+                    # localized_timestamp = current_timezone.localize(msg_obj.created_at)
+                    msg_obj.created_at = msg_obj.created_at.astimezone(sender.user_timezone)
+                    # msg_obj.created_at = ct
                     msg_obj.save()
                     print(msg_obj.id)
                     for obj in json.loads(serializer.validated_data['receiver']):
@@ -456,7 +459,7 @@ class ComposeMessage(CreateAPIView):
 
                     # t = pytz.timezone(sender.user_timezone)
                     # ct = t.localize(timezone.now())
-                    print(sender.user_timezone, ct)
+                    print(sender.user_timezone,ct)
                     msg_obj = Message.objects.create(
                         sender=sender,
                         text=text,
@@ -469,6 +472,8 @@ class ComposeMessage(CreateAPIView):
                         # ques_attachment=ques_attachment
                     )
                     msg_obj.created_at = ct
+                    msg_obj.created_at = msg_obj.created_at.astimezone(sender.user_timezone)
+                    # msg_obj.created_at = ct
                     msg_obj.save()
                     for obj in json.loads(serializer.validated_data['receiver']):
                         # for obj in serializer.validated_data['receiver']:
@@ -676,15 +681,13 @@ class ReadingMessage(CreateAPIView):
                             current_time = timezone.localtime(timezone.now())
                             print("SENDER TIME ZONE:  ", message_obj.sender.user_timezone)
                             print("CURRENT TIME:  ", current_time)
-                            current_timezone = pytz.timezone(message_obj.sender.user_timezone)
                             notification = AppNotification.objects.create(
                                 user=message_obj.sender,
                                 message=Message.objects.get(id=message_obj.id),
                                 text=f'{app_user_obj.username} read your message',
                                 # date_read=current_time,
                                 # date_read=timezone.localtime(timezone.now()),
-                                # date_sent=timezone.localtime(message_obj.created_at),
-                                date_sent=current_timezone.localize(message_obj.created_at),
+                                date_sent=message_obj.created_at,
                                 mode=message_obj.mode,
                                 # sent_to=sent_to.set([x.username for x in message_obj.receiver.all()])
                             )
@@ -976,14 +979,13 @@ class ReadingMessage(CreateAPIView):
                         current_time = timezone.localtime(timezone.now())
                         print("SENDER TIME ZONE:  ", message_obj.sender.user_timezone)
                         print("CURRENT TIME:  ", current_time)
-                        current_timezone = pytz.timezone(message_obj.sender.user_timezone)
                         notification = AppNotification.objects.create(
                             user=message_obj.sender,
                             message=Message.objects.get(id=message_obj.id),
                             text=f'{app_user_obj.username} read your message',
                             # date_read=current_time,
                             # date_read=timezone.localtime(timezone.now()),
-                            date_sent=current_timezone.localize(message_obj.created_at),
+                            date_sent=message_obj.created_at,
                             mode=message_obj.mode,
                             # sent_to=[x.username for x in message_obj.receiver.all()]
                         )
