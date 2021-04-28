@@ -453,16 +453,19 @@ class ComposeMessage(CreateAPIView):
                     user_coins.save()
                     return Response({"message": "Message sent successfully", "status": HTTP_200_OK})
                 else:
+                    print(timezone)
                     timezone.activate(pytz.timezone(sender.user_timezone))
+                    print(timezone)
                     ct = timezone.localtime(timezone.now())
 
                     # t = pytz.timezone(sender.user_timezone)
                     # ct = t.localize(timezone.now())
                     print(sender.user_timezone, ct)
+                    print(timezone)
                     # print(timezone.localtime(sender.user_timezone.now()))
-                    print(timezone.localtime(timezone.activate(pytz.timezone(sender.user_timezone)).now()))
-                    print(timezone.localtime(pytz.timezone(sender.user_timezone).now()))
-                    print(timezone.localtime(pytz.timezone(sender.user_timezone)).now())
+                    # print(timezone.localtime(timezone.activate(pytz.timezone(sender.user_timezone))))
+                    # print(timezone.localtime(pytz.timezone(sender.user_timezone).now()))
+                    # print(timezone.localtime(pytz.timezone(sender.user_timezone)).now())
                     msg_obj = Message.objects.create(
                         sender=sender,
                         text=text,
