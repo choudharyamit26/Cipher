@@ -56,11 +56,11 @@ def convertDateExpired(user, user_time):
     return x
 
 
-# def convertDateSent(user, user_time):
-#     est = pytz.timezone(user.user_timezone)
-#     x = user_time.astimezone(est)
-#     print(x)
-#     return x
+def convertDateSent(user, user_time):
+    est = pytz.timezone(user.user_timezone)
+    x = user_time.astimezone(est)
+    print(x)
+    return x
 
 
 class CreateUser(APIView):
@@ -1593,7 +1593,10 @@ class GetNotificationList(ListAPIView):
                 date_read = TimeConvert(app_user, notification.date_read)
             else:
                 date_read = notification.date_read
-            # date_sent = convertDateSent(app_user, notification.date_sent)
+            if notification.date_sent:
+                date_sent = convertDateSent(app_user, notification.date_sent)
+            else:
+                date_sent = notification.date_sent
             if notification.date_expired:
                 date_expired = convertDateExpired(app_user, notification.date_expired)
             else:
