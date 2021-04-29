@@ -1591,7 +1591,10 @@ class GetNotificationList(ListAPIView):
             # print(ct)
             date_read = TimeConvert(app_user, notification.date_read)
             # date_sent = convertDateSent(app_user, notification.date_sent)
-            date_expired = convertDateExpired(app_user, notification.date_expired)
+            if notification.date_expired:
+                date_expired = convertDateExpired(app_user, notification.date_expired)
+            else:
+                date_expired = notification.date_expired
             notification_list.append(
                 {'id': notification.id, 'user_id': notification.user.id, 'message_id': notification.message.id,
                  'text': notification.text, 'title': notification.title, 'date_read': date_read,
