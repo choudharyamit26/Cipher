@@ -49,6 +49,19 @@ def TimeConvert(user, time):
     return x
 
 
+def convertDateExpired(user, user_time):
+    est = pytz.timezone(user.user_timezone)
+    x = user_time.astimezone(est)
+    print(x)
+    return x
+
+def convertDateSent(user,user_time):
+    est = pytz.timezone(user.user_timezone)
+    x = user_time.astimezone(est)
+    print(x)
+    return x
+
+
 class CreateUser(APIView):
     '''
     Enter username,country code,phone number and password to register
@@ -1576,8 +1589,8 @@ class GetNotificationList(ListAPIView):
             # ct = t.astimezone(est)
             # print(ct)
             date_read = TimeConvert(app_user, notification.date_read)
-            date_sent = TimeConvert(app_user, notification.date_sent)
-            date_expired = TimeConvert(app_user, notification.date_expired)
+            date_sent = convertDateSent(app_user, notification.date_sent)
+            date_expired = convertDateExpired(app_user, notification.date_expired)
             notification_list.append(
                 {'id': notification.id, 'user_id': notification.user.id, 'message_id': notification.message.id,
                  'text': notification.text, 'title': notification.title, 'date_read': date_read,
