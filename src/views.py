@@ -612,7 +612,7 @@ class InboxView(APIView):
                          'sender_profile_pic': message.sender.profile_pic.url,
                          'sender_phone_number': message.sender.phone_number, 'mode': message.mode,
                          'question': message.ques,
-                         'answer': message.ans, 'created_at': created_at, 'missed': message.is_missed,
+                         'answer': message.ans, 'created_at': created_at,'timer':message.created_at, 'missed': message.is_missed,
                          'message_text': message.text, 'message_attachment': message.attachment.url,
                          'validity': message.validity, 'message_read_by': [x.id for x in message.read_by.all()]})
                 else:
@@ -623,7 +623,7 @@ class InboxView(APIView):
                          'sender_profile_pic': message.sender.profile_pic.url,
                          'sender_phone_number': message.sender.phone_number, 'mode': message.mode,
                          'question': message.ques,
-                         'answer': message.ans, 'created_at': created_at, 'missed': message.is_missed,
+                         'answer': message.ans, 'created_at': created_at,'timer':message.created_at, 'missed': message.is_missed,
                          'message_text': message.text, 'message_attachment': '', 'validity': message.validity,
                          'message_read_by': [x.id for x in message.read_by.all()]})
                 receivers.append({"receiver": [
@@ -650,7 +650,7 @@ class InboxView(APIView):
                          'sender_profile_pic': message.sender.profile_pic.url,
                          'sender_phone_number': message.sender.phone_number, 'mode': message.mode,
                          'question': message.ques,
-                         'answer': message.ans, 'created_at': created_at, 'missed': message.is_missed,
+                         'answer': message.ans, 'created_at': created_at,'timer':message.created_at, 'missed': message.is_missed,
                          'message_text': message.text, 'message_attachment': message.attachment.url,
                          'validity': message.validity, 'message_read_by': [x.id for x in message.read_by.all()]})
                 else:
@@ -661,7 +661,7 @@ class InboxView(APIView):
                          'sender_profile_pic': message.sender.profile_pic.url,
                          'sender_phone_number': message.sender.phone_number, 'mode': message.mode,
                          'question': message.ques,
-                         'answer': message.ans, 'created_at': created_at, 'missed': message.is_missed,
+                         'answer': message.ans, 'created_at': created_at,'timer':message.created_at, 'missed': message.is_missed,
                          'message_text': message.text, 'message_attachment': '', 'validity': message.validity,
                          'message_read_by': [x.id for x in message.read_by.all()]})
 
