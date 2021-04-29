@@ -605,23 +605,25 @@ class InboxView(APIView):
             for message in messages_obj:
                 print([x.id for x in message.read_by.all()])
                 if message.attachment:
+                    created_at = convertDateSent(app_user_obj,message.created_at)
                     messages_values.append(
                         {'id': message.id, 'sender_id': message.sender.id, 'sender_name': message.sender.username,
                          'sender_country_code': message.sender.country_code,
                          'sender_profile_pic': message.sender.profile_pic.url,
                          'sender_phone_number': message.sender.phone_number, 'mode': message.mode,
                          'question': message.ques,
-                         'answer': message.ans, 'created_at': message.created_at, 'missed': message.is_missed,
+                         'answer': message.ans, 'created_at': created_at, 'missed': message.is_missed,
                          'message_text': message.text, 'message_attachment': message.attachment.url,
                          'validity': message.validity, 'message_read_by': [x.id for x in message.read_by.all()]})
                 else:
+                    created_at = convertDateSent(app_user_obj,message.created_at)
                     messages_values.append(
                         {'id': message.id, 'sender_id': message.sender.id, 'sender_name': message.sender.username,
                          'sender_country_code': message.sender.country_code,
                          'sender_profile_pic': message.sender.profile_pic.url,
                          'sender_phone_number': message.sender.phone_number, 'mode': message.mode,
                          'question': message.ques,
-                         'answer': message.ans, 'created_at': message.created_at, 'missed': message.is_missed,
+                         'answer': message.ans, 'created_at': created_at, 'missed': message.is_missed,
                          'message_text': message.text, 'message_attachment': '', 'validity': message.validity,
                          'message_read_by': [x.id for x in message.read_by.all()]})
                 receivers.append({"receiver": [
@@ -641,23 +643,25 @@ class InboxView(APIView):
             for message in messages_obj:
                 # print(message.receiver.all().exclude(id=app_user_obj.id))
                 if message.attachment:
+                    created_at = convertDateSent(app_user_obj,message.created_at)
                     messages_values.append(
                         {'id': message.id, 'sender_id': message.sender.id, 'sender_name': message.sender.username,
                          'sender_country_code': message.sender.country_code,
                          'sender_profile_pic': message.sender.profile_pic.url,
                          'sender_phone_number': message.sender.phone_number, 'mode': message.mode,
                          'question': message.ques,
-                         'answer': message.ans, 'created_at': message.created_at, 'missed': message.is_missed,
+                         'answer': message.ans, 'created_at': created_at, 'missed': message.is_missed,
                          'message_text': message.text, 'message_attachment': message.attachment.url,
                          'validity': message.validity, 'message_read_by': [x.id for x in message.read_by.all()]})
                 else:
+                    created_at = convertDateSent(app_user_obj,message.created_at)
                     messages_values.append(
                         {'id': message.id, 'sender_id': message.sender.id, 'sender_name': message.sender.username,
                          'sender_country_code': message.sender.country_code,
                          'sender_profile_pic': message.sender.profile_pic.url,
                          'sender_phone_number': message.sender.phone_number, 'mode': message.mode,
                          'question': message.ques,
-                         'answer': message.ans, 'created_at': message.created_at, 'missed': message.is_missed,
+                         'answer': message.ans, 'created_at': created_at, 'missed': message.is_missed,
                          'message_text': message.text, 'message_attachment': '', 'validity': message.validity,
                          'message_read_by': [x.id for x in message.read_by.all()]})
 
