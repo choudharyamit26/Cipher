@@ -39,12 +39,12 @@ from .fcm_notification import send_to_one, send_another
 authy_api = AuthyApiClient('SpLBdknBezXVTlD6s2gxbXgH4NzqUDcv')
 
 
-def TimeConvert(user, time):
+def TimeConvert(user, user_time):
     # user_timezone = user.user_timezone
-    t = timezone.now()
-    print(t)
+    # t = timezone.now()
+    # print(t)
     est = pytz.timezone(user.user_timezone)
-    x = t.astimezone(est)
+    x = user_time.astimezone(est)
     print(x)
     return x
 
