@@ -39,6 +39,16 @@ from .fcm_notification import send_to_one, send_another
 authy_api = AuthyApiClient('SpLBdknBezXVTlD6s2gxbXgH4NzqUDcv')
 
 
+def TimeConvert(user, time):
+    # user_timezone = user.user_timezone
+    t = timezone.now()
+    print(t)
+    est = pytz.timezone(user.user_timezone)
+    x = t.astimezone(est)
+    print(x)
+    return x
+
+
 class CreateUser(APIView):
     '''
     Enter username,country code,phone number and password to register
@@ -1560,10 +1570,18 @@ class GetNotificationList(ListAPIView):
         notification_list = []
         for notification in notifications:
             print(notification.date_read)
+            # t = timezone.now()
+            # print(t)
+            # est = pytz.timezone(message.sender.user_timezone)
+            # ct = t.astimezone(est)
+            # print(ct)
+            date_read = TimeConvert(app_user, notification.date_read)
+            date_sent = TimeConvert(app_user, notification.date_sent)
+            date_expired = TimeConvert(app_user, notification.date_expired)
             notification_list.append(
                 {'id': notification.id, 'user_id': notification.user.id, 'message_id': notification.message.id,
-                 'text': notification.text, 'title': notification.title, 'date_read': notification.date_read,
-                 'date_sent': notification.date_sent, 'date_expired': notification.date_expired,
+                 'text': notification.text, 'title': notification.title, 'date_read': date_read,
+                 'date_sent': date_sent, 'date_expired': date_expired,
                  'mode': notification.mode, 'read': notification.read})
         for x in zip(notification_list, receivers):
             final_data.append({'notifications': {**x[0], **x[1]}})
