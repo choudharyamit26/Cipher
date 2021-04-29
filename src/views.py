@@ -1589,7 +1589,10 @@ class GetNotificationList(ListAPIView):
             # est = pytz.timezone(message.sender.user_timezone)
             # ct = t.astimezone(est)
             # print(ct)
-            date_read = TimeConvert(app_user, notification.date_read)
+            if notification.date_read:
+                date_read = TimeConvert(app_user, notification.date_read)
+            else:
+                date_read = notification.date_read
             # date_sent = convertDateSent(app_user, notification.date_sent)
             if notification.date_expired:
                 date_expired = convertDateExpired(app_user, notification.date_expired)
