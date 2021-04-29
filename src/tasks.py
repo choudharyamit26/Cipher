@@ -47,13 +47,13 @@ def expire_messages():
                     if AppNotificationSetting.objects.get(user=AppUser.objects.get(id=receiver.id)).on:
                         try:
                             if AppUser.objects.get(id=receiver.id).device_type == 'android':
-                                # timezone.activate(pytz.timezone(receiver.user_timezone))
-                                # ct = timezone.localtime(timezone.now())
-                                t = timezone.now()
-                                print(t)
-                                est = pytz.timezone(receiver.user_timezone)
-                                ct = t.astimezone(est)
-                                print(ct)
+                                timezone.activate(pytz.timezone(receiver.user_timezone))
+                                ct = timezone.localtime(timezone.now())
+                                # t = timezone.now()
+                                # print(t)
+                                # est = pytz.timezone(receiver.user_timezone)
+                                # ct = t.astimezone(est)
+                                # print(ct)
                                 notification = AppNotification.objects.create(
                                     user=AppUser.objects.get(id=receiver.id),
                                     text='Message Expired',
@@ -110,13 +110,13 @@ def expire_messages():
                 if AppNotificationSetting.objects.get(user=AppUser.objects.get(id=message.sender.id)).on:
                     try:
                         if AppUser.objects.get(id=message.sender.id).device_type == 'android':
-                            # timezone.activate(pytz.timezone(message.sender.user_timezone))
-                            # ct = timezone.localtime(timezone.now())
-                            t = timezone.now()
-                            print(t)
-                            est = pytz.timezone(message.sender.user_timezone)
-                            ct = t.astimezone(est)
-                            print(ct)
+                            timezone.activate(pytz.timezone(message.sender.user_timezone))
+                            ct = timezone.localtime(timezone.now())
+                            # t = timezone.now()
+                            # print(t)
+                            # est = pytz.timezone(message.sender.user_timezone)
+                            # ct = t.astimezone(est)
+                            # print(ct)
                             if len(message.read_by.all()) > 0:
                                 notification = AppNotification.objects.create(
                                     user=AppUser.objects.get(id=message.sender.id),
@@ -163,14 +163,14 @@ def expire_messages():
                                 respo = send_to_one(sender_fcm_token, data_message)
                         else:
                             if len(message.read_by.all()) > 0:
-                                # timezone.activate(pytz.timezone(message.sender.user_timezone))
-                                # ct = timezone.localtime(timezone.now())
+                                timezone.activate(pytz.timezone(message.sender.user_timezone))
+                                ct = timezone.localtime(timezone.now())
                                 # data_message = json.dumps(data_message)
-                                t = timezone.now()
-                                print(t)
-                                est = pytz.timezone(message.sender.user_timezone)
-                                ct = t.astimezone(est)
-                                print(ct)
+                                # t = timezone.now()
+                                # print(t)
+                                # est = pytz.timezone(message.sender.user_timezone)
+                                # ct = t.astimezone(est)
+                                # print(ct)
                                 notification = AppNotification.objects.create(
                                     user=AppUser.objects.get(id=message.sender.id),
                                     text='Message Expired',
