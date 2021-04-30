@@ -849,6 +849,7 @@ class ReadingMessage(CreateAPIView):
                                                                 text=f'"WELP, TOO BAD! {app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.',
                                                                 date_sent=message_obj.created_at,
                                                                 mode=message_obj.mode,
+                                                                message=Message.objects.get(id=message_obj.id),
                                                                 # date_expired=datetime.datetime.now(),
                                                                 # sent_to=[x.username for x in receivers]
                                                             )
@@ -874,6 +875,7 @@ class ReadingMessage(CreateAPIView):
                                                                 text=f'"WELP, TOO BAD! {app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.',
                                                                 date_sent=message_obj.created_at,
                                                                 mode=message_obj.mode,
+                                                                message=Message.objects.get(id=message_obj.id),
                                                                 # date_expired=datetime.datetime.now(),
                                                                 # sent_to=[x.username for x in receivers]
                                                             )
@@ -925,6 +927,7 @@ class ReadingMessage(CreateAPIView):
                                                             text=f'"WELP, TOO BAD! {app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.',
                                                             date_sent=message_obj.created_at,
                                                             mode=message_obj.mode,
+                                                            message=Message.objects.get(id=message_obj.id),
                                                             # date_expired=datetime.datetime.now(),
                                                             # sent_to=[x.username for x in receivers]
                                                         )
@@ -949,6 +952,7 @@ class ReadingMessage(CreateAPIView):
                                                             text=f'"WELP, TOO BAD! {app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.',
                                                             date_sent=message_obj.created_at,
                                                             mode=message_obj.mode,
+                                                            message=Message.objects.get(id=message_obj.id),
                                                             # date_expired=datetime.datetime.now(),
                                                             # sent_to=[x.username for x in receivers]
                                                         )
@@ -1152,6 +1156,7 @@ class ReadingMessage(CreateAPIView):
                                                             text=f'"WELP, TOO BAD! {app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.',
                                                             date_sent=message_obj.created_at,
                                                             mode=message_obj.mode,
+                                                            message=Message.objects.get(id=message_obj.id),
                                                             # date_expired=datetime.datetime.now(),
                                                             # sent_to=[x.username for x in receivers]
                                                         )
@@ -1176,6 +1181,7 @@ class ReadingMessage(CreateAPIView):
                                                             text=f'"WELP, TOO BAD! {app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.',
                                                             date_sent=message_obj.created_at,
                                                             mode=message_obj.mode,
+                                                            message=Message.objects.get(id=message_obj.id),
                                                             # date_expired=datetime.datetime.now(),
                                                             # sent_to=[x.username for x in receivers]
                                                         )
@@ -1227,6 +1233,7 @@ class ReadingMessage(CreateAPIView):
                                                         text=f'"WELP, TOO BAD! {app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.',
                                                         date_sent=message_obj.created_at,
                                                         mode=message_obj.mode,
+                                                        message=Message.objects.get(id=message_obj.id),
                                                         # date_expired=datetime.datetime.now(),
                                                         # sent_to=[x.username for x in receivers]
                                                     )
@@ -1251,6 +1258,7 @@ class ReadingMessage(CreateAPIView):
                                                         text=f'"WELP, TOO BAD! {app_user_obj.username} got your secret question wrong 3 times so the message has been terminated forever.',
                                                         date_sent=message_obj.created_at,
                                                         mode=message_obj.mode,
+                                                        message=Message.objects.get(id=message_obj.id),
                                                         # date_expired=datetime.datetime.now(),
                                                         # sent_to=[x.username for x in receivers]
                                                     )
