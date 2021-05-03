@@ -51,9 +51,9 @@ def TimeConvert(user, user_time):
 
 def convertDateExpired(user, user_time):
     est = pytz.timezone(user.user_timezone)
-    # x = user_time.astimezone(est)
-    t = timezone.now()
-    x = t.astimezone(est)
+    x = user_time.astimezone(est)
+    # t = timezone.now()
+    # x = t.astimezone(est)
     print(x)
     return x
 

@@ -127,7 +127,7 @@ def expire_messages():
                                         date_sent=message.created_at,
                                         mode=message.mode,
                                         # date_expired=datetime.datetime.now(),
-                                        date_expired=ct,
+                                        date_expired=timezone.now(),
                                         message=Message.objects.get(id=message.id),
                                         # sent_to=[x.username for x in receivers]
                                     )
@@ -147,7 +147,7 @@ def expire_messages():
                                     date_sent=message.created_at,
                                     mode=message.mode,
                                     # date_expired=datetime.datetime.now(),
-                                    date_expired=ct,
+                                    date_expired=timezone.now(),
                                     message=Message.objects.get(id=message.id),
                                     # sent_to=[x.username for x in receivers]
                                 )
@@ -173,7 +173,7 @@ def expire_messages():
                                         date_sent=message.created_at,
                                         mode=message.mode,
                                         # date_expired=datetime.datetime.now(),
-                                        date_expired=ct,
+                                        date_expired=timezone.now(),
                                         message=Message.objects.get(id=message.id),
                                         # sent_to=[x.username for x in receivers]
                                     )
@@ -194,7 +194,7 @@ def expire_messages():
                                     date_sent=message.created_at,
                                     mode=message.mode,
                                     # date_expired=datetime.datetime.now(),
-                                    date_expired=ct,
+                                    date_expired=timezone.now(),
                                     message=Message.objects.get(id=message.id),
                                     # sent_to=[x.username for x in receivers]
                                 )
