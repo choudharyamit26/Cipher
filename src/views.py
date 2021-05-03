@@ -698,55 +698,74 @@ class ReadingMessage(CreateAPIView):
         if serializer.is_valid():
             app_user_obj = AppUser.objects.get(phone_number=int(str(user.country_code) + str(user.phone_number)))
             message_id = serializer.validated_data['message_id']
-            print(message_id)
+            # print(message_id)
             ans = serializer.validated_data['ans']
             try:
                 message_obj = Message.objects.get(id=message_id)
-                print(ans is message_obj.ans)
-                print('Answer>>>', ans, type(ans))
-                print('Original answer>>>', message_obj.ans, type(message_obj.ans))
-                print('Message read by all', message_obj.read_by.all())
-                print('Message read by count ', message_obj.read_by.count())
                 if message_obj.mode == 'Race' or message_obj.mode == 'Race Mode':
                     if message_obj.read_by.count() > 0:
-                        print('Message read by all', message_obj.read_by.all())
-                        print('Message read by count ', message_obj.read_by.count())
                         return Response(
                             {'message': 'You cannot read this message as it was in race mode and it was already read'})
                     else:
                         if ans == message_obj.ans:
                             message_obj.read_by.add(app_user_obj.id)
-                            ###### Add notification to be sent to the sender
-                            # timezone.activate(pytz.timezone(message_obj.sender.user_timezone))
-                            # # timezone.activate(message_obj.sender.user_timezone)
-                            # current_time = timezone.localtime(timezone.now())
-                            # print("SENDER TIME ZONE:  ", message_obj.sender.user_timezone)
-                            # print("CURRENT TIME:  ", current_time)
                             t = timezone.now()
                             print(t)
                             est = pytz.timezone(message_obj.sender.user_timezone)
                             x = t.astimezone(est)
                             print(x)
-                            notification = AppNotification.objects.create(
-                                user=message_obj.sender,
-                                message=Message.objects.get(id=message_obj.id),
-                                text=f'{app_user_obj.username} read your message',
-                                date_read=x,
-                                # date_read=timezone.localtime(timezone.now()),
-                                date_sent=message_obj.created_at,
-                                mode=message_obj.mode,
-                                # sent_to=sent_to.set([x.username for x in message_obj.receiver.all()])
-                            )
-                            print('FIRST NOTIFICATION CASE')
-                            # notification.date_read = current_time
-                            # notification.save()
-                            # print("SENDER TIME ZONE:  ", message_obj.sender.user_timezone)
-                            # print("CURRENT TIME:  ", current_time)
-                            print("DATE TIME READ:  ", notification.date_read)
-                            # print('before sent_to.set')
-                            # notification.sent_to.set([x.username for x in message_obj.receiver.all()])
-                            for receiver in message_obj.correct_attempts_by.all():
-                                notification.sent_to.add(receiver)
+                            if message_obj.mode == 'Race' or message_obj.mode == 'Race Mode':
+                                notification = AppNotification.objects.create(
+                                    user=message_obj.sender,
+                                    message=Message.objects.get(id=message_obj.id),
+                                    title='YOUR MESSAGE WAS RECEIVED',
+                                    # text=f'{app_user_obj.username} read your {message_obj.mode} message',
+                                    text=f'Your GROUP message was read by {app_user_obj.username} and nobody else in the group will see it',
+                                    date_read=x,
+                                    # date_read=timezone.localtime(timezone.now()),
+                                    date_sent=message_obj.created_at,
+                                    mode=message_obj.mode,
+                                    # sent_to=sent_to.set([x.username for x in message_obj.receiver.all()])
+                                )
+                                for receiver in message_obj.correct_attempts_by.all():
+                                    notification.sent_to.add(receiver)
+                            elif message_obj.mode == 'Everybody Mode':
+                                notification = AppNotification.objects.create(
+                                    user=message_obj.sender,
+                                    message=Message.objects.get(id=message_obj.id),
+                                    title='YOUR MESSAGE WAS RECEIVED',
+                                    # text=f'{app_user_obj.username} read your {message_obj.mode} message',
+                                    text=f'Your GROUP message was read by {app_user_obj.username}',
+                                    date_read=x,
+                                    # date_read=timezone.localtime(timezone.now()),
+                                    date_sent=message_obj.created_at,
+                                    mode=message_obj.mode,
+                                    # sent_to=sent_to.set([x.username for x in message_obj.receiver.all()])
+                                )
+                                for receiver in message_obj.correct_attempts_by.all():
+                                    notification.sent_to.add(receiver)
+                            else:
+                                notification = AppNotification.objects.create(
+                                    user=message_obj.sender,
+                                    message=Message.objects.get(id=message_obj.id),
+                                    title='YOUR MESSAGE WAS RECEIVED',
+                                    text=f'{app_user_obj.username} read your direct message',
+                                    date_read=x,
+                                    # date_read=timezone.localtime(timezone.now()),
+                                    date_sent=message_obj.created_at,
+                                    mode=message_obj.mode,
+                                    # sent_to=sent_to.set([x.username for x in message_obj.receiver.all()])
+                                )
+                                print('FIRST NOTIFICATION CASE')
+                                # notification.date_read = current_time
+                                # notification.save()
+                                # print("SENDER TIME ZONE:  ", message_obj.sender.user_timezone)
+                                # print("CURRENT TIME:  ", current_time)
+                                print("DATE TIME READ:  ", notification.date_read)
+                                # print('before sent_to.set')
+                                # notification.sent_to.set([x.username for x in message_obj.receiver.all()])
+                                for receiver in message_obj.correct_attempts_by.all():
+                                    notification.sent_to.add(receiver)
                             print('Race mode else case notification sent user list', message_obj.correct_attempts_by.all())
                             print('Race mode else case notification sent user list', notification.sent_to.all())
                             fcm_token = message_obj.sender.device_token
@@ -760,48 +779,54 @@ class ReadingMessage(CreateAPIView):
                                     ct = t.astimezone(est)
                                     print(ct)
                                     if message_obj.sender.device_type == 'android':
-                                        data_message = {"title": "YOUR MESSAGE WAS RECEIVED",
-                                                        "body": f'{app_user_obj.username} read your message' + ' Message Sent: ' + str(
-                                                            message_obj.created_at.strftime(
-                                                                "%B %d, %Y.")) + ' @ ' + str(
-                                                            ct.strftime("%I:%-M%p")) + ' ' + str(
-                                                            message_obj.mode) + ':' + str(", ".join(
-                                                            [x.username for x in
-                                                             message_obj.correct_attempts_by.all()])),
-                                                        "type": "messageRead", "sound": 'notifications.mp3'}
-                                        respo = send_to_one(fcm_token, data_message)
-                                        print(respo)
+                                        if message_obj.mode == 'Race' or message_obj.mode == 'Race Mode':
+                                            data_message = {"title": "YOUR MESSAGE WAS RECEIVED",
+                                                            "body": f'Your GROUP message was read by {app_user_obj.username} and nobody else in the group will see it. Click for Details',
+                                                            "type": "messageRead", "sound": 'notifications.mp3'}
+                                            respo = send_to_one(fcm_token, data_message)
+                                            print(respo)
+                                        elif message_obj.mode == 'Everybody Mode':
+                                            data_message = {"title": "YOUR MESSAGE WAS RECEIVED",
+                                                            "body": f'Your GROUP message was read by {app_user_obj.username}. Click for Details',
+                                                            "type": "messageRead", "sound": 'notifications.mp3'}
+                                            respo = send_to_one(fcm_token, data_message)
+                                            print(respo)
+                                        else:
+                                            data_message = {"title": "YOUR MESSAGE WAS RECEIVED",
+                                                            "body": f'{app_user_obj.username} read your direct message. Click for Details',
+                                                            "type": "messageRead", "sound": 'notifications.mp3'}
+                                            respo = send_to_one(fcm_token, data_message)
+                                            print(respo)
                                     else:
-                                        # data_message = json.dumps(data_message)
-                                        title = "YOUR MESSAGE WAS RECEIVED"
-                                        # body = f'{app_user_obj.username} read your message' + 'Message Sent:' + str(
-                                        #     message_obj.created_at) + ', ' + str(message_obj.mode) + ':' + str(
-                                        #     [x.username for x in message_obj.receiver.all()])
-                                        body = f'{app_user_obj.username} read your message' + ' Message Sent: ' + str(
-                                            message_obj.created_at.strftime("%B %d, %Y.")) + ' @ ' + str(
-                                            ct.strftime("%I:%-M%p")) + ' ' + str(
-                                            message_obj.mode) + ':' + str(", ".join(
-                                            [x.username for x in message_obj.correct_attempts_by.all()]))
-                                        message_type = "messageRead"
-                                        sound = 'notifications.mp3'
-                                        respo = send_another(
-                                            fcm_token, title, body, message_type, sound)
-                                        print("FCM Response===============>0", respo)
-                                        # title = "Profile Update"
-                                        # body = "Your profile has been updated successfully"
-                                        # respo = send_to_one(fcm_token, title, body)
-                                        # print("FCM Response===============>0", respo)
+                                        if message_obj.mode == 'Race' or message_obj.mode == 'Race Mode':
+                                            title = "YOUR MESSAGE WAS RECEIVED"
+                                            body = f'Your GROUP message was read by {app_user_obj.username} and nobody else in the group will see it. Click for Details'
+                                            message_type = "messageRead"
+                                            sound = 'notifications.mp3'
+                                            respo = send_another(
+                                                fcm_token, title, body, message_type, sound)
+                                            print("FCM Response===============>0", respo)
+                                        elif message_obj.mode == 'Everybody Mode':
+                                            title = "YOUR MESSAGE WAS RECEIVED"
+                                            body = f'Your GROUP message was read by {app_user_obj.username}. Click for Details'
+                                            message_type = "messageRead"
+                                            sound = 'notifications.mp3'
+                                            respo = send_another(
+                                                fcm_token, title, body, message_type, sound)
+                                            print("FCM Response===============>0", respo)
+                                        else:
+                                            title = "YOUR MESSAGE WAS RECEIVED"
+                                            body = f'{app_user_obj.username} read your direct message. Click for Details'
+                                            message_type = "messageRead"
+                                            sound = 'notifications.mp3'
+                                            respo = send_another(
+                                                fcm_token, title, body, message_type, sound)
+                                            print("FCM Response===============>0", respo)
                                 except:
                                     pass
                             else:
                                 pass
                             if message_obj.attachment:
-                                # AppNotification.objects.create(
-                                #     user=message_obj.sender,
-                                #     text=f'{app_user_obj.username} read your message',
-                                #     date_sent=message_obj.created_at,
-                                #     mode=message_obj.mode
-                                # )
                                 return Response({"message": "Correct answer", 'message_text': message_obj.text,
                                                  'message_attachment': message_obj.attachment.url,
                                                  'sender_name': message_obj.sender.username,
@@ -1043,39 +1068,70 @@ class ReadingMessage(CreateAPIView):
                 else:
                     if ans == message_obj.ans:
                         message_obj.read_by.add(app_user_obj.id)
-                        ###### Add notification to be sent to the sender
-                        # timezone.activate(pytz.timezone(message_obj.sender.user_timezone))
-                        # # timezone.activate(message_obj.sender.user_timezone)
-                        # current_time = timezone.localtime(timezone.now())
-                        # print("SENDER TIME ZONE:  ", message_obj.sender.user_timezone)
-                        # print("CURRENT TIME:  ", current_time)
+                        # t = timezone.now()
+                        # print(t)
+                        # est = pytz.timezone(message_obj.sender.user_timezone)
+                        # ct = t.astimezone(est)
+                        # print(ct)
                         t = timezone.now()
                         print(t)
                         est = pytz.timezone(message_obj.sender.user_timezone)
-                        ct = t.astimezone(est)
-                        print(ct)
-                        notification = AppNotification.objects.create(
-                            user=message_obj.sender,
-                            message=Message.objects.get(id=message_obj.id),
-                            text=f'{app_user_obj.username} read your message',
-                            date_read=ct,
-                            # date_read=timezone.localtime(timezone.now()),
-                            date_sent=message_obj.created_at,
-                            mode=message_obj.mode,
-                            # sent_to=[x.username for x in message_obj.receiver.all()]
-                        )
-                        # print('LAST NOTIFICATION CASE')
-                        # notification.date_read = current_time
-                        # notification.save()
-                        # print("SENDER TIME ZONE:  ", message_obj.sender.user_timezone)
-                        # print("CURRENT TIME:  ", current_time)
-                        # print("DATE TIME READ:  ", notification.date_read)
-                        # print('before second sent_to')
-                        # notification.sent_to.set([x.username for x in message_obj.receiver.all()])
-                        for receiver in message_obj.correct_attempts_by.all():
-                            notification.sent_to.add(receiver)
-                        print('message receivers receivers------>>>', message_obj.correct_attempts_by.all())
-                        print('notification receivers------>>>', notification.sent_to.all())
+                        x = t.astimezone(est)
+                        print(x)
+                        if message_obj.mode == 'Race' or message_obj.mode == 'Race Mode':
+                            notification = AppNotification.objects.create(
+                                user=message_obj.sender,
+                                message=Message.objects.get(id=message_obj.id),
+                                title='YOUR MESSAGE WAS RECEIVED',
+                                # text=f'{app_user_obj.username} read your {message_obj.mode} message',
+                                text=f'Your GROUP message was read by {app_user_obj.username} and nobody else in the group will see it',
+                                date_read=x,
+                                # date_read=timezone.localtime(timezone.now()),
+                                date_sent=message_obj.created_at,
+                                mode=message_obj.mode,
+                                # sent_to=sent_to.set([x.username for x in message_obj.receiver.all()])
+                            )
+                            for receiver in message_obj.correct_attempts_by.all():
+                                notification.sent_to.add(receiver)
+                        elif message_obj.mode == 'Everybody Mode':
+                            notification = AppNotification.objects.create(
+                                user=message_obj.sender,
+                                message=Message.objects.get(id=message_obj.id),
+                                title='YOUR MESSAGE WAS RECEIVED',
+                                # text=f'{app_user_obj.username} read your {message_obj.mode} message',
+                                text=f'Your GROUP message was read by {app_user_obj.username}',
+                                date_read=x,
+                                # date_read=timezone.localtime(timezone.now()),
+                                date_sent=message_obj.created_at,
+                                mode=message_obj.mode,
+                                # sent_to=sent_to.set([x.username for x in message_obj.receiver.all()])
+                            )
+                            for receiver in message_obj.correct_attempts_by.all():
+                                notification.sent_to.add(receiver)
+                        else:
+                            notification = AppNotification.objects.create(
+                                user=message_obj.sender,
+                                message=Message.objects.get(id=message_obj.id),
+                                title='YOUR MESSAGE WAS RECEIVED',
+                                text=f'{app_user_obj.username} read your direct message',
+                                date_read=x,
+                                # date_read=timezone.localtime(timezone.now()),
+                                date_sent=message_obj.created_at,
+                                mode=message_obj.mode,
+                                # sent_to=sent_to.set([x.username for x in message_obj.receiver.all()])
+                            )
+                            print('FIRST NOTIFICATION CASE')
+                            # notification.date_read = current_time
+                            # notification.save()
+                            # print("SENDER TIME ZONE:  ", message_obj.sender.user_timezone)
+                            # print("CURRENT TIME:  ", current_time)
+                            print("DATE TIME READ:  ", notification.date_read)
+                            # print('before sent_to.set')
+                            # notification.sent_to.set([x.username for x in message_obj.receiver.all()])
+                            for receiver in message_obj.correct_attempts_by.all():
+                                notification.sent_to.add(receiver)
+                        print('Race mode else case notification sent user list', message_obj.correct_attempts_by.all())
+                        print('Race mode else case notification sent user list', notification.sent_to.all())
                         fcm_token = message_obj.sender.device_token
                         if AppNotificationSetting.objects.get(user=app_user_obj).on:
                             try:
@@ -1087,32 +1143,49 @@ class ReadingMessage(CreateAPIView):
                                 ct = t.astimezone(est)
                                 print(ct)
                                 if message_obj.sender.device_type == 'android':
-                                    data_message = {"title": "YOUR MESSAGE WAS RECEIVED",
-                                                    "body": f'{app_user_obj.username} read your message' + ' Message Sent: ' + str(
-                                                        message_obj.created_at.strftime("%B %d, %Y.")) + ' @ ' + str(
-                                                        ct.strftime("%I:%-M%p")) + ' ' + str(
-                                                        message_obj.mode) + ':' + str(", ".join(
-                                                        [x.username for x in message_obj.correct_attempts_by.all()])),
-                                                    "type": "messageRead", "sound": 'notifications.mp3'}
-                                    respo = send_to_one(fcm_token, data_message)
+                                    if message_obj.mode == 'Race' or message_obj.mode == 'Race Mode':
+                                        data_message = {"title": "YOUR MESSAGE WAS RECEIVED",
+                                                        "body": f'Your GROUP message was read by {app_user_obj.username} and nobody else in the group will see it. Click for Details',
+                                                        "type": "messageRead", "sound": 'notifications.mp3'}
+                                        respo = send_to_one(fcm_token, data_message)
+                                        print(respo)
+                                    elif message_obj.mode == 'Everybody Mode':
+                                        data_message = {"title": "YOUR MESSAGE WAS RECEIVED",
+                                                        "body": f'Your GROUP message was read by {app_user_obj.username}. Click for Details',
+                                                        "type": "messageRead", "sound": 'notifications.mp3'}
+                                        respo = send_to_one(fcm_token, data_message)
+                                        print(respo)
+                                    else:
+                                        data_message = {"title": "YOUR MESSAGE WAS RECEIVED",
+                                                        "body": f'{app_user_obj.username} read your direct message. Click for Details',
+                                                        "type": "messageRead", "sound": 'notifications.mp3'}
+                                        respo = send_to_one(fcm_token, data_message)
+                                        print(respo)
                                 else:
-                                    # data_message = json.dumps(data_message)
-                                    title = "YOUR MESSAGE WAS RECEIVED"
-                                    # body = f'{app_user_obj.username} read your message'
-                                    body = f'{app_user_obj.username} read your message' + ' Message Sent: ' + str(
-                                        message_obj.created_at.strftime("%B %d, %Y.")) + ' @ ' + str(
-                                        ct.strftime("%I:%-M%p")) + ' ' + str(
-                                        message_obj.mode) + ':' + str(", ".join(
-                                        [x.username for x in message_obj.correct_attempts_by.all()]))
-                                    message_type = "messageRead"
-                                    sound = 'notifications.mp3'
-                                    respo = send_another(
-                                        fcm_token, title, body, message_type, sound)
-                                    print("FCM Response===============>0", respo)
-                                # title = "Profile Update"
-                                # body = "Your profile has been updated successfully"
-                                # respo = send_to_one(fcm_token, title, body)
-                                # print("FCM Response===============>0", respo)
+                                    if message_obj.mode == 'Race' or message_obj.mode == 'Race Mode':
+                                        title = "YOUR MESSAGE WAS RECEIVED"
+                                        body = f'Your GROUP message was read by {app_user_obj.username} and nobody else in the group will see it. Click for Details'
+                                        message_type = "messageRead"
+                                        sound = 'notifications.mp3'
+                                        respo = send_another(
+                                            fcm_token, title, body, message_type, sound)
+                                        print("FCM Response===============>0", respo)
+                                    elif message_obj.mode == 'Everybody Mode':
+                                        title = "YOUR MESSAGE WAS RECEIVED"
+                                        body = f'Your GROUP message was read by {app_user_obj.username}. Click for Details'
+                                        message_type = "messageRead"
+                                        sound = 'notifications.mp3'
+                                        respo = send_another(
+                                            fcm_token, title, body, message_type, sound)
+                                        print("FCM Response===============>0", respo)
+                                    else:
+                                        title = "YOUR MESSAGE WAS RECEIVED"
+                                        body = f'{app_user_obj.username} read your direct message. Click for Details'
+                                        message_type = "messageRead"
+                                        sound = 'notifications.mp3'
+                                        respo = send_another(
+                                            fcm_token, title, body, message_type, sound)
+                                        print("FCM Response===============>0", respo)
                             except:
                                 pass
                         else:
