@@ -607,25 +607,27 @@ class InboxView(APIView):
             for message in messages_obj:
                 print([x.id for x in message.read_by.all()])
                 if message.attachment:
-                    created_at = convertDateSent(app_user_obj,message.created_at)
+                    created_at = convertDateSent(app_user_obj, message.created_at)
                     messages_values.append(
                         {'id': message.id, 'sender_id': message.sender.id, 'sender_name': message.sender.username,
                          'sender_country_code': message.sender.country_code,
                          'sender_profile_pic': message.sender.profile_pic.url,
                          'sender_phone_number': message.sender.phone_number, 'mode': message.mode,
                          'question': message.ques,
-                         'answer': message.ans, 'created_at': created_at,'timer':message.created_at, 'missed': message.is_missed,
+                         'answer': message.ans, 'created_at': created_at, 'timer': message.created_at,
+                         'missed': message.is_missed,
                          'message_text': message.text, 'message_attachment': message.attachment.url,
                          'validity': message.validity, 'message_read_by': [x.id for x in message.read_by.all()]})
                 else:
-                    created_at = convertDateSent(app_user_obj,message.created_at)
+                    created_at = convertDateSent(app_user_obj, message.created_at)
                     messages_values.append(
                         {'id': message.id, 'sender_id': message.sender.id, 'sender_name': message.sender.username,
                          'sender_country_code': message.sender.country_code,
                          'sender_profile_pic': message.sender.profile_pic.url,
                          'sender_phone_number': message.sender.phone_number, 'mode': message.mode,
                          'question': message.ques,
-                         'answer': message.ans, 'created_at': created_at,'timer':message.created_at, 'missed': message.is_missed,
+                         'answer': message.ans, 'created_at': created_at, 'timer': message.created_at,
+                         'missed': message.is_missed,
                          'message_text': message.text, 'message_attachment': '', 'validity': message.validity,
                          'message_read_by': [x.id for x in message.read_by.all()]})
                 receivers.append({"receiver": [
@@ -645,25 +647,27 @@ class InboxView(APIView):
             for message in messages_obj:
                 # print(message.receiver.all().exclude(id=app_user_obj.id))
                 if message.attachment:
-                    created_at = convertDateSent(app_user_obj,message.created_at)
+                    created_at = convertDateSent(app_user_obj, message.created_at)
                     messages_values.append(
                         {'id': message.id, 'sender_id': message.sender.id, 'sender_name': message.sender.username,
                          'sender_country_code': message.sender.country_code,
                          'sender_profile_pic': message.sender.profile_pic.url,
                          'sender_phone_number': message.sender.phone_number, 'mode': message.mode,
                          'question': message.ques,
-                         'answer': message.ans, 'created_at': created_at,'timer':message.created_at, 'missed': message.is_missed,
+                         'answer': message.ans, 'created_at': created_at, 'timer': message.created_at,
+                         'missed': message.is_missed,
                          'message_text': message.text, 'message_attachment': message.attachment.url,
                          'validity': message.validity, 'message_read_by': [x.id for x in message.read_by.all()]})
                 else:
-                    created_at = convertDateSent(app_user_obj,message.created_at)
+                    created_at = convertDateSent(app_user_obj, message.created_at)
                     messages_values.append(
                         {'id': message.id, 'sender_id': message.sender.id, 'sender_name': message.sender.username,
                          'sender_country_code': message.sender.country_code,
                          'sender_profile_pic': message.sender.profile_pic.url,
                          'sender_phone_number': message.sender.phone_number, 'mode': message.mode,
                          'question': message.ques,
-                         'answer': message.ans, 'created_at': created_at,'timer':message.created_at, 'missed': message.is_missed,
+                         'answer': message.ans, 'created_at': created_at, 'timer': message.created_at,
+                         'missed': message.is_missed,
                          'message_text': message.text, 'message_attachment': '', 'validity': message.validity,
                          'message_read_by': [x.id for x in message.read_by.all()]})
 
@@ -768,7 +772,8 @@ class ReadingMessage(CreateAPIView):
                                 # notification.sent_to.set([x.username for x in message_obj.receiver.all()])
                                 for receiver in message_obj.correct_attempts_by.all():
                                     notification.sent_to.add(receiver)
-                            print('Race mode else case notification sent user list', message_obj.correct_attempts_by.all())
+                            print('Race mode else case notification sent user list',
+                                  message_obj.correct_attempts_by.all())
                             print('Race mode else case notification sent user list', notification.sent_to.all())
                             fcm_token = message_obj.sender.device_token
                             if AppNotificationSetting.objects.get(user=app_user_obj).on:
@@ -2127,6 +2132,8 @@ class SendingNotification(APIView):
         messages = Message.objects.filter(is_missed=False)
         print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>', messages)
         for message in messages:
+            for r in message.receiver.all():
+                print('CHECKING RECEIVER IN READ LIST',r,message.read_by.all(),r in message.read_by.all())
             now_time = datetime.datetime.now()
             print('-------', type(now_time))
             message_validity = message.created_at.replace(tzinfo=None) + datetime.timedelta(hours=message.validity)

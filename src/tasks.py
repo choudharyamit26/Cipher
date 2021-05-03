@@ -243,22 +243,71 @@ def send_hurry_notification():
         if (message_validity - now_time) < datetime.timedelta(minutes=11):
             for receiver in receivers:
                 fcm_token = AppUser.objects.get(id=receiver.id).device_token
-                try:
-                    if not HurryNotification.objects.get(user=AppUser.objects.get(id=receiver.id),
-                                                         message=Message.objects.get(id=message.id)).sent:
+                if receiver not in message.read_by.all():
+                    try:
+                        if not HurryNotification.objects.get(user=AppUser.objects.get(id=receiver.id),
+                                                             message=Message.objects.get(id=message.id)).sent:
+                            if AppNotificationSetting.objects.get(user=AppUser.objects.get(id=receiver.id)).on:
+                                try:
+                                    # notification = AppNotification.objects.create(
+                                    #     user=AppUser.objects.get(id=receiver.id),
+                                    #     text=f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!',
+                                    #     date_sent=message.created_at,
+                                    #     mode=message.mode,
+                                    #     # date_expired=datetime.datetime.now(),
+                                    #     # sent_to=[x.username for x in receivers]
+                                    # )
+                                    # for users in receivers:
+                                    #     notification.sent_to.add(users)
+                                    if AppUser.objects.get(id=receiver.id).device_type == 'android':
+                                        data_message = {"title": "HURRY MESSAGE",
+                                                        "body": f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!',
+                                                        "type": "messageExpired", "sound": "notifications.mp3"}
+                                        respo = send_to_one(fcm_token, data_message)
+                                    else:
+                                        # data_message = json.dumps(data_message)
+
+                                        # notification = AppNotification.objects.create(
+                                        #     user=AppUser.objects.get(id=receiver.id),
+                                        #     text=f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!',
+                                        #     date_sent=message.created_at,
+                                        #     mode=message.mode,
+                                        #     # date_expired=datetime.datetime.now(),
+                                        #     # sent_to=[x.username for x in receivers]
+                                        # )
+                                        # for users in receivers:
+                                        #     notification.sent_to.add(users)
+                                        title = "HURRY MESSAGE"
+                                        body = f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!'
+                                        message_type = "messageExpired"
+                                        sound = 'notifications.mp3'
+                                        respo = send_another(
+                                            fcm_token, title, body, message_type, sound)
+                                        print("FCM Response===============>0", respo)
+                                        # title = "Profile Update"
+                                        # body = "Your profile has been updated successfully"
+                                        # respo = send_to_one(fcm_token, title, body)
+                                        # print("FCM Response===============>0", respo)
+                                except:
+                                    pass
+                        else:
+                            pass
+                    except Exception as e:
+                        HurryNotification.objects.create(user=AppUser.objects.get(id=receiver.id),
+                                                         message=Message.objects.get(id=message.id), sent=True)
                         if AppNotificationSetting.objects.get(user=AppUser.objects.get(id=receiver.id)).on:
                             try:
-                                # notification = AppNotification.objects.create(
-                                #     user=AppUser.objects.get(id=receiver.id),
-                                #     text=f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!',
-                                #     date_sent=message.created_at,
-                                #     mode=message.mode,
-                                #     # date_expired=datetime.datetime.now(),
-                                #     # sent_to=[x.username for x in receivers]
-                                # )
-                                # for users in receivers:
-                                #     notification.sent_to.add(users)
                                 if AppUser.objects.get(id=receiver.id).device_type == 'android':
+                                    # notification = AppNotification.objects.create(
+                                    #     user=AppUser.objects.get(id=receiver.id),
+                                    #     text=f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!',
+                                    #     date_sent=message.created_at,
+                                    #     mode=message.mode,
+                                    #     # date_expired=datetime.datetime.now(),
+                                    #     # sent_to=[x.username for x in receivers]
+                                    # )
+                                    # for users in receivers:
+                                    #     notification.sent_to.add(users)
                                     data_message = {"title": "HURRY MESSAGE",
                                                     "body": f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!',
                                                     "type": "messageExpired", "sound": "notifications.mp3"}
@@ -289,54 +338,8 @@ def send_hurry_notification():
                                     # print("FCM Response===============>0", respo)
                             except:
                                 pass
-                    else:
-                        pass
-                except Exception as e:
-                    HurryNotification.objects.create(user=AppUser.objects.get(id=receiver.id),
-                                                     message=Message.objects.get(id=message.id), sent=True)
-                    if AppNotificationSetting.objects.get(user=AppUser.objects.get(id=receiver.id)).on:
-                        try:
-                            if AppUser.objects.get(id=receiver.id).device_type == 'android':
-                                # notification = AppNotification.objects.create(
-                                #     user=AppUser.objects.get(id=receiver.id),
-                                #     text=f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!',
-                                #     date_sent=message.created_at,
-                                #     mode=message.mode,
-                                #     # date_expired=datetime.datetime.now(),
-                                #     # sent_to=[x.username for x in receivers]
-                                # )
-                                # for users in receivers:
-                                #     notification.sent_to.add(users)
-                                data_message = {"title": "HURRY MESSAGE",
-                                                "body": f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!',
-                                                "type": "messageExpired", "sound": "notifications.mp3"}
-                                respo = send_to_one(fcm_token, data_message)
-                            else:
-                                # data_message = json.dumps(data_message)
-
-                                # notification = AppNotification.objects.create(
-                                #     user=AppUser.objects.get(id=receiver.id),
-                                #     text=f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!',
-                                #     date_sent=message.created_at,
-                                #     mode=message.mode,
-                                #     # date_expired=datetime.datetime.now(),
-                                #     # sent_to=[x.username for x in receivers]
-                                # )
-                                # for users in receivers:
-                                #     notification.sent_to.add(users)
-                                title = "HURRY MESSAGE"
-                                body = f'Act Fast! - Your message from {message.sender.username} is about to expire and be gone forever!'
-                                message_type = "messageExpired"
-                                sound = 'notifications.mp3'
-                                respo = send_another(
-                                    fcm_token, title, body, message_type, sound)
-                                print("FCM Response===============>0", respo)
-                                # title = "Profile Update"
-                                # body = "Your profile has been updated successfully"
-                                # respo = send_to_one(fcm_token, title, body)
-                                # print("FCM Response===============>0", respo)
-                        except:
-                            pass
+                else:
+                    pass
     return "sending notification"
 
 
