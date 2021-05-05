@@ -219,7 +219,7 @@ class LoginView(ObtainAuthToken):
                         print('updated device token ', userObj.device_token)
                         token = token[0]
                         return Response({"token": token.key, "id": user_id.id, 'username': user_id.username,
-                                         'country_code': user_id.country_code,
+                                         'country_code': user_id.country_code, 'school': user_id.school_name,
                                          'phone_number': user_id.phone_number, "status": HTTP_200_OK})
                     except Exception as e:
                         token = Token.objects.get_or_create(user=userObj)
@@ -232,7 +232,7 @@ class LoginView(ObtainAuthToken):
                         print('updated device token ', userObj.device_token)
                         token = token[0]
                         return Response({"token": token.key, "id": user_id.id, 'username': user_id.username,
-                                         'country_code': user_id.country_code,
+                                         'country_code': user_id.country_code, 'school': user_id.school_name,
                                          'phone_number': user_id.phone_number, "status": HTTP_200_OK})
                 else:
                     return Response({"message": "Wrong password", "status": HTTP_400_BAD_REQUEST})
@@ -2133,7 +2133,7 @@ class SendingNotification(APIView):
         print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>', messages)
         for message in messages:
             for r in message.receiver.all():
-                print('CHECKING RECEIVER IN READ LIST',r,message.read_by.all(),r in message.read_by.all())
+                print('CHECKING RECEIVER IN READ LIST', r, message.read_by.all(), r in message.read_by.all())
             now_time = datetime.datetime.now()
             print('-------', type(now_time))
             message_validity = message.created_at.replace(tzinfo=None) + datetime.timedelta(hours=message.validity)
